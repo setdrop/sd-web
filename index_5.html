@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setdrop — Get Booked. Get Heard.</title>
+<meta name="description" content="The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090F;--cyan:#00D2FF;--white:#F0F0FF;--muted:#888AAA;--dim:#3A3A5A;--green:#1D9E75;
+  --glass:rgba(255,255,255,0.05);--glass-b:rgba(255,255,255,0.09);
+  --glass-cyan:rgba(0,210,255,0.05);--glass-cyan-b:rgba(0,210,255,0.15)
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(9,9,15,0.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{font-size:19px;font-weight:700;letter-spacing:-0.4px}
+.nav-brand .s{color:var(--white)}.nav-brand .d{color:var(--cyan)}
+.nav-progress{display:flex;align-items:center;gap:8px}
+.np{width:28px;height:3px;border-radius:2px;background:var(--dim);transition:all 0.4s ease}
+.np.done{background:rgba(0,210,255,0.4)}.np.active{background:var(--cyan);width:40px}
+.nav-spacer{width:90px}
+
+.slides{position:fixed;inset:0;top:61px;bottom:80px}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 48px;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
+.slide.active{opacity:1;pointer-events:all}
+.slide.active .r{animation:up 0.55s cubic-bezier(0.16,1,0.3,1) both}
+.slide.active .r:nth-child(1){animation-delay:0.06s}
+.slide.active .r:nth-child(2){animation-delay:0.15s}
+.slide.active .r:nth-child(3){animation-delay:0.24s}
+.slide.active .r:nth-child(4){animation-delay:0.33s}
+.slide.active .r:nth-child(5){animation-delay:0.40s}
+.slide.active .r:nth-child(6){animation-delay:0.46s}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:200;height:80px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(9,9,15,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06)}
+.slide-label{font-size:13px;color:var(--muted);font-weight:500}
+.slide-label strong{color:var(--white);font-weight:600}
+.nav-btns{display:flex;align-items:center;gap:10px}
+.btn-back{padding:10px 22px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-family:inherit;transition:all 0.15s;backdrop-filter:blur(8px)}
+.btn-back:hover{color:var(--white);border-color:rgba(255,255,255,0.15)}
+.btn-back.hidden{opacity:0;pointer-events:none}
+.btn-next{padding:10px 28px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;border:none;background:var(--cyan);color:var(--bg);font-family:inherit;transition:opacity 0.15s;display:flex;align-items:center;gap:8px}
+.btn-next:hover{opacity:0.88}
+.btn-next svg{width:14px;height:14px;stroke:var(--bg);flex-shrink:0}
+
+/* SHARED */
+.pill{display:inline-flex;align-items:center;gap:7px;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.2);border-radius:20px;padding:5px 14px}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:blink 2s ease-in-out infinite}
+.pill-text{font-size:11px;color:var(--cyan);font-weight:600;letter-spacing:0.6px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.lbl{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-align:center}
+.lbl-c{color:var(--cyan)}.lbl-m{color:var(--muted);opacity:0.5}
+.sh{font-size:clamp(26px,4vw,46px);font-weight:700;letter-spacing:-1px;text-align:center;line-height:1.12}
+.ss{font-size:15px;color:var(--muted);line-height:1.65;text-align:center;max-width:500px;margin:0 auto}
+
+.hero-h{font-size:clamp(44px,7vw,80px);font-weight:700;line-height:1.04;letter-spacing:-2.5px;text-align:center;max-width:800px}
+.hero-h .c{color:var(--cyan)}
+.hero-sub{font-size:clamp(15px,1.8vw,19px);color:var(--muted);line-height:1.65;max-width:480px;text-align:center}
+.hero-eyebrow{font-size:13px;color:var(--muted);text-align:center}
+.hero-eyebrow strong{color:var(--white);font-weight:600}
+
+.two-col{display:flex;gap:12px;width:100%;max-width:700px}
+.col{flex:1;padding:26px 22px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(16px)}
+.col-c{background:var(--glass-cyan);border-color:var(--glass-cyan-b)}
+.ci{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.ci-c{background:rgba(0,210,255,0.1)}.ci-n{background:rgba(255,255,255,0.05)}
+.col-t{font-size:14px;font-weight:600;margin:12px 0 5px}.col-b{font-size:13px;color:var(--muted);line-height:1.6}
+.steps{display:flex;width:100%;max-width:700px}
+.step{flex:1;text-align:center;position:relative;padding:0 6px}
+.sn{width:34px;height:34px;border-radius:50%;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:12px;font-weight:700;color:var(--cyan)}
+.st{font-size:13px;font-weight:600;margin-bottom:4px}.sd{font-size:12px;color:var(--muted);line-height:1.5}
+.sl{position:absolute;top:17px;left:calc(50% + 20px);width:calc(100% - 40px);height:1px;background:linear-gradient(90deg,rgba(0,210,255,0.2),transparent)}
+
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:720px}
+.fc{padding:20px 18px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(16px)}
+.fc-cy{background:var(--glass-cyan);border-color:var(--glass-cyan-b)}
+.fstat{font-size:30px;font-weight:700;color:var(--cyan);letter-spacing:-1px}
+.furl{font-size:11px;color:var(--cyan);background:rgba(0,210,255,0.07);display:inline-block;padding:2px 8px;border-radius:4px;font-family:monospace}
+.fvb{display:flex;align-items:center;gap:6px}.fvb span{font-size:11px;font-weight:500;color:var(--green)}
+.fi{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center}.fi-n{background:rgba(255,255,255,0.05)}
+.ft{font-size:13px;font-weight:600;margin:8px 0 4px}.fb{font-size:11px;color:var(--muted);line-height:1.6}
+
+.pl{display:flex;flex-direction:column;gap:8px;width:100%;max-width:580px}
+.pm{padding:16px 20px;border-radius:12px;display:flex;gap:14px;align-items:flex-start;background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(16px)}
+.pm-c{background:var(--glass-cyan);border-color:var(--glass-cyan-b)}
+.pi{min-width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pi-c{background:rgba(0,210,255,0.1)}.pi-n{background:rgba(255,255,255,0.04)}
+.pt{font-size:13px;font-weight:600;margin-bottom:3px}.pd{font-size:12px;color:var(--muted);line-height:1.6}
+
+.pw{display:flex;flex-direction:column;align-items:center;width:100%}
+.tabs{display:flex;background:rgba(255,255,255,0.04);border:1px solid var(--glass-b);border-radius:10px;padding:4px;gap:4px}
+.tab{padding:8px 22px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;border:none;font-family:inherit;color:var(--muted);background:transparent}
+.tab.oc{background:var(--cyan);color:var(--bg)}.tab.ow{background:var(--white);color:var(--bg)}
+.panel{display:flex;gap:10px;max-width:720px;width:100%}.panel.off{display:none}
+.tier{flex:1;border-radius:14px;padding:22px 18px;position:relative;background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(16px)}
+.tier-r{background:var(--glass-cyan);border-color:rgba(0,210,255,0.25)}
+.tier-p{border-color:rgba(255,255,255,0.15)}
+.tbadge{position:absolute;top:-9px;right:14px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;letter-spacing:0.3px}
+.bc{background:var(--cyan);color:var(--bg)}.bw{background:var(--white);color:var(--bg)}
+.tn{font-size:12px;font-weight:500;margin-bottom:5px}
+.tp{font-size:26px;font-weight:700;letter-spacing:-0.5px}.tp span{font-size:12px;color:var(--muted);font-weight:400}
+.tnote{font-size:11px;color:var(--muted);margin-top:2px;margin-bottom:12px}
+.tr{height:1px;background:rgba(255,255,255,0.06);margin-bottom:10px}
+.tfs{display:flex;flex-direction:column;gap:7px;font-size:11px;color:#C0C0D8}
+.tf{display:flex;align-items:center;gap:7px}.tf.off{color:var(--dim)}
+.ic{width:11px;height:11px;flex-shrink:0}.fee-t{color:var(--cyan);font-size:11px;font-weight:700;flex-shrink:0}
+.fn{max-width:680px;margin-top:16px;padding:14px 18px;border-radius:12px;display:flex;align-items:flex-start;gap:12px;background:var(--glass-cyan);border:1px solid var(--glass-cyan-b);backdrop-filter:blur(16px)}
+.fni{min-width:30px;height:30px;border-radius:7px;background:rgba(0,210,255,0.1);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--cyan);flex-shrink:0}
+.fnt{font-size:13px;font-weight:600;margin-bottom:2px}
+.fnd{font-size:12px;color:var(--muted);line-height:1.6}.fnd strong{color:var(--white);font-weight:500}
+
+.cta-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;max-width:520px}
+.cta-glow{position:absolute;width:700px;height:500px;background:radial-gradient(ellipse,rgba(0,210,255,0.1) 0%,transparent 65%);pointer-events:none}
+.cr{display:flex;align-items:stretch;justify-content:center}
+.ci2{text-align:center;padding:0 32px}
+.cn{font-size:52px;font-weight:700;letter-spacing:-2px;line-height:1}.cn.cc{color:var(--cyan)}
+.cl{font-size:11px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:0.5px}
+.csep{width:1px;background:var(--glass-b);align-self:stretch}
+.prog-wrap{max-width:340px;width:100%;margin:0 auto}
+.pt2{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--cyan),rgba(0,180,216,0.7));border-radius:2px;transition:width 1s ease}
+.sr{display:flex;gap:8px;width:100%;max-width:420px;margin:0 auto}
+.si{flex:1;background:var(--glass);border:1px solid var(--glass-b);border-radius:9px;padding:13px 16px;font-size:14px;color:var(--white);font-family:inherit;outline:none;transition:border-color 0.15s;backdrop-filter:blur(8px)}
+.si::placeholder{color:var(--dim)}.si:focus{border-color:rgba(0,210,255,0.35)}
+.sb{background:var(--cyan);color:var(--bg);padding:13px 22px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;border:none;font-family:inherit;transition:opacity 0.15s}
+.sb:hover{opacity:0.88}.sb:disabled{opacity:0.5;cursor:not-allowed}
+.reas{font-size:12px;color:var(--dim)}
+.form-err{font-size:12px;color:#ff6b6b;text-align:center}
+
+.qw{max-width:460px;text-align:center;padding:24px 0 0;border-top:1px solid rgba(255,255,255,0.07)}
+.qt{font-size:16px;line-height:1.6;font-style:italic}.qc{font-size:12px;color:var(--muted);margin-top:10px;font-style:normal}
+
+/* THANK YOU */
+.ty-glow-1{position:absolute;width:700px;height:700px;background:radial-gradient(ellipse,rgba(0,210,255,0.12) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:tyg 4s ease-in-out infinite alternate}
+.ty-glow-2{position:absolute;width:400px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.07) 0%,transparent 65%);top:35%;left:35%;transform:translate(-50%,-50%);pointer-events:none;animation:tyg 4s ease-in-out infinite alternate-reverse}
+@keyframes tyg{from{opacity:0.5;transform:translate(-50%,-50%) scale(1)}to{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+.ty-wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:640px}
+.ty-icon{width:64px;height:64px;border-radius:50%;background:rgba(0,210,255,0.1);border:1px solid rgba(0,210,255,0.25);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.ty-h{font-size:clamp(28px,4.5vw,52px);font-weight:700;letter-spacing:-1.5px;line-height:1.08;margin-bottom:12px}
+.ty-h .c{color:var(--cyan)}
+.ty-sub{font-size:15px;color:var(--muted);line-height:1.7;max-width:420px;margin-bottom:24px}
+.ty-sub strong{color:var(--white);font-weight:600}
+
+/* 3-card row */
+.ty-cards{display:flex;gap:10px;margin-bottom:24px;width:100%;max-width:580px}
+.ty-card{flex:1;padding:16px 18px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(16px);text-align:left}
+.ty-card-icon{width:28px;height:28px;border-radius:7px;background:rgba(0,210,255,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.ty-card-title{font-size:12px;font-weight:600;margin-bottom:3px;color:var(--white)}
+.ty-card-body{font-size:11px;color:var(--muted);line-height:1.5}
+.ty-num{font-size:20px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+
+/* Profile wall */
+.ty-profiles{display:flex;align-items:center;gap:10px;margin-bottom:20px;justify-content:center}
+.ty-profiles-label{font-size:12px;color:var(--muted);margin-left:4px}
+.ty-avatars{display:flex}
+.ty-av{width:36px;height:36px;border-radius:50%;background:rgba(0,210,255,0.12);border:2px solid var(--bg);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--cyan);flex-shrink:0}
+.ty-av+.ty-av{margin-left:-10px}
+.ty-av img{width:100%;height:100%;object-fit:cover}
+
+.ty-ig{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:10px;background:linear-gradient(135deg,rgba(131,58,180,0.18),rgba(253,29,29,0.12),rgba(252,176,69,0.12));border:1px solid rgba(255,255,255,0.1);cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--white);transition:all 0.2s;text-decoration:none}
+.ty-ig:hover{background:linear-gradient(135deg,rgba(131,58,180,0.3),rgba(253,29,29,0.22),rgba(252,176,69,0.22));border-color:rgba(255,255,255,0.18)}
+.ty-ig svg{width:16px;height:16px;fill:var(--white);flex-shrink:0}
+.ty-small{font-size:12px;color:var(--dim);margin-top:14px}
+
+@media(max-width:768px){
+  .nav{padding:14px 20px}.bottom{padding:0 20px}.slide{padding:20px 16px}
+  .two-col{flex-direction:column;max-width:100%;gap:8px}
+  .steps{display:grid;grid-template-columns:1fr 1fr;gap:14px 8px}.sl{display:none}
+  .fg{grid-template-columns:1fr 1fr;max-width:100%}.nav-progress{display:none}
+  .panel{max-width:100%}
+  #panel-biz{flex-wrap:wrap}
+  #panel-biz .tier{min-width:calc(50% - 5px)}
+  #panel-biz .tier:last-child{flex:1 1 100%}
+  .ty-cards{gap:8px}
+}
+@media(max-width:480px){
+  .fg{grid-template-columns:1fr 1fr}
+  #panel-artist,#panel-biz{flex-direction:column}
+  #panel-biz .tier{min-width:100%}
+  .cr{gap:0}.ci2{padding:0 18px}.cn{font-size:38px}
+  .sr{flex-direction:column}.steps{grid-template-columns:1fr 1fr}
+  .hero-h{letter-spacing:-1.5px}
+  .ty-cards{flex-direction:row}
+  .ty-card{min-width:0;flex:1}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand"><span class="s">set</span><span class="d">drop</span></div>
+  <div class="nav-progress" id="nav-progress"></div>
+  <div class="nav-spacer"></div>
+</nav>
+
+<div class="slides">
+
+  <!-- 0: HERO -->
+  <div class="slide active" data-i="0">
+    <div style="position:absolute;width:800px;height:600px;background:radial-gradient(ellipse,rgba(0,210,255,0.09) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:0"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center">
+      <div class="pill r" style="margin-bottom:28px"><div class="pill-dot"></div><span class="pill-text">FOUNDING ARTISTS NOW OPEN</span></div>
+      <h1 class="hero-h r" style="margin-bottom:22px">Get booked.<br><span class="c">Get heard.</span></h1>
+      <p class="hero-sub r" style="margin-bottom:32px">The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.</p>
+      <p class="hero-eyebrow r"><strong id="hero-count">—</strong> artists already signed up in Melbourne</p>
+    </div>
+  </div>
+
+  <!-- 1: HOW IT WORKS -->
+  <div class="slide" data-i="1">
+    <div style="position:absolute;width:500px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.06) 0%,transparent 65%);top:30%;left:30%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div class="lbl lbl-c r" style="margin-bottom:12px">How it works</div>
+    <h2 class="sh r" style="margin-bottom:28px">One platform. Both sides of the gig.</h2>
+    <div class="two-col r">
+      <div class="col col-c">
+        <div class="ci ci-c"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg></div>
+        <div class="col-t">For Artists</div>
+        <div class="col-b">Browse gigs that match your sound. Apply with your profile. Get approved and everything else is handled. Contracts, invoices, verified history. You play. You get paid.</div>
+      </div>
+      <div class="col">
+        <div class="ci ci-n"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F0F0FF" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M3 9h18"/></svg></div>
+        <div class="col-t">For Businesses</div>
+        <div class="col-b">Post your gig. Setdrop matches you with artists who fit. Review profiles, approve your pick, and the booking is locked in. Contracts and payments sorted inside the app.</div>
+      </div>
+    </div>
+    <div class="steps r" style="margin-top:28px">
+      <div class="step"><div class="sn">1</div><div class="st">Gig posted</div><div class="sd">Business lists the gig with date, genre, and fee range</div><div class="sl"></div></div>
+      <div class="step"><div class="sn">2</div><div class="st">Artists apply</div><div class="sd">Matched artists see the gig and apply with their profile</div><div class="sl"></div></div>
+      <div class="step"><div class="sn">3</div><div class="st">Booked</div><div class="sd">Business approves. Contract generated. Chat opens.</div><div class="sl"></div></div>
+      <div class="step"><div class="sn">4</div><div class="st">Paid and verified</div><div class="sd">Invoice sent. Payment settled. Gig added to verified history.</div></div>
+    </div>
+  </div>
+
+  <!-- 2: FOR ARTISTS -->
+  <div class="slide" data-i="2">
+    <div style="position:absolute;width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.07) 0%,transparent 65%);top:40%;left:60%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div class="lbl lbl-c r" style="margin-bottom:10px">For Artists</div>
+    <h2 class="sh r" style="margin-bottom:22px">Your career. Your terms.</h2>
+    <div class="fg r">
+      <div class="fc fc-cy"><div class="fstat">0%</div><div class="ft">Booking fees. Always.</div><div class="fb">Other platforms take up to 20% of every gig. On Setdrop you keep every dollar. Written into the company constitution.</div></div>
+      <div class="fc"><div class="furl">setdrop.com.au/yourname</div><div class="ft">Your profile. Your link.</div><div class="fb">A shareable page that replaces your Linktree, bio site, and press kit. One link for your Instagram bio.</div></div>
+      <div class="fc"><div class="fvb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#1D9E75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#1D9E75" stroke-width="1.5"/></svg><span>Verified</span></div><div class="ft">Verified gig history</div><div class="fb">Every completed booking is recorded and verified. Download a certificate anytime.</div></div>
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h3"/></svg></div><div class="ft">Invoice Maker</div><div class="fb">Create and send professional invoices from the app. Save profiles for different trading names or ABNs.</div></div>
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div><div class="ft">Auto generated EPK</div><div class="fb">Your press kit builds itself from your profile. Delivered instantly when a booker approves you.</div></div>
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ft">Posts and community</div><div class="fb">Share updates, announce availability, and connect with other artists in your scene.</div></div>
+    </div>
+    <div class="qw r"><p class="qt">"This is not a tech company that discovered music. This came from inside the scene, built with the people in it, for the people in it."</p><cite class="qc">AJ, Founder</cite></div>
+  </div>
+
+  <!-- 3: FOR BUSINESSES -->
+  <div class="slide" data-i="3">
+    <div class="lbl lbl-m r" style="margin-bottom:10px">For Businesses</div>
+    <h2 class="sh r" style="margin-bottom:10px">Find the right artist. Book them in minutes.</h2>
+    <p class="ss r" style="margin-bottom:24px">Stop scrolling Instagram hoping someone replies. Post your gig, get matched with artists who actually fit, and lock in the booking with everything handled in the app.</p>
+    <div class="fg r">
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0F0FF" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="ft">Matched to your gig</div><div class="fb">Every applicant is scored across genre fit, experience, reviews, and reliability. Best matches first.</div></div>
+      <div class="fc"><div class="fvb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#1D9E75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#1D9E75" stroke-width="1.5"/></svg><span>Verified</span></div><div class="ft">Profiles you can trust</div><div class="fb">Real reviews from real gigs. Booking history you can see. No guesswork on who you are hiring.</div></div>
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></div><div class="ft">Contracts sorted</div><div class="fb">Approve an artist and a contract generates automatically. Both parties sign inside the app.</div></div>
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div class="ft">Web dashboard</div><div class="fb">Manage gigs, review applicants, and track bookings from your desktop.</div></div>
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div class="ft">Private artist roster</div><div class="fb">Save artists to your private roster. Add notes, track history, and rebook your favourites.</div></div>
+      <div class="fc"><div class="fi fi-n" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div class="ft">Payments in one place</div><div class="fb">Invoices generated from the booking. Clear records for every transaction. No chasing paperwork.</div></div>
+    </div>
+  </div>
+
+  <!-- 4: PROMISES -->
+  <div class="slide" data-i="4">
+    <div style="position:absolute;width:500px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.06) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div class="lbl lbl-c r" style="margin-bottom:12px">Our Promises</div>
+    <h2 class="sh r" style="margin-bottom:22px">Words we put in writing.</h2>
+    <div class="pl r">
+      <div class="pm pm-c"><div class="pi pi-c"><span style="font-size:12px;color:var(--cyan);font-weight:700">$</span></div><div><div class="pt">Artists pay zero booking fees. Forever.</div><div class="pd">Not now. Not ever. Not under any ownership, update, or circumstance. This is structural, not promotional. It cannot be changed without breaching the company constitution.</div></div></div>
+      <div class="pm"><div class="pi pi-n"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><div class="pt">Your data belongs to you.</div><div class="pd">We will never sell your data, use it to target ads, or share your private messages. Your gig history is downloadable at any time.</div></div></div>
+      <div class="pm"><div class="pi pi-n"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div><div class="pt">The algorithm is public.</div><div class="pd">Every system that affects who gets seen is published in full. No payment to Setdrop affects your ranking.</div></div></div>
+      <div class="pm"><div class="pi pi-n"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="pt">We protect artists.</div><div class="pd">Exploitation patterns are flagged quietly in conversation. No payment can begin without a signed contract. These protections exist by default.</div></div></div>
+      <div class="pm"><div class="pi pi-n"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div><div><div class="pt">Your career record is always yours.</div><div class="pd">Your gig history is downloadable at any time, regardless of subscription or account status. Your data. Your career. Always portable.</div></div></div>
+    </div>
+  </div>
+
+  <!-- 5: PRICING -->
+  <div class="slide" data-i="5">
+    <div class="lbl lbl-c r" style="margin-bottom:10px">Pricing</div>
+    <h2 class="sh r" style="margin-bottom:20px">Simple plans. No surprises.</h2>
+    <div class="pw r">
+      <div class="tabs" style="margin-bottom:20px">
+        <button class="tab oc" id="tab-artist" onclick="switchTab('artist')">For Artists</button>
+        <button class="tab" id="tab-biz" onclick="switchTab('biz')">For Businesses</button>
+      </div>
+      <div class="panel" id="panel-artist">
+        <div class="tier">
+          <div class="tn" style="color:var(--muted)">Free</div>
+          <div class="tp">$0</div><div class="tnote">Forever. No catch.</div>
+          <div class="tr"></div>
+          <div class="tfs">
+            <div class="tf"><span class="fee-t">0%</span> Booking fee. Always.</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Unlimited gig applications</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 5 photos, 3 videos</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Basic EPK and Invoice Maker</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 1 invoice profile</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Verified gig history</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Shareable profile link</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Basic profile customisation</div>
+          </div>
+        </div>
+        <div class="tier tier-r">
+          <div class="tbadge bc">RECOMMENDED</div>
+          <div class="tn" style="color:var(--cyan)">Pro</div>
+          <div class="tp">$19.99<span>/mo</span></div><div class="tnote">or $179.99/yr — save 25%</div>
+          <div class="tr" style="background:rgba(0,210,255,0.1)"></div>
+          <div class="tfs">
+            <div class="tf" style="color:var(--muted);font-style:italic;font-size:10px;margin-bottom:2px">Everything in Free, plus:</div>
+            <div class="tf"><span class="fee-t">0%</span> Booking fee. Always.</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 10 photos, 6 videos</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Advanced EPK</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Up to 5 invoice profiles</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Full profile customisation</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Gig Alert</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> AI writing tools</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Full analytics and earnings tracker</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Post scheduling</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel off" id="panel-biz">
+        <div class="tier">
+          <div class="tn" style="color:var(--muted)">Free</div>
+          <div class="tp">$0</div><div class="tnote">6% booking fee</div>
+          <div class="tr"></div>
+          <div class="tfs">
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Post gigs (unlimited)</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Review applicants</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Booking contracts</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Artist roster</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Invoice manager</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 1 private brief/mo</div>
+            <div class="tf off"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#3A3A5A" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg> No web dashboard</div>
+            <div class="tf off"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#3A3A5A" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg> No AI scoring</div>
+          </div>
+        </div>
+        <div class="tier tier-p">
+          <div class="tbadge bw">POPULAR</div>
+          <div class="tn" style="color:var(--white)">Pro</div>
+          <div class="tp">$49.99<span>/mo</span></div><div class="tnote">3% booking fee</div>
+          <div class="tr"></div>
+          <div class="tfs">
+            <div class="tf" style="color:var(--muted);font-style:italic;font-size:10px;margin-bottom:2px">Everything in Free, plus:</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Web dashboard</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> AI applicant scoring</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Full analytics</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 3 team seats + $9.99 each</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 4 private briefs/mo</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Posting scheduling</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Roster availability overlay</div>
+          </div>
+        </div>
+        <div class="tier">
+          <div class="tn" style="color:var(--muted)">Pro+</div>
+          <div class="tp">$99.99<span>/mo</span></div><div class="tnote">2% booking fee</div>
+          <div class="tr"></div>
+          <div class="tfs">
+            <div class="tf" style="color:var(--muted);font-style:italic;font-size:10px;margin-bottom:2px">Everything in Pro, plus:</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 8 team seats + $9.99 each</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Unlimited private briefs</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Multi-venue management</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Custom booking page</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Verified Business badge</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Onboarding Manager (first 30 days)</div>
+            <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Real-time invoice dashboard</div>
+          </div>
+        </div>
+      </div>
+      <div class="fn">
+        <div class="fni">&#9733;</div>
+        <div>
+          <div class="fnt">Founding member pricing</div>
+          <div class="fnd">First 500 artists get Pro locked at <strong>$14.99/mo for life</strong> with a permanent gold badge. First businesses get Pro at <strong>$39.99/mo</strong> with 2% booking fee permanently.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: CTA -->
+  <div class="slide" data-i="6">
+    <div class="cta-glow"></div>
+    <div class="cta-wrap">
+      <div class="pill r" style="margin-bottom:24px"><div class="pill-dot"></div><span class="pill-text">LIMITED TO 500 FOUNDING ARTISTS</span></div>
+      <h2 class="sh r" style="margin-bottom:12px">Be one of the first.</h2>
+      <p class="hero-sub r" style="margin-bottom:24px">Founding Artists get Pro locked at $14.99/mo for life, a permanent gold badge on their profile, and a say in how this platform grows. Once 500 spots are filled, this offer closes permanently.</p>
+      <div class="cr r" style="margin-bottom:22px">
+        <div class="ci2"><div class="cn cc" id="count-joined">—</div><div class="cl">Artists joined</div></div>
+        <div class="csep"></div>
+        <div class="ci2"><div class="cn" id="count-remaining">—</div><div class="cl">Spots remaining</div></div>
+      </div>
+      <div class="prog-wrap r" style="margin-bottom:22px">
+        <div class="pt2"><div class="pf" id="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="r" style="width:100%;max-width:420px;margin:0 auto">
+        <div class="sr" style="margin-bottom:8px">
+          <input type="email" class="si" id="email-input" placeholder="your@email.com">
+          <button class="sb" id="submit-btn" onclick="handleSignup()">Join the Founding 500</button>
+        </div>
+        <p class="form-err" id="form-err" style="display:none"></p>
+      </div>
+      <p class="reas r" style="margin-top:8px">No credit card required. You will be first to access the app.</p>
+    </div>
+  </div>
+
+  <!-- 7: THANK YOU -->
+  <div class="slide" data-i="7">
+    <div class="ty-glow-1"></div>
+    <div class="ty-glow-2"></div>
+    <div class="ty-wrap">
+      <div class="ty-icon r">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <h2 class="ty-h r">You're in.<br><span class="c">This is just the beginning.</span></h2>
+      <p class="ty-sub r">You are now a <strong>Founding Artist.</strong> Check your inbox for your confirmation and founding number. We will be in touch before launch day with everything you need.</p>
+
+      <!-- 3-card row -->
+      <div class="ty-cards r">
+        <div class="ty-card">
+          <div class="ty-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></div>
+          <div class="ty-num">#<span id="ty-num">—</span></div>
+          <div class="ty-card-title">Your founding number</div>
+          <div class="ty-card-body">Permanent. On your profile forever.</div>
+        </div>
+        <div class="ty-card">
+          <div class="ty-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+          <div class="ty-card-title">Pro locked at $14.99/mo</div>
+          <div class="ty-card-body">Your rate. Locked for life as long as you stay subscribed.</div>
+        </div>
+        <div class="ty-card">
+          <div class="ty-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+          <div class="ty-card-title">First in the app</div>
+          <div class="ty-card-body">TestFlight access before public release. Your feedback shapes the build.</div>
+        </div>
+      </div>
+
+      <!-- Profile wall -->
+      <div class="ty-profiles r" id="ty-profiles" style="display:none">
+        <div class="ty-avatars" id="ty-avatars"></div>
+        <span class="ty-profiles-label" id="ty-profiles-label"></span>
+      </div>
+
+      <a class="ty-ig r" href="https://instagram.com/setdrop.au" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" fill="currentColor"/></svg>
+        Follow @setdrop.au for launch updates
+      </a>
+      <p class="ty-small r">Melbourne, Australia. Built for the scene.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom" id="bottom-bar">
+  <div class="slide-label" id="slide-label"></div>
+  <div class="nav-btns">
+    <button class="btn-back hidden" id="btn-back" onclick="prev()">Back</button>
+    <button class="btn-next" id="btn-next" onclick="next()">
+      <span id="btn-next-label">Let's go</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const SB_URL  = 'https://hlqmsujjnwicclyecpkz.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscW1zdWpqbndpY2NseWVjcGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NTU0NDcsImV4cCI6MjA4OTEzMTQ0N30.BTgsCMxNZ1SYJf6lEpsVucm1qwJ4phmp1ooWeuX6HxQ';
+const HEADERS = { 'Content-Type':'application/json', apikey: SB_KEY, Authorization:`Bearer ${SB_KEY}` };
+
+// ── Supabase helpers ───────────────────────────────────
+async function getCount() {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/rpc/waitlist_count`, {
+      method: 'POST', headers: HEADERS, body: '{}'
+    });
+    if (!r.ok) return null;
+    return await r.json(); // returns integer directly
+  } catch { return null; }
+}
+
+async function insertWaitlist(email) {
+  const r = await fetch(`${SB_URL}/rest/v1/waitlist`, {
+    method: 'POST',
+    headers: { ...HEADERS, Prefer: 'return=minimal' },
+    body: JSON.stringify({ email, source: 'landing_page' })
+  });
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    const msg = (body.message || body.code || '').toLowerCase();
+    if (msg.includes('duplicate') || msg.includes('unique') || r.status === 409) {
+      throw new Error('duplicate');
+    }
+    throw new Error('failed');
+  }
+  // return=minimal gives no body — fetch count to get founding number
+  const count = await getCount();
+  return { founding_number: count };
+}
+
+async function getRecentProfiles() {
+  // Fetch up to 8 recent artist profiles that have a photo, for the thank you wall
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/artist_profiles?select=stage_name,photo_url&photo_url=not.is.null&order=created_at.desc&limit=8`,
+      { headers: HEADERS }
+    );
+    if (!r.ok) return [];
+    return await r.json();
+  } catch { return []; }
+}
+
+// ── Slide engine ───────────────────────────────────────
+const TOTAL = 8;
+let cur = 0, busy = false;
+const allSlides = document.querySelectorAll('.slide');
+const navProg   = document.getElementById('nav-progress');
+const labelEl   = document.getElementById('slide-label');
+const btnBack   = document.getElementById('btn-back');
+const btnNext   = document.getElementById('btn-next');
+const btnLbl    = document.getElementById('btn-next-label');
+const bottomBar = document.getElementById('bottom-bar');
+
+const meta = [
+  { label:'Welcome',         next:"Let's go" },
+  { label:'How it works',    next:'For Artists' },
+  { label:'For Artists',     next:'For Businesses' },
+  { label:'For Businesses',  next:'Our Promises' },
+  { label:'Our Promises',    next:'See pricing' },
+  { label:'Pricing',         next:'Get early access' },
+  { label:'Founding 500',    next:null },
+  { label:null,              next:null },
+];
+
+for (let i = 0; i < 7; i++) {
+  const b = document.createElement('div');
+  b.className = 'np'; b.id = 'np-'+i; navProg.appendChild(b);
+}
+
+function goTo(i) {
+  if (i === cur || busy || i < 0 || i >= TOTAL) return;
+  busy = true;
+  allSlides[cur].classList.remove('active');
+  allSlides[i].classList.add('active');
+  cur = i; syncUI();
+  setTimeout(() => { busy = false; }, 700);
+  if (i === 6) loadCounter();
+}
+function next() { goTo(cur + 1); }
+function prev() { goTo(cur - 1); }
+
+function syncUI() {
+  for (let i = 0; i < 7; i++) {
+    const el = document.getElementById('np-'+i);
+    if (el) el.className = 'np'+(i<cur?' done':i===cur?' active':'');
+  }
+  const m = meta[cur];
+  bottomBar.style.display = cur < 7 ? 'flex' : 'none';
+  if (cur >= 7) return;
+  labelEl.innerHTML = m.label ? `<strong>${cur+1} of 7</strong> &nbsp; ${m.label}` : '';
+  btnBack.classList.toggle('hidden', cur === 0);
+  btnNext.style.display = m.next ? 'flex' : 'none';
+  if (m.next) btnLbl.textContent = m.next;
+}
+
+function setCounter(n) {
+  const joined = n, remaining = Math.max(0, 500 - n);
+  document.getElementById('count-joined').textContent    = joined;
+  document.getElementById('count-remaining').textContent = remaining;
+  document.getElementById('hero-count').textContent      = joined;
+  document.getElementById('progress-fill').style.width   = (joined / 500 * 100) + '%';
+}
+
+function animCounter(target) {
+  const dur = 1400, s = performance.now();
+  function tick(now) {
+    const p = Math.min((now - s) / dur, 1), e = 1 - Math.pow(1 - p, 3), v = Math.round(e * target);
+    document.getElementById('count-joined').textContent    = v;
+    document.getElementById('count-remaining').textContent = Math.max(0, 500 - v);
+    document.getElementById('progress-fill').style.width   = (v / 500 * 100) + '%';
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+async function loadCounter() {
+  const n = await getCount();
+  if (n !== null) animCounter(n);
+}
+
+// ── Signup ─────────────────────────────────────────────
+async function handleSignup() {
+  const emailEl = document.getElementById('email-input');
+  const btn     = document.getElementById('submit-btn');
+  const errEl   = document.getElementById('form-err');
+  const email   = emailEl.value.trim();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block'; return;
+  }
+  btn.disabled = true; btn.textContent = 'Joining...'; errEl.style.display = 'none';
+
+  try {
+    const row = await insertWaitlist(email);
+    if (row?.founding_number) document.getElementById('ty-num').textContent = row.founding_number;
+    btn.disabled = false; btn.textContent = 'Join the Founding 500'; emailEl.value = '';
+    goTo(7);
+    loadProfileWall();
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Join the Founding 500';
+    errEl.textContent = err.message === 'duplicate'
+      ? 'That email is already on the list.'
+      : 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+async function loadProfileWall() {
+  const profiles = await getRecentProfiles();
+  if (!profiles.length) return;
+  const wrap    = document.getElementById('ty-profiles');
+  const avWrap  = document.getElementById('ty-avatars');
+  const lbl     = document.getElementById('ty-profiles-label');
+  const shown   = profiles.slice(0, 6);
+  avWrap.innerHTML = shown.map(p => {
+    if (p.photo_url) return `<div class="ty-av"><img src="${p.photo_url}" alt="${p.stage_name||''}" loading="lazy"></div>`;
+    const init = (p.stage_name||'?').charAt(0).toUpperCase();
+    return `<div class="ty-av">${init}</div>`;
+  }).join('');
+  lbl.textContent = profiles.length > 6
+    ? `and ${profiles.length - 6} more founding artists just like you`
+    : `${profiles.length} founding artist${profiles.length !== 1 ? 's' : ''} already in`;
+  wrap.style.display = 'flex';
+}
+
+function switchTab(t) {
+  const ta=document.getElementById('tab-artist'),tb=document.getElementById('tab-biz');
+  const pa=document.getElementById('panel-artist'),pb=document.getElementById('panel-biz');
+  if (t==='artist'){ta.className='tab oc';tb.className='tab';pa.classList.remove('off');pb.classList.add('off');}
+  else{tb.className='tab ow';ta.className='tab';pb.classList.remove('off');pa.classList.add('off');}
+}
+
+// Boot: fetch count for hero
+getCount().then(n => { if (n !== null) document.getElementById('hero-count').textContent = n; }).catch(()=>{});
+syncUI();
+</script>
+</body>
+</html>
