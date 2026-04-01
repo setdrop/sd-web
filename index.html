@@ -3,8 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Setdrop — Get Booked. Get Heard.</title>
+<title>Setdrop</title>
 <meta name="description" content="The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="Setdrop — Get Booked. Get Heard.">
+<meta property="og:description" content="The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.">
+<meta property="og:image" content="/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Setdrop">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Setdrop — Get Booked. Get Heard.">
+<meta name="twitter:description" content="The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.">
+<meta name="twitter:image" content="/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -155,10 +169,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .ty-num{font-size:20px;font-weight:700;color:var(--cyan);margin-bottom:4px}
 
 /* Profile wall */
-.ty-profiles{display:flex;align-items:center;gap:10px;margin-bottom:20px;justify-content:center}
-.ty-profiles-label{font-size:12px;color:var(--muted);margin-left:4px}
+.ty-profiles{display:flex;align-items:center;gap:0;margin-bottom:20px;justify-content:center}
 .ty-avatars{display:flex}
-.ty-av{width:36px;height:36px;border-radius:50%;background:rgba(0,210,255,0.12);border:2px solid var(--bg);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--cyan);flex-shrink:0}
+.ty-av{width:36px;height:36px;border-radius:50%;background:rgba(0,210,255,0.12);border:1px solid rgba(255,255,255,0.09);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--cyan);flex-shrink:0}
 .ty-av+.ty-av{margin-left:-10px}
 .ty-av img{width:100%;height:100%;object-fit:cover}
 
@@ -193,7 +206,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 <body>
 
 <nav class="nav">
-  <div class="nav-brand"><span class="s">set</span><span class="d">drop</span></div>
+  <div class="nav-brand"><img src="/logo.png" alt="Setdrop" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:8px;display:inline-block"><span class="s">set</span><span class="d">drop</span></div>
   <div class="nav-progress" id="nav-progress"></div>
   <div class="nav-spacer"></div>
 </nav>
@@ -443,7 +456,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <!-- Profile wall -->
       <div class="ty-profiles r" id="ty-profiles" style="display:none">
         <div class="ty-avatars" id="ty-avatars"></div>
-        <span class="ty-profiles-label" id="ty-profiles-label"></span>
       </div>
 
       <a class="ty-ig r" href="https://instagram.com/setdrop.au" target="_blank" rel="noopener">
@@ -623,18 +635,18 @@ async function handleSignup() {
 async function loadProfileWall() {
   const profiles = await getRecentProfiles();
   if (!profiles.length) return;
-  const wrap    = document.getElementById('ty-profiles');
-  const avWrap  = document.getElementById('ty-avatars');
-  const lbl     = document.getElementById('ty-profiles-label');
-  const shown   = profiles.slice(0, 6);
+  const wrap   = document.getElementById('ty-profiles');
+  const avWrap = document.getElementById('ty-avatars');
+  const shown  = profiles.slice(0, 6);
+  const extra  = profiles.length - shown.length;
   avWrap.innerHTML = shown.map(p => {
     if (p.photo_url) return `<div class="ty-av"><img src="${p.photo_url}" alt="${p.stage_name||''}" loading="lazy"></div>`;
     const init = (p.stage_name||'?').charAt(0).toUpperCase();
     return `<div class="ty-av">${init}</div>`;
   }).join('');
-  lbl.textContent = profiles.length > 6
-    ? `and ${profiles.length - 6} more founding artists just like you`
-    : `${profiles.length} founding artist${profiles.length !== 1 ? 's' : ''} already in`;
+  if (extra > 0) {
+    avWrap.innerHTML += `<div class="ty-av" style="background:rgba(255,255,255,0.06);color:var(--muted);font-size:10px;font-weight:600">+${extra}</div>`;
+  }
   wrap.style.display = 'flex';
 }
 
