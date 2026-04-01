@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Setdrop</title>
 <meta name="description" content="The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -31,7 +31,7 @@
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 
-.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(9,9,15,0.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;padding-top:calc(18px + env(safe-area-inset-top));background:rgba(9,9,15,0.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
 .nav-brand{font-size:19px;font-weight:700;letter-spacing:-0.4px}
 .nav-brand .s{color:var(--white)}.nav-brand .d{color:var(--cyan)}
 .nav-progress{display:flex;align-items:center;gap:8px}
@@ -39,8 +39,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .np.done{background:rgba(0,210,255,0.4)}.np.active{background:var(--cyan);width:40px}
 .nav-spacer{width:90px}
 
-.slides{position:fixed;inset:0;top:61px;bottom:80px}
-.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 48px;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
+.slides{position:fixed;inset:0;top:var(--nav-h,61px);bottom:var(--bar-h,80px)}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 48px;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
 .slide.active{opacity:1;pointer-events:all}
 .slide.active .r{animation:up 0.55s cubic-bezier(0.16,1,0.3,1) both}
 .slide.active .r:nth-child(1){animation-delay:0.06s}
@@ -51,7 +51,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .slide.active .r:nth-child(6){animation-delay:0.46s}
 @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-.bottom{position:fixed;bottom:0;left:0;right:0;z-index:200;height:80px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(9,9,15,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06)}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:200;height:auto;min-height:80px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;padding-bottom:max(16px, env(safe-area-inset-bottom));background:rgba(9,9,15,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06)}
 .slide-label{font-size:13px;color:var(--muted);font-weight:500}
 .slide-label strong{color:var(--white);font-weight:600}
 .nav-btns{display:flex;align-items:center;gap:10px}
@@ -181,7 +181,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .ty-small{font-size:12px;color:var(--dim);margin-top:14px}
 
 @media(max-width:768px){
-  .nav{padding:14px 20px}.bottom{padding:0 20px}.slide{padding:20px 16px}
+  .nav{padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top))}.bottom{padding:0 20px;padding-bottom:max(12px, env(safe-area-inset-bottom))}.slide{padding:20px 16px}
   .two-col{flex-direction:column;max-width:100%;gap:8px}
   .steps{display:grid;grid-template-columns:1fr 1fr;gap:14px 8px}.sl{display:none}
   .fg{grid-template-columns:1fr 1fr;max-width:100%}.nav-progress{display:none}
@@ -206,7 +206,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 <body>
 
 <nav class="nav">
-  <div class="nav-brand"><img src="/logo.png" alt="Setdrop" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:8px;display:inline-block"><span class="s">set</span><span class="d">drop</span></div>
+  <div class="nav-brand"><img src="/logo-transparent.png" alt="Setdrop" style="width:22px;height:22px;vertical-align:middle;margin-right:8px;display:inline-block"><span class="s">set</span><span class="d">drop</span></div>
   <div class="nav-progress" id="nav-progress"></div>
   <div class="nav-spacer"></div>
 </nav>
@@ -577,6 +577,7 @@ function syncUI() {
   btnBack.classList.toggle('hidden', cur === 0);
   btnNext.style.display = m.next ? 'flex' : 'none';
   if (m.next) btnLbl.textContent = m.next;
+  setTimeout(setHeights, 50);
 }
 
 function setCounter(n) {
@@ -657,7 +658,15 @@ function switchTab(t) {
   else{tb.className='tab ow';ta.className='tab';pb.classList.remove('off');pa.classList.add('off');}
 }
 
-// Boot: fetch count for hero
+// Measure actual nav/bottom heights and set CSS vars so slides fit exactly
+function setHeights() {
+  const nav = document.querySelector('.nav');
+  const bar = document.getElementById('bottom-bar');
+  if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
+  if (bar && bar.style.display !== 'none') document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
+}
+setHeights();
+window.addEventListener('resize', setHeights);
 getCount().then(n => { if (n !== null) document.getElementById('hero-count').textContent = n; }).catch(()=>{});
 syncUI();
 </script>
