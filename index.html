@@ -41,11 +41,11 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
 .nav-spacer{width:90px}
 
 .slides{position:fixed;inset:0;top:var(--nav-h,61px);bottom:var(--bar-h,80px);overflow:hidden}
-.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 48px 28px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
-.slide.centred{justify-content:center;padding-top:28px}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 48px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
+.slide.top{justify-content:flex-start;padding-top:40px}
 @media(min-width:769px){
-  .slide>*,.slide.centred>*{max-width:760px;width:100%}
-  .slide.centred>*{max-width:580px}
+  .slide>*{max-width:760px;width:100%}
+  .slide.top>*{max-width:760px;width:100%}
 }
 .slide.active{opacity:1;pointer-events:all}
 .slide.active .r{animation:up 0.55s cubic-bezier(0.16,1,0.3,1) both}
@@ -190,7 +190,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   .nav{padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top))}
   .bottom{padding:0 20px;padding-bottom:max(12px, env(safe-area-inset-bottom))}
   .slide{padding:16px 16px 24px;width:100%;justify-content:flex-start}
-  .slide.centred{justify-content:center;padding-top:20px}
+  .slide.top{padding-top:16px}
   .two-col{flex-direction:column;width:100%;max-width:100%;gap:8px}
   .steps{display:grid;grid-template-columns:1fr 1fr;gap:14px 8px;width:100%}.sl{display:none}
   .fg{grid-template-columns:1fr 1fr;max-width:100%;width:100%}
@@ -242,7 +242,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 1: HOW IT WORKS -->
-  <div class="slide" data-i="1">
+  <div class="slide top" data-i="1">
     <div style="position:absolute;width:500px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.06) 0%,transparent 65%);top:30%;left:30%;transform:translate(-50%,-50%);pointer-events:none"></div>
     <div class="lbl lbl-c r" style="margin-bottom:12px">How it works</div>
     <h2 class="sh r" style="margin-bottom:28px">One platform. Both sides of the gig.</h2>
@@ -267,7 +267,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 2: FOR ARTISTS -->
-  <div class="slide" data-i="2">
+  <div class="slide top" data-i="2">
     <div style="position:absolute;width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.07) 0%,transparent 65%);top:40%;left:60%;transform:translate(-50%,-50%);pointer-events:none"></div>
     <div class="lbl lbl-c r" style="margin-bottom:10px">For Artists</div>
     <h2 class="sh r" style="margin-bottom:22px">Your career. Your terms.</h2>
@@ -283,7 +283,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 3: FOR BUSINESSES -->
-  <div class="slide" data-i="3">
+  <div class="slide top" data-i="3">
     <div class="lbl lbl-m r" style="margin-bottom:10px">For Businesses</div>
     <h2 class="sh r" style="margin-bottom:10px">Find the right artist. Book them in minutes.</h2>
     <p class="ss r" style="margin-bottom:24px">Stop scrolling Instagram hoping someone replies. Post your gig, get matched with artists who actually fit, and lock in the booking with everything handled in the app.</p>
@@ -298,7 +298,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 4: PROMISES -->
-  <div class="slide" data-i="4">
+  <div class="slide top" data-i="4">
     <div style="position:absolute;width:500px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.06) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none"></div>
     <div class="lbl lbl-c r" style="margin-bottom:12px">Our Promises</div>
     <h2 class="sh r" style="margin-bottom:22px">Words we put in writing.</h2>
@@ -312,7 +312,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 5: PRICING -->
-  <div class="slide" data-i="5">
+  <div class="slide top" data-i="5">
     <div class="lbl lbl-c r" style="margin-bottom:10px">Pricing</div>
     <h2 class="sh r" style="margin-bottom:20px">Simple plans. No surprises.</h2>
     <div class="pw r">
@@ -439,22 +439,40 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
     </div>
   </div>
 
-  <!-- 7: THANK YOU -->
+  <!-- 7: CHECK EMAIL -->
   <div class="slide centred" data-i="7">
+    <div class="ty-glow-1"></div>
+    <div class="ty-glow-2"></div>
+    <div class="ty-wrap">
+      <div class="ty-icon r" style="background:rgba(0,210,255,0.08);border-color:rgba(0,210,255,0.2)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+      </div>
+      <h2 class="ty-h r" style="margin-bottom:12px">Check your inbox.</h2>
+      <p class="ty-sub r" style="margin-bottom:28px">We sent a confirmation link to <strong id="check-email-addr" style="color:var(--white)">your email</strong>. Click it to lock in your founding spot. It only takes a second.</p>
+      <div class="r" style="background:rgba(0,210,255,0.05);border:1px solid rgba(0,210,255,0.15);border-radius:12px;padding:16px 20px;width:100%;max-width:400px;text-align:left">
+        <p style="font-size:12px;color:var(--muted);margin:0 0 6px;font-weight:600;letter-spacing:.5px;text-transform:uppercase">What happens next</p>
+        <p style="font-size:13px;color:#CCC;line-height:1.65;margin:0">Once confirmed you will get your founding number, your permanent gold badge, and Pro locked at $14.99/mo for life.</p>
+      </div>
+      <p class="ty-small r" style="margin-top:20px">No confirmation? Check your spam folder or <button onclick="goTo(6)" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-size:12px;padding:0;font-family:inherit;text-decoration:underline">try a different email</button>.</p>
+    </div>
+  </div>
+
+  <!-- 8: THANK YOU -->
+  <div class="slide centred" data-i="8">
     <div class="ty-glow-1"></div>
     <div class="ty-glow-2"></div>
     <div class="ty-wrap">
       <div class="ty-icon r">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
       </div>
-      <h2 class="ty-h r">You're in.<br><span class="c">This is just the beginning.</span></h2>
-      <p class="ty-sub r">Check your inbox — we've sent a confirmation link to verify your spot as <strong>Founding Artist #<span id="ty-num">—</span></strong>. Once confirmed, you're in for life.</p>
+      <h2 class="ty-h r">You are in.<br><span class="c">This is just the beginning.</span></h2>
+      <p class="ty-sub r">Welcome to the founding group, <strong>Artist #<span id="ty-num">—</span></strong>. Your permanent gold badge and lifetime rate are locked in.</p>
 
       <!-- 3-card row -->
       <div class="ty-cards r">
         <div class="ty-card">
           <div class="ty-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></div>
-          <div class="ty-num">#<span id="ty-num">—</span></div>
+          <div class="ty-num">#<span id="ty-num-card">—</span></div>
           <div class="ty-card-title">Your founding number</div>
           <div class="ty-card-body">Permanent. On your profile forever.</div>
         </div>
@@ -501,65 +519,81 @@ const SB_URL  = 'https://hlqmsujjnwicclyecpkz.supabase.co';
 const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscW1zdWpqbndpY2NseWVjcGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NTU0NDcsImV4cCI6MjA4OTEzMTQ0N30.BTgsCMxNZ1SYJf6lEpsVucm1qwJ4phmp1ooWeuX6HxQ';
 const HEADERS = { 'Content-Type':'application/json', apikey: SB_KEY, Authorization:`Bearer ${SB_KEY}` };
 
-// ── Supabase helpers ───────────────────────────────────
+// ── Supabase helpers ───────────────────────────────────────────────────────
+
 async function getCount() {
   try {
     const r = await fetch(`${SB_URL}/rest/v1/rpc/waitlist_count`, {
-      method: 'POST', headers: HEADERS, body: '{}'
+      method:'POST', headers:HEADERS, body:'{}'
     });
-    if (!r.ok) return null;
-    return await r.json(); // returns integer directly
+    return r.ok ? await r.json() : null;
   } catch { return null; }
 }
 
-function genToken() {
-  const arr = new Uint8Array(32);
-  crypto.getRandomValues(arr);
-  return Array.from(arr, b => b.toString(16).padStart(2,'0')).join('');
-}
-
-async function insertWaitlist(email) {
-  const r = await fetch(`${SB_URL}/rest/v1/waitlist`, {
-    method: 'POST',
-    headers: { ...HEADERS, Prefer: 'return=minimal' },
-    body: JSON.stringify({ email, source: 'landing_page', verified: false })
-  });
-  if (!r.ok) {
-    const body = await r.json().catch(() => ({}));
-    const msg = (body.message || body.code || '').toLowerCase();
-    if (msg.includes('duplicate') || msg.includes('unique') || r.status === 409) {
-      throw new Error('duplicate');
-    }
-    throw new Error('failed');
-  }
-  // Get unverified founding number (position in queue) via a dedicated RPC
-  const nRes = await fetch(`${SB_URL}/rest/v1/rpc/waitlist_queue_position`, {
-    method: 'POST', headers: HEADERS, body: JSON.stringify({ p_email: email })
-  });
-  const founding_number = nRes.ok ? await nRes.json() : null;
-  // Fire confirmation email via edge function (non-blocking)
-  fetch(`${SB_URL}/functions/v1/waitlist-confirm`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
-    body: JSON.stringify({ email, founding_number })
-  }).catch(() => {});
-  return { founding_number };
-}
-
 async function getRecentProfiles() {
-  // Fetch up to 8 recent artist profiles that have a photo, for the thank you wall
   try {
     const r = await fetch(
       `${SB_URL}/rest/v1/artist_profiles?select=stage_name,photo_url&photo_url=not.is.null&order=created_at.desc&limit=8`,
       { headers: HEADERS }
     );
-    if (!r.ok) return [];
-    return await r.json();
+    return r.ok ? await r.json() : [];
   } catch { return []; }
 }
 
-// ── Slide engine ───────────────────────────────────────
-const TOTAL = 8;
+// Send Supabase OTP magic link — Supabase emails the user directly
+async function sendOTP(email) {
+  const r = await fetch(`${SB_URL}/auth/v1/otp`, {
+    method: 'POST',
+    headers: HEADERS,
+    body: JSON.stringify({
+      email,
+      create_user: true,
+      options: {
+        // Redirect back to the landing page after clicking the link
+        email_redirect_to: 'https://setdrop.com.au/'
+      }
+    })
+  });
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    const msg = (body.msg || body.message || body.error_description || '').toLowerCase();
+    if (msg.includes('rate') || msg.includes('too many')) throw new Error('ratelimit');
+    throw new Error('failed');
+  }
+}
+
+// Insert into waitlist and return founding number
+async function addToWaitlist(email) {
+  // Insert — ignore duplicate (user may have verified before)
+  await fetch(`${SB_URL}/rest/v1/waitlist`, {
+    method: 'POST',
+    headers: { ...HEADERS, Prefer: 'resolution=ignore-duplicates,return=minimal' },
+    body: JSON.stringify({ email, source: 'landing_page', verified: true })
+  });
+  // Get their founding number
+  const r = await fetch(
+    `${SB_URL}/rest/v1/waitlist?email=eq.${encodeURIComponent(email)}&select=founding_number`,
+    { headers: HEADERS }
+  );
+  const rows = r.ok ? await r.json() : [];
+  return rows[0]?.founding_number || null;
+}
+
+// Exchange Supabase token hash from URL for a session, then get the email
+async function exchangeToken(tokenHash, type) {
+  const r = await fetch(`${SB_URL}/auth/v1/verify`, {
+    method: 'POST',
+    headers: HEADERS,
+    body: JSON.stringify({ token_hash: tokenHash, type })
+  });
+  if (!r.ok) return null;
+  const data = await r.json();
+  return data?.user?.email || null;
+}
+
+// ── Slide engine ───────────────────────────────────────────────────────────
+
+const TOTAL = 9;
 let cur = 0, busy = false;
 const allSlides = document.querySelectorAll('.slide');
 const navProg   = document.getElementById('nav-progress');
@@ -570,14 +604,15 @@ const btnLbl    = document.getElementById('btn-next-label');
 const bottomBar = document.getElementById('bottom-bar');
 
 const meta = [
-  { label:'Welcome',         next:"Let's go" },
-  { label:'How it works',    next:'For Artists' },
-  { label:'For Artists',     next:'For Businesses' },
-  { label:'For Businesses',  next:'Promises' },
-  { label:'Our Promises',    next:'Pricing' },
-  { label:'Pricing',         next:'Join Now' },
-  { label:'Founding 500',    next:null },
-  { label:null,              next:null },
+  { label:'Welcome',        next:"Let's go"    },
+  { label:'How it works',   next:'For Artists'  },
+  { label:'For Artists',    next:'For Businesses'},
+  { label:'For Businesses', next:'Promises'     },
+  { label:'Our Promises',   next:'Pricing'      },
+  { label:'Pricing',        next:'Join Now'     },
+  { label:'Founding 500',   next:null           },
+  { label:null,             next:null           }, // check email
+  { label:null,             next:null           }, // thank you
 ];
 
 for (let i = 0; i < 7; i++) {
@@ -603,8 +638,9 @@ function syncUI() {
     if (el) el.className = 'np'+(i<cur?' done':i===cur?' active':'');
   }
   const m = meta[cur];
+  // Hide bottom bar on check-email (7) and thank you (8) slides
   bottomBar.style.display = cur < 7 ? 'flex' : 'none';
-  if (cur >= 7) return;
+  if (cur >= 7) { setHeights(); return; }
   labelEl.innerHTML = m.label ? `<strong>${cur+1} of 7</strong> &nbsp; ${m.label}` : '';
   btnBack.classList.toggle('hidden', cur === 0);
   btnNext.style.display = m.next ? 'flex' : 'none';
@@ -612,21 +648,13 @@ function syncUI() {
   setTimeout(setHeights, 50);
 }
 
-function setCounter(n) {
-  const joined = n, remaining = Math.max(0, 500 - n);
-  document.getElementById('count-joined').textContent    = joined;
-  document.getElementById('count-remaining').textContent = remaining;
-  document.getElementById('hero-count').textContent      = joined;
-  document.getElementById('progress-fill').style.width   = (joined / 500 * 100) + '%';
-}
-
 function animCounter(target) {
   const dur = 1400, s = performance.now();
   function tick(now) {
-    const p = Math.min((now - s) / dur, 1), e = 1 - Math.pow(1 - p, 3), v = Math.round(e * target);
+    const p = Math.min((now-s)/dur, 1), e = 1-Math.pow(1-p,3), v = Math.round(e*target);
     document.getElementById('count-joined').textContent    = v;
-    document.getElementById('count-remaining').textContent = Math.max(0, 500 - v);
-    document.getElementById('progress-fill').style.width   = (v / 500 * 100) + '%';
+    document.getElementById('count-remaining').textContent = Math.max(0, 500-v);
+    document.getElementById('progress-fill').style.width   = (v/500*100)+'%';
     if (p < 1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
@@ -637,7 +665,8 @@ async function loadCounter() {
   if (n !== null) animCounter(n);
 }
 
-// ── Signup ─────────────────────────────────────────────
+// ── Signup ─────────────────────────────────────────────────────────────────
+
 async function handleSignup() {
   const emailEl = document.getElementById('email-input');
   const btn     = document.getElementById('submit-btn');
@@ -648,22 +677,26 @@ async function handleSignup() {
     errEl.textContent = 'Please enter a valid email address.';
     errEl.style.display = 'block'; return;
   }
-  btn.disabled = true; btn.textContent = 'Joining...'; errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Sending...'; errEl.style.display = 'none';
 
   try {
-    const row = await insertWaitlist(email);
-    if (row?.founding_number) document.getElementById('ty-num').textContent = row.founding_number;
+    await sendOTP(email);
+    // Show the email they sent to on the check-email slide
+    document.getElementById('check-email-addr').textContent = email;
     btn.disabled = false; btn.textContent = 'Join the Founding 500'; emailEl.value = '';
-    goTo(7);
-    loadProfileWall();
+    goTo(7); // → check your email slide
   } catch (err) {
     btn.disabled = false; btn.textContent = 'Join the Founding 500';
-    errEl.textContent = err.message === 'duplicate'
-      ? 'That email is already on the list.'
-      : 'Something went wrong. Please try again.';
+    if (err.message === 'ratelimit') {
+      errEl.textContent = 'Too many attempts. Please wait a minute and try again.';
+    } else {
+      errEl.textContent = 'Something went wrong. Please try again.';
+    }
     errEl.style.display = 'block';
   }
 }
+
+// ── Profile wall ──────────────────────────────────────────────────────────
 
 async function loadProfileWall() {
   const profiles = await getRecentProfiles();
@@ -674,14 +707,19 @@ async function loadProfileWall() {
   const extra  = profiles.length - shown.length;
   avWrap.innerHTML = shown.map(p => {
     if (p.photo_url) return `<div class="ty-av"><img src="${p.photo_url}" alt="${p.stage_name||''}" loading="lazy"></div>`;
-    const init = (p.stage_name||'?').charAt(0).toUpperCase();
-    return `<div class="ty-av">${init}</div>`;
+    return `<div class="ty-av">${(p.stage_name||'?').charAt(0).toUpperCase()}</div>`;
   }).join('');
-  if (extra > 0) {
-    avWrap.innerHTML += `<div class="ty-av" style="background:rgba(255,255,255,0.06);color:var(--muted);font-size:10px;font-weight:600">+${extra}</div>`;
-  }
+  if (extra > 0) avWrap.innerHTML += `<div class="ty-av" style="background:rgba(255,255,255,0.06);color:var(--muted);font-size:10px;font-weight:600">+${extra}</div>`;
   wrap.style.display = 'flex';
 }
+
+function setFoundingNumber(n) {
+  if (!n) return;
+  document.getElementById('ty-num').textContent     = n;
+  document.getElementById('ty-num-card').textContent = n;
+}
+
+// ── Pricing tab ────────────────────────────────────────────────────────────
 
 function switchTab(t) {
   const ta=document.getElementById('tab-artist'),tb=document.getElementById('tab-biz');
@@ -690,40 +728,74 @@ function switchTab(t) {
   else{tb.className='tab ow';ta.className='tab';pb.classList.remove('off');pa.classList.add('off');}
 }
 
-// Measure actual nav/bottom heights and set CSS vars so slides fit exactly
+// ── Heights ────────────────────────────────────────────────────────────────
+
 function setHeights() {
   const nav = document.querySelector('.nav');
   const bar = document.getElementById('bottom-bar');
-  if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
-  if (bar && bar.style.display !== 'none') document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
+  if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight+'px');
+  if (bar && bar.style.display !== 'none') document.documentElement.style.setProperty('--bar-h', bar.offsetHeight+'px');
+  else document.documentElement.style.setProperty('--bar-h', '0px');
 }
-setHeights();
-window.addEventListener('resize', setHeights);
-getCount().then(n => { if (n !== null) document.getElementById('hero-count').textContent = n; }).catch(()=>{});
 
-// Handle email verification redirect (?verify=ok&n=X)
-(function handleVerifyRedirect() {
-  const p = new URLSearchParams(window.location.search);
-  if (!p.has('verify')) return;
-  const status = p.get('verify');
-  const num = p.get('n');
-  // Clean URL
-  window.history.replaceState({}, '', '/');
-  if (status === 'ok' || status === 'already') {
-    if (num) document.getElementById('ty-num').textContent = num;
+// ── Boot ───────────────────────────────────────────────────────────────────
+
+(async function boot() {
+  setHeights();
+  window.addEventListener('resize', setHeights);
+
+  // Load hero count immediately
+  getCount().then(n => { if (n !== null) document.getElementById('hero-count').textContent = n; }).catch(()=>{});
+
+  // Check for Supabase magic link token in URL hash
+  // Supabase appends #access_token=...&type=magiclink or ?token_hash=...&type=magiclink
+  const hash   = new URLSearchParams(window.location.hash.replace('#',''));
+  const search = new URLSearchParams(window.location.search);
+  const tokenHash = hash.get('token_hash') || search.get('token_hash');
+  const type      = hash.get('type') || search.get('type') || 'magiclink';
+  const accessToken = hash.get('access_token');
+
+  if (tokenHash || accessToken) {
+    // Clean URL immediately
+    window.history.replaceState({}, '', '/');
     syncUI();
-    goTo(7);
-    loadProfileWall();
-    // Update hero count
-    getCount().then(n => { if (n !== null) { document.getElementById('hero-count').textContent = n; } }).catch(()=>{});
-  } else if (status === 'invalid') {
-    // Show lookup form so they can try again
-    syncUI();
+
+    let email = null;
+
+    if (tokenHash) {
+      email = await exchangeToken(tokenHash, type);
+    } else if (accessToken) {
+      // Decode email from access token (JWT payload)
+      try {
+        const payload = JSON.parse(atob(accessToken.split('.')[1]));
+        email = payload.email;
+      } catch {}
+    }
+
+    if (email) {
+      const num = await addToWaitlist(email);
+      setFoundingNumber(num);
+      // Update counter
+      getCount().then(n => {
+        if (n !== null) {
+          document.getElementById('hero-count').textContent = n;
+          animCounter(n);
+        }
+      });
+      goTo(8); // → thank you slide
+      loadProfileWall();
+    } else {
+      // Token invalid or expired — drop back to CTA slide
+      goTo(6);
+      const errEl = document.getElementById('form-err');
+      errEl.textContent = 'That link has expired. Please enter your email again.';
+      errEl.style.display = 'block';
+    }
+    return;
   }
+
+  syncUI();
 })();
-
-if (!new URLSearchParams(window.location.search).has('verify')) syncUI();
-
 </script>
 </body>
 </html>
