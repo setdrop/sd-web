@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/dev", "destination": "/dev.html" },
+    { "source": "/@:username", "destination": "/profile.html" },
+    { "source": "/verify", "destination": "/verify.html" },
+    { "source": "/verify/:code", "destination": "/verify.html" }
+  ]
+}
