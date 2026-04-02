@@ -32,16 +32,17 @@
 html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:var(--bg);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 
 .nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;padding-top:calc(18px + env(safe-area-inset-top));background:rgba(9,9,15,0.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
-.nav-brand{font-size:21px;font-weight:700;letter-spacing:-0.4px;display:flex;align-items:center;gap:6px}
+.nav-brand{font-size:21px;font-weight:700;letter-spacing:-0.4px;display:flex;align-items:center;gap:7px}
 .nav-brand img{width:26px;height:26px}
-.nav-brand .s{color:var(--white)}.nav-brand .d{color:var(--cyan)}
+.nav-brand .s{color:var(--white);letter-spacing:-0.4px}.nav-brand .d{color:var(--cyan);letter-spacing:-0.4px;margin-left:-1px}
 .nav-progress{display:flex;align-items:center;gap:8px}
 .np{width:28px;height:3px;border-radius:2px;background:var(--dim);transition:all 0.4s ease}
 .np.done{background:rgba(0,210,255,0.4)}.np.active{background:var(--cyan);width:40px}
 .nav-spacer{width:90px}
 
 .slides{position:fixed;inset:0;top:var(--nav-h,61px);bottom:var(--bar-h,80px);overflow:hidden}
-.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:28px 48px 28px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 48px 28px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
+.slide.centred{justify-content:center;padding-top:28px}
 .slide.active{opacity:1;pointer-events:all}
 .slide.active .r{animation:up 0.55s cubic-bezier(0.16,1,0.3,1) both}
 .slide.active .r:nth-child(1){animation-delay:0.06s}
@@ -184,7 +185,8 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
 @media(max-width:768px){
   .nav{padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top))}
   .bottom{padding:0 20px;padding-bottom:max(12px, env(safe-area-inset-bottom))}
-  .slide{padding:16px 16px 24px;width:100%}
+  .slide{padding:40px 16px 24px;width:100%}
+  .slide.centred{padding-top:20px}
   .two-col{flex-direction:column;width:100%;max-width:100%;gap:8px}
   .steps{display:grid;grid-template-columns:1fr 1fr;gap:14px 8px;width:100%}.sl{display:none}
   .fg{grid-template-columns:1fr 1fr;max-width:100%;width:100%}
@@ -225,7 +227,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
 <div class="slides">
 
   <!-- 0: HERO -->
-  <div class="slide active" data-i="0">
+  <div class="slide centred active" data-i="0">
     <div style="position:absolute;width:800px;height:600px;background:radial-gradient(ellipse,rgba(0,210,255,0.09) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:0"></div>
     <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center">
       <div class="pill r" style="margin-bottom:28px"><div class="pill-dot"></div><span class="pill-text">FOUNDING ARTISTS NOW OPEN</span></div>
@@ -306,7 +308,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 5: PRICING -->
-  <div class="slide" data-i="5">
+  <div class="slide centred" data-i="5">
     <div class="lbl lbl-c r" style="margin-bottom:10px">Pricing</div>
     <h2 class="sh r" style="margin-bottom:20px">Simple plans. No surprises.</h2>
     <div class="pw r">
@@ -408,7 +410,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 6: CTA -->
-  <div class="slide" data-i="6">
+  <div class="slide centred" data-i="6">
     <div class="cta-glow"></div>
     <div class="cta-wrap">
       <div class="pill r" style="margin-bottom:24px"><div class="pill-dot"></div><span class="pill-text">LIMITED TO 500 FOUNDING ARTISTS</span></div>
@@ -434,7 +436,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
   </div>
 
   <!-- 7: THANK YOU -->
-  <div class="slide" data-i="7">
+  <div class="slide centred" data-i="7">
     <div class="ty-glow-1"></div>
     <div class="ty-glow-2"></div>
     <div class="ty-wrap">
