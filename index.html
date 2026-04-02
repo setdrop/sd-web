@@ -41,8 +41,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
 .nav-spacer{width:90px}
 
 .slides{position:fixed;inset:0;top:var(--nav-h,61px);bottom:var(--bar-h,80px);overflow:hidden}
-.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 48px 28px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
-.slide.centred{justify-content:center;padding-top:28px}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 48px 28px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1)}
 .slide.active{opacity:1;pointer-events:all}
 .slide.active .r{animation:up 0.55s cubic-bezier(0.16,1,0.3,1) both}
 .slide.active .r:nth-child(1){animation-delay:0.06s}
@@ -60,7 +59,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
 .btn-back{padding:10px 22px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-family:inherit;transition:all 0.15s;backdrop-filter:blur(8px)}
 .btn-back:hover{color:var(--white);border-color:rgba(255,255,255,0.15)}
 .btn-back.hidden{opacity:0;pointer-events:none}
-.btn-next{padding:10px 28px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;border:none;background:var(--cyan);color:var(--bg);font-family:inherit;transition:opacity 0.15s;display:flex;align-items:center;gap:8px}
+.btn-next{padding:10px 28px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;border:none;background:var(--cyan);color:var(--bg);font-family:inherit;transition:opacity 0.15s;display:flex;align-items:center;gap:8px;white-space:nowrap}
 .btn-next:hover{opacity:0.88}
 .btn-next svg{width:14px;height:14px;stroke:var(--bg);flex-shrink:0}
 
@@ -185,8 +184,8 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
 @media(max-width:768px){
   .nav{padding:14px 20px;padding-top:calc(14px + env(safe-area-inset-top))}
   .bottom{padding:0 20px;padding-bottom:max(12px, env(safe-area-inset-bottom))}
-  .slide{padding:40px 16px 24px;width:100%}
-  .slide.centred{padding-top:20px}
+  .slide{padding:16px 16px 24px;width:100%;justify-content:flex-start}
+  .slide.centred{justify-content:center;padding-top:20px}
   .two-col{flex-direction:column;width:100%;max-width:100%;gap:8px}
   .steps{display:grid;grid-template-columns:1fr 1fr;gap:14px 8px;width:100%}.sl{display:none}
   .fg{grid-template-columns:1fr 1fr;max-width:100%;width:100%}
@@ -444,7 +443,7 @@ html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:va
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
       </div>
       <h2 class="ty-h r">You're in.<br><span class="c">This is just the beginning.</span></h2>
-      <p class="ty-sub r">You are now a <strong>Founding Artist.</strong> Check your inbox for your confirmation and founding number. We will be in touch before launch day with everything you need.</p>
+      <p class="ty-sub r">Check your inbox — we've sent a confirmation link to verify your spot as <strong>Founding Artist #<span id="ty-num">—</span></strong>. Once confirmed, you're in for life.</p>
 
       <!-- 3-card row -->
       <div class="ty-cards r">
@@ -508,11 +507,18 @@ async function getCount() {
   } catch { return null; }
 }
 
+function genToken() {
+  const arr = new Uint8Array(32);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => b.toString(16).padStart(2,'0')).join('');
+}
+
 async function insertWaitlist(email) {
+  const verify_token = genToken();
   const r = await fetch(`${SB_URL}/rest/v1/waitlist`, {
     method: 'POST',
-    headers: { ...HEADERS, Prefer: 'return=minimal' },
-    body: JSON.stringify({ email, source: 'landing_page' })
+    headers: { ...HEADERS, Prefer: 'return=representation' },
+    body: JSON.stringify({ email, source: 'landing_page', verified: false, verify_token })
   });
   if (!r.ok) {
     const body = await r.json().catch(() => ({}));
@@ -522,9 +528,15 @@ async function insertWaitlist(email) {
     }
     throw new Error('failed');
   }
-  // return=minimal gives no body — fetch count to get founding number
-  const count = await getCount();
-  return { founding_number: count };
+  const rows = await r.json().catch(() => []);
+  const founding_number = rows[0]?.founding_number || await getCount();
+  // Fire confirmation email via edge function (non-blocking)
+  fetch(`${SB_URL}/functions/v1/waitlist-confirm`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
+    body: JSON.stringify({ email, founding_number })
+  }).catch(() => {});
+  return { founding_number };
 }
 
 async function getRecentProfiles() {
@@ -554,9 +566,9 @@ const meta = [
   { label:'Welcome',         next:"Let's go" },
   { label:'How it works',    next:'For Artists' },
   { label:'For Artists',     next:'For Businesses' },
-  { label:'For Businesses',  next:'Our Promises' },
-  { label:'Our Promises',    next:'See pricing' },
-  { label:'Pricing',         next:'Get early access' },
+  { label:'For Businesses',  next:'Promises' },
+  { label:'Our Promises',    next:'Pricing' },
+  { label:'Pricing',         next:'Join Now' },
   { label:'Founding 500',    next:null },
   { label:null,              next:null },
 ];
@@ -681,7 +693,30 @@ function setHeights() {
 setHeights();
 window.addEventListener('resize', setHeights);
 getCount().then(n => { if (n !== null) document.getElementById('hero-count').textContent = n; }).catch(()=>{});
-syncUI();
+
+// Handle email verification redirect (?verify=ok&n=X)
+(function handleVerifyRedirect() {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.has('verify')) return;
+  const status = p.get('verify');
+  const num = p.get('n');
+  // Clean URL
+  window.history.replaceState({}, '', '/');
+  if (status === 'ok' || status === 'already') {
+    if (num) document.getElementById('ty-num').textContent = num;
+    syncUI();
+    goTo(7);
+    loadProfileWall();
+    // Update hero count
+    getCount().then(n => { if (n !== null) { document.getElementById('hero-count').textContent = n; } }).catch(()=>{});
+  } else if (status === 'invalid') {
+    // Show lookup form so they can try again
+    syncUI();
+  }
+})();
+
+if (!new URLSearchParams(window.location.search).has('verify')) syncUI();
+
 </script>
 </body>
 </html>
