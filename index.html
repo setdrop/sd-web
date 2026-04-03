@@ -32,8 +32,8 @@
 html,body{width:100%;height:100%;overflow:hidden;overflow-x:hidden;background:var(--bg);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 
 .nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;padding-top:calc(18px + env(safe-area-inset-top));background:rgba(9,9,15,0.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
-.nav-brand{font-size:21px;font-weight:700;letter-spacing:-0.4px;display:flex;align-items:center;gap:7px}
-.nav-brand img{width:26px;height:26px}
+.nav-brand{font-size:23px;font-weight:700;letter-spacing:-0.5px;display:flex;align-items:center;gap:4px;line-height:1}
+.nav-brand img{width:30px;height:30px;display:block;position:relative;top:0px}
 .nav-brand .word{color:var(--white)}.nav-brand .word .d{color:var(--cyan)}
 .nav-progress{display:flex;align-items:center;gap:8px}
 .np{width:28px;height:3px;border-radius:2px;background:var(--dim);transition:all 0.4s ease}
@@ -576,7 +576,16 @@ async function addToWaitlist(email) {
     { headers: HEADERS }
   );
   const rows = r.ok ? await r.json() : [];
-  return rows[0]?.founding_number || null;
+  const founding_number = rows[0]?.founding_number || null;
+  // Send Resend confirmation email (non-blocking)
+  if (founding_number) {
+    fetch(`${SB_URL}/functions/v1/waitlist-confirm`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
+      body: JSON.stringify({ email, founding_number })
+    }).catch(() => {});
+  }
+  return founding_number;
 }
 
 // Exchange Supabase token hash from URL for a session, then get the email
