@@ -1,8 +1,12 @@
 {
   "rewrites": [
-    { "source": "/dev", "destination": "/dev_console.html" },
+    { "source": "/dev", "destination": "/dev.html" },
+    { "source": "/edit", "destination": "/edit.html" },
+    { "source": "/customise", "destination": "/customise.html" },
+    { "source": "/analytics", "destination": "/analytics.html" },
     { "source": "/@:username", "destination": "/profile.html" },
     { "source": "/verify", "destination": "/verify.html" },
-    { "source": "/verify/:code", "destination": "/verify.html" }
+    { "source": "/verify/:code", "destination": "/verify.html" },
+    { "source": "/confirmed", "destination": "/confirmed.html" }
   ]
 }

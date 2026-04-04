@@ -18,7 +18,7 @@
   --font:"DM Sans",system-ui,sans-serif;--sp:10px;--ip:16px
 }
 html{background:var(--bg);-webkit-font-smoothing:antialiased}
-body{min-height:100vh;font-family:var(--font);color:var(--white);background:var(--bg);overflow-x:hidden}
+body{min-height:100vh;font-family:var(--font);color:var(--white);background:transparent;overflow-x:hidden}
 
 /* BACKGROUND — independent fixed layers, no wrapper */
 #bgi{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center top;opacity:0;transition:opacity 1.1s ease;pointer-events:none;will-change:transform}
@@ -174,7 +174,7 @@ body.sep-none .sec+.sec{border-top:none}
 .gig-badge.conf{background:rgba(0,210,255,.07);border:1px solid rgba(0,210,255,.17);color:var(--cyan)}
 
 /* MEDIA */
-.mgd{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.mgd{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
 .mc{aspect-ratio:1;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--gb);overflow:hidden;position:relative;cursor:pointer}
 .mc img{width:100%;height:100%;object-fit:cover;display:block}
 .mc-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
@@ -191,15 +191,6 @@ body.sep-none .sec+.sec{border-top:none}
 .rev-star{font-size:11px;color:var(--gold)}.rev-star.off{color:var(--dim)}
 .rev-body{font-size:12px;color:#CCC;line-height:1.62}
 .rev-date{font-size:10px;color:var(--muted);margin-top:4px}
-
-/* OWNER PANEL */
-#owner-panel{display:none;margin:var(--sp) 14px 0;background:rgba(0,210,255,.04);border:1px solid rgba(0,210,255,.18);border-radius:var(--r);padding:14px}
-#owner-panel .op-title{font-size:10px;font-weight:600;color:var(--cyan);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
-.op-btns{display:flex;gap:6px;flex-wrap:wrap}
-.op-btn{font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;border:none;font-family:inherit;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
-.op-btn.edit{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--white)}
-.op-btn.cust{background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.22);color:var(--cyan)}
-.op-btn.analytics{background:rgba(29,158,117,.08);border:1px solid rgba(29,158,117,.2);color:var(--green)}
 
 /* FOOTER */
 .pft{text-align:center;padding:22px 0 18px;font-size:11px;color:var(--dim)}
@@ -252,14 +243,9 @@ body.spacing-spacious{--sp:16px;--ip:22px}
       </div>
       <!-- Owner buttons (shown when viewing your own profile) -->
       <div class="nav-owner" id="nav-owner">
-        <button class="nbtn ghost" onclick="goAnalytics()" title="Analytics">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Analytics
-        </button>
-        <button class="nbtn ghost" onclick="goCustomise()" title="Customise">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Edit
-        </button>
+        <button class="nbtn ghost" onclick="goEdit()">Edit</button>
+        <button class="nbtn ghost" onclick="goCustomise()">Customise</button>
+        <button class="nbtn ghost" onclick="goAnalytics()">Analytics</button>
         <button class="nbtn danger" onclick="doSignOut()">Sign out</button>
       </div>
     </div>
@@ -311,25 +297,6 @@ body.spacing-spacious{--sp:16px;--ip:22px}
       <div class="si"><div class="sv" id="sg">0</div><div class="sl">Gigs</div></div>
       <div class="si"><div class="sv" id="sr">—</div><div class="sl">Rating</div></div>
       <div class="si"><div class="sv" id="sy">—</div><div class="sl">Years</div></div>
-    </div>
-
-    <!-- Owner panel — shown only to the profile owner when logged in -->
-    <div id="owner-panel">
-      <div class="op-title">Your profile</div>
-      <div class="op-btns">
-        <button class="op-btn edit" onclick="goEdit()">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          Edit profile
-        </button>
-        <button class="op-btn cust" onclick="goCustomise()">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-          Customise
-        </button>
-        <button class="op-btn analytics" onclick="goAnalytics()">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Analytics
-        </button>
-      </div>
     </div>
 
     <div id="sections"></div>
@@ -488,14 +455,13 @@ function updateNavForAuth(user,profileUserId){
   // Show owner buttons only if this is the user's own profile
   if(profileUserId&&user.id===profileUserId){
     own.style.display="flex";
-    document.getElementById("owner-panel").style.display="block";
   }else{
     own.style.display="none";
   }
 }
-function goEdit(){window.location.href="/dev";}
-function goCustomise(){window.location.href="/dev";}
-function goAnalytics(){window.location.href="/dev";}
+function goEdit(){window.location.href="/edit";}
+function goCustomise(){window.location.href="/customise";}
+function goAnalytics(){window.location.href="/analytics";}
 
 // ── DATA LOADING ──────────────────────────────────────────────────────────────
 async function load(u){
