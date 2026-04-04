@@ -8,7 +8,7 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta property="og:title" content="Setdrop — Get Booked. Get Heard.">
+<meta property="og:title" content="Setdrop. Get Booked, Get Heard.">
 <meta property="og:description" content="The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.">
 <meta property="og:image" content="/og-image.jpg">
 <meta property="og:image:width" content="1200">
@@ -16,7 +16,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Setdrop">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Setdrop — Get Booked. Get Heard.">
+<meta name="twitter:title" content="Setdrop. Get Booked, Get Heard.">
 <meta name="twitter:description" content="The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.">
 <meta name="twitter:image" content="/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -550,10 +550,10 @@ async function getCount() {
   } catch { return null; }
 }
 
-async function getRecentProfiles() {
+async function getWaitlistSignups() {
   try {
     const r = await fetch(
-      `${SB_URL}/rest/v1/artist_profiles?select=stage_name,photo_url&photo_url=not.is.null&order=created_at.desc&limit=8`,
+      `${SB_URL}/rest/v1/waitlist?select=email&order=founding_number.asc&limit=10`,
       { headers: HEADERS }
     );
     return r.ok ? await r.json() : [];
@@ -728,17 +728,29 @@ async function handleSignup() {
 // ── Profile wall ──────────────────────────────────────────────────────────
 
 async function loadProfileWall() {
-  const profiles = await getRecentProfiles();
-  if (!profiles.length) return;
+  const signups = await getWaitlistSignups();
+  if (!signups.length) return;
   const wrap   = document.getElementById('ty-profiles');
   const avWrap = document.getElementById('ty-avatars');
-  const shown  = profiles.slice(0, 6);
-  const extra  = profiles.length - shown.length;
-  avWrap.innerHTML = shown.map(p => {
-    if (p.photo_url) return `<div class="ty-av"><img src="${p.photo_url}" alt="${p.stage_name||''}" loading="lazy"></div>`;
-    return `<div class="ty-av">${(p.stage_name||'?').charAt(0).toUpperCase()}</div>`;
+  const shown  = signups.slice(0, 6);
+  const extra  = signups.length - shown.length;
+  // Generate a consistent colour from email initial
+  const colours = [
+    {bg:'rgba(0,210,255,0.15)',c:'#00D2FF'},
+    {bg:'rgba(29,158,117,0.15)',c:'#1D9E75'},
+    {bg:'rgba(212,160,23,0.15)',c:'#D4A017'},
+    {bg:'rgba(163,100,220,0.15)',c:'#A364DC'},
+    {bg:'rgba(255,85,0,0.15)',c:'#FF5500'},
+    {bg:'rgba(255,255,255,0.08)',c:'#888AAA'},
+  ];
+  avWrap.innerHTML = shown.map((row, i) => {
+    const letter = (row.email || '?')[0].toUpperCase();
+    const col = colours[i % colours.length];
+    return `<div class="ty-av" style="background:${col.bg};color:${col.c};border-color:${col.c.replace(')',',0.25)').replace('rgb','rgba')}">${letter}</div>`;
   }).join('');
-  if (extra > 0) avWrap.innerHTML += `<div class="ty-av" style="background:rgba(255,255,255,0.06);color:var(--muted);font-size:10px;font-weight:600">+${extra}</div>`;
+  if (extra > 0) {
+    avWrap.innerHTML += `<div class="ty-av" style="background:rgba(255,255,255,0.06);color:var(--muted);font-size:10px;font-weight:600">+${extra}</div>`;
+  }
   wrap.style.display = 'flex';
 }
 
