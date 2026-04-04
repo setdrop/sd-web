@@ -526,7 +526,26 @@ async function load(u){
     orgDetails=Object.fromEntries(or.map(o=>[o.id,o]));
   }
   PROFILE_ID=p.user_id;
-  return{...p,links,badges,cfg,epk,followers,gigCount,reviews,bookings,gigDetails,orgDetails};
+
+  // Fetch gallery photos from artist-gallery storage bucket
+  let galleryPhotos=[];
+  if(p.user_id){
+    try{
+      const gr=await fetch(`${SB}/storage/v1/object/list/artist-gallery`,{
+        method:"POST",
+        headers:{...H,"Content-Type":"application/json"},
+        body:JSON.stringify({prefix:`${p.user_id}/`,limit:20,sortBy:{column:"created_at",order:"desc"}})
+      });
+      if(gr.ok){
+        const files=await gr.json();
+        galleryPhotos=(files||[])
+          .filter(f=>f.name&&!f.name.endsWith("/"))
+          .map(f=>`${SB}/storage/v1/object/public/artist-gallery/${p.user_id}/${f.name}`);
+      }
+    }catch(e){console.warn("gallery fetch failed",e);}
+  }
+
+  return{...p,links,badges,cfg,epk,followers,gigCount,reviews,bookings,gigDetails,orgDetails,galleryPhotos};
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
@@ -621,8 +640,21 @@ function render(p){
     media(){
       let vids=p.video_embeds||[];
       if(typeof vids==="string"){try{vids=JSON.parse(vids);}catch{vids=[];}}
-      if(!Array.isArray(vids)||!vids.length)return;
+      if(!Array.isArray(vids))vids=[];
+      const photos=p.galleryPhotos||[];
+      if(!vids.length&&!photos.length)return;
+
       const d=document.createElement("div");d.className="mgd";
+
+      // Photos first — direct from storage
+      photos.slice(0,8).forEach(url=>{
+        const e=document.createElement("div");e.className="mc";
+        e.innerHTML=`<img src="${esc(url)}" alt="" loading="lazy">`;
+        e.onclick=()=>window.open(url,"_blank");
+        d.appendChild(e);
+      });
+
+      // Then video embeds
       vids.slice(0,4).forEach(v=>{
         const e=document.createElement("div");e.className="mc";
         if(v.thumbnail_url){
@@ -631,7 +663,8 @@ function render(p){
         }else{e.innerHTML="<div class=\"mc-empty\">▶</div>";}
         d.appendChild(e);
       });
-      sec("smd","Media",d);
+
+      if(d.children.length)sec("smd","Media",d);
     },
     past_gigs(){
       if(!p.bookings?.length)return;
@@ -719,7 +752,7 @@ function doShare(){if(navigator.share)navigator.share({url:location.href}).catch
     document.getElementById("prf").style.display="block";
     document.getElementById("abar").style.display="flex";
     updateNavForAuth(user,null);
-    render({stage_name:"Alfred Jay",username:"alfredjay",bio_short:"Melbourne based DJ.",bio_full:"Melbourne based DJ and producer. Electronic and house sounds across venues and festivals.",artist_type:["DJ"],genres:["Electronic","House","Techno"],verified:false,available:true,open_to_collab:true,live_now:false,location_city:"Melbourne, AU",photo_url:null,banner_url:null,followers:0,gigCount:0,reviews:[],bookings:[],gigDetails:{},orgDetails:{},links:[{id:"1",platform:"instagram",url:"https://instagram.com/setdrop.au",label:"@setdrop.au",sort_order:0}],badges:[{badge_type:"founding_artist"},{badge_type:"early_adopter"}],cfg:{featured_badge_type:"founding_artist",colour_scheme:"default",font_style:"dm_sans",section_order:["bio","links","media","past_gigs","press_quotes","badges","reviews"],press_quotes:[{text:"One of Melbourne's most exciting acts.",source:"Beat Magazine"}],featured_link_ids:["1"],spacing_style:"standard",separator_style:"inset"},epk:null,show_mini_epk:false,video_embeds:[],user_id:null});
+    render({stage_name:"Alfred Jay",username:"alfredjay",bio_short:"Melbourne based DJ.",bio_full:"Melbourne based DJ and producer. Electronic and house sounds across venues and festivals.",artist_type:["DJ"],genres:["Electronic","House","Techno"],verified:false,available:true,open_to_collab:true,live_now:false,location_city:"Melbourne, AU",photo_url:null,banner_url:null,followers:0,gigCount:0,reviews:[],bookings:[],gigDetails:{},orgDetails:{},links:[{id:"1",platform:"instagram",url:"https://instagram.com/setdrop.au",label:"@setdrop.au",sort_order:0}],badges:[{badge_type:"founding_artist"},{badge_type:"early_adopter"}],cfg:{featured_badge_type:"founding_artist",colour_scheme:"default",font_style:"dm_sans",section_order:["bio","links","media","past_gigs","press_quotes","badges","reviews"],press_quotes:[{text:"One of Melbourne's most exciting acts.",source:"Beat Magazine"}],featured_link_ids:["1"],spacing_style:"standard",separator_style:"inset"},epk:null,show_mini_epk:false,video_embeds:[],galleryPhotos:[],user_id:null});
     return;
   }
 
