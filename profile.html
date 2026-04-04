@@ -274,8 +274,9 @@ body.spacing-spacious{--sp:16px;--ip:22px}
       <span><span class="w">set<span class="d">drop</span></span></span>
     </div>
     <p style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:20px">Sign in to manage your profile</p>
-    <input id="login-email" type="email" placeholder="your@email.com" style="width:100%;padding:11px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--white);font-size:13px;font-family:inherit;outline:none;margin-bottom:10px">
-    <button id="login-btn" onclick="doLogin()" style="width:100%;padding:12px;border-radius:9px;border:none;background:var(--cyan);color:var(--bg);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">Send magic link</button>
+    <input id="login-email" type="email" placeholder="your@email.com" style="width:100%;padding:11px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--white);font-size:13px;font-family:inherit;outline:none;margin-bottom:8px">
+    <input id="login-password" type="password" placeholder="Password" style="width:100%;padding:11px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--white);font-size:13px;font-family:inherit;outline:none;margin-bottom:10px">
+    <button id="login-btn" onclick="doLogin()" style="width:100%;padding:12px;border-radius:9px;border:none;background:var(--cyan);color:var(--bg);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">Sign in</button>
     <p id="login-msg" style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px;display:none"></p>
     <button onclick="closeLogin()" style="display:block;margin:14px auto 0;font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit">Cancel</button>
   </div>
@@ -450,18 +451,28 @@ function showLogin(){document.getElementById("login-modal").style.display="flex"
 function closeLogin(){document.getElementById("login-modal").style.display="none";}
 async function doLogin(){
   const email=document.getElementById("login-email").value.trim();
-  if(!email)return;
+  const password=document.getElementById("login-password").value;
+  if(!email||!password)return;
   const btn=document.getElementById("login-btn");
   const msg=document.getElementById("login-msg");
-  btn.disabled=true;btn.textContent="Sending...";
+  btn.disabled=true;btn.textContent="Signing in...";
   try{
-    const r=await fetch(`${SB}/auth/v1/otp`,{
-      method:"POST",headers:H,
-      body:JSON.stringify({email,create_user:false,options:{email_redirect_to:window.location.href}})
+    const r=await fetch(`${SB}/auth/v1/token?grant_type=password`,{
+      method:"POST",headers:{...H,"Content-Type":"application/json"},
+      body:JSON.stringify({email,password})
     });
-    if(r.ok){msg.textContent="Check your email — click the link to sign in.";msg.style.display="block";btn.textContent="Sent";}
-    else{btn.disabled=false;btn.textContent="Send magic link";msg.textContent="Could not send link. Try again.";msg.style.display="block";}
-  }catch{btn.disabled=false;btn.textContent="Send magic link";}
+    const data=await r.json();
+    if(r.ok&&data.access_token){
+      localStorage.setItem("sb_at",data.access_token);
+      SESSION=data.user||null;
+      closeLogin();
+      updateNavForAuth(SESSION,PROFILE_ID);
+    }else{
+      btn.disabled=false;btn.textContent="Sign in";
+      msg.textContent=data.error_description||data.msg||"Incorrect email or password.";
+      msg.style.color="rgba(255,100,100,.9)";msg.style.display="block";
+    }
+  }catch{btn.disabled=false;btn.textContent="Sign in";msg.textContent="Something went wrong. Try again.";msg.style.display="block";}
 }
 async function doSignOut(){
   localStorage.removeItem("sb_at");
