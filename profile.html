@@ -17,13 +17,13 @@
   --glass:rgba(9,9,15,0.62);--gb:rgba(255,255,255,0.09);--r:14px;--max:480px;
   --font:"DM Sans",system-ui,sans-serif;--sp:10px;--ip:16px
 }
-html{background:var(--bg);-webkit-font-smoothing:antialiased}
+html{background-color:#06090E;background-image:linear-gradient(rgba(0,210,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,.055) 1px,transparent 1px),linear-gradient(rgba(0,210,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,.022) 1px,transparent 1px);background-size:80px 80px,80px 80px,20px 20px,20px 20px;-webkit-font-smoothing:antialiased}
 body{min-height:100vh;font-family:var(--font);color:var(--white);background:transparent;overflow-x:hidden}
 
 /* BACKGROUND — independent fixed layers, no wrapper */
 #bgi{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center top;opacity:0;transition:opacity 1.1s ease;pointer-events:none;will-change:transform}
 #bgi.on{opacity:1}
-#bgg{position:fixed;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(9,9,15,.12) 0%,rgba(9,9,15,.4) 30%,rgba(9,9,15,.8) 60%,rgba(9,9,15,.97) 100%);pointer-events:none}
+#bgg{position:fixed;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(6,9,14,.05) 0%,rgba(6,9,14,.28) 25%,rgba(6,9,14,.72) 55%,rgba(6,9,14,.95) 80%,rgba(6,9,14,.99) 100%);pointer-events:none}
 
 /* LOADING */
 #ld{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);gap:12px;transition:opacity .4s}
