@@ -78,6 +78,8 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 .cover-drop p{font-size:12px;color:var(--muted);pointer-events:none}
 .cover-prev-wrap{width:100%;height:110px;border-radius:7px;margin-top:8px;display:none;background:rgba(0,0,0,.4);overflow:hidden;position:relative}
 #cover-prev{width:100%;height:100%;object-fit:contain;display:block}
+#cover-uploading{position:absolute;inset:0;display:none;align-items:center;justify-content:center;gap:7px;background:rgba(0,0,0,.6);font-size:11px;color:var(--muted);z-index:2}
+#cover-uploading .spin{width:14px;height:14px}
 
 /* Quote rows */
 .qrow{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px;margin-bottom:7px;display:flex;flex-direction:column}
@@ -190,6 +192,7 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
         <p><strong style="color:var(--white)">Tap to upload</strong> · displays behind your profile</p>
         <div class="cover-prev-wrap" id="cover-prev-wrap">
           <img id="cover-prev" src="" alt="">
+          <div id="cover-uploading"><div class="spin"></div>Uploading…</div>
         </div>
       </div>
     </div>
@@ -546,18 +549,24 @@ async function doCover(file){
   const local=URL.createObjectURL(file);
   const prev=document.getElementById("cover-prev");
   const wrap=document.getElementById("cover-prev-wrap");
+  const uploading=document.getElementById("cover-uploading");
   prev.src=local;wrap.style.display="block";
+  uploading.style.display="flex";
   DRAFT.cover_photo_url=local;DRAFT.cover_type="image";
   applyPreview();
-  const token=localStorage.getItem("sb_at");
-  const path=ARTIST.user_id+"/cover_"+Date.now()+"."+file.name.split(".").pop();
-  const r=await fetch(SB+"/storage/v1/object/artist-photos/"+path,{
-    method:"POST",headers:{apikey:K,Authorization:"Bearer "+token,"Content-Type":file.type},body:file
-  });
-  if(r.ok){
-    const url=SB+"/storage/v1/object/public/artist-photos/"+path;
-    DRAFT.cover_photo_url=url;prev.src=url;wrap.style.display="block";
-    applyPreview();
+  try{
+    const token=localStorage.getItem("sb_at");
+    const path=ARTIST.user_id+"/cover_"+Date.now()+"."+file.name.split(".").pop();
+    const r=await fetch(SB+"/storage/v1/object/artist-photos/"+path,{
+      method:"POST",headers:{apikey:K,Authorization:"Bearer "+token,"Content-Type":file.type},body:file
+    });
+    if(r.ok){
+      const url=SB+"/storage/v1/object/public/artist-photos/"+path;
+      DRAFT.cover_photo_url=url;prev.src=url;
+      applyPreview();
+    }
+  }finally{
+    uploading.style.display="none";
   }
 }
 
@@ -817,25 +826,23 @@ function doTex(type){
 
 // ── SAVE ──────────────────────────────────────────────────────────────────
 async function saveAll(){
+  const btn=document.getElementById("save-fab");
+  btn.textContent="Saving…";btn.disabled=true;
   const token=localStorage.getItem("sb_at");
   const aH={...H,Authorization:"Bearer "+token,"Content-Type":"application/json",Prefer:"return=minimal"};
   const cfgK=["cover_photo_url","cover_video_url","cover_type","featured_badge_type","section_order","press_quotes","cover_mode","contact_methods","edge_effect"];
   const apK=["accent_colour","base_colour","bg_texture","header_layout","avatar_shape","section_style","corner_radius","hidden_sections"];
-  // Collect current section order from DOM before saving
   collectSecOrder();
   const cfgB={},apB={};
   cfgK.forEach(k=>{
     if(DRAFT[k]===undefined)return;
-    // Skip blob URLs — upload still in progress
     if(typeof DRAFT[k]==="string"&&DRAFT[k].startsWith("blob:"))return;
     cfgB[k]=DRAFT[k];
   });
   apK.forEach(k=>{if(DRAFT[k]!==undefined)apB[k]=DRAFT[k];});
-  // Always save press quotes from _quotes
   cfgB.press_quotes=_quotes;
   try{
     const ps=[];
-    // PATCH if config row exists, POST (insert) if not
     if(CFG&&CFG.id){
       ps.push(fetch(SB+"/rest/v1/artist_profile_config?id=eq."+CFG.id,{method:"PATCH",headers:aH,body:JSON.stringify(cfgB)}));
     } else {
@@ -846,8 +853,13 @@ async function saveAll(){
     await Promise.all(ps);
     Object.assign(CFG,cfgB);Object.assign(ARTIST,apB);
     DRAFT={};
-    const t=document.getElementById("save-toast");t.style.opacity="1";setTimeout(()=>t.style.opacity="0",2400);
-  }catch(e){console.error(e);alert("Save failed.");}
+    btn.textContent="Saved ✓";
+    setTimeout(()=>{btn.textContent="Save changes";btn.disabled=false;},2200);
+  }catch(e){
+    console.error(e);
+    btn.textContent="Save changes";btn.disabled=false;
+    alert("Save failed.");
+  }
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────
@@ -858,7 +870,7 @@ async function saveAll(){
   if(!ap.ok){window.location.href="/?login=1";return;}
   const rows=await ap.json();ARTIST=rows[0];
   if(!ARTIST){document.getElementById("page-loading").classList.add("gone");return;}
-  const cfgR=await fetch(SB+"/rest/v1/artist_profile_config?artist_id=eq."+ARTIST.id+"&limit=1",{headers:H});
+  const cfgR=await fetch(SB+"/rest/v1/artist_profile_config?artist_id=eq."+ARTIST.id+"&order=id.desc&limit=1",{headers:H});
   CFG=(cfgR.ok?(await cfgR.json())[0]:null)||{};
   document.getElementById("view-btn").href="/@"+ARTIST.username;
 
