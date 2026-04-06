@@ -121,11 +121,18 @@ body.light-bg .gp{color:#0077aa;border-color:rgba(0,120,170,.4);background:rgba(
 .stats.style-ghost{background:transparent}
 .stats.style-solid{background:rgba(9,9,15,.96)}
 .stats.style-line{background:transparent;border:none;border-top:1px solid var(--gb)}
-/* stats corner radius — when margins applied it looks like a section */
-.stats.cr-rounded{border-radius:14px;border:1px solid var(--gb);margin:10px 14px 0}
-.stats.cr-sharp{border-radius:4px;border:1px solid var(--gb);margin:10px 14px 0}
-.stats.cr-pill{border-radius:20px;border:1px solid var(--gb);margin:10px 14px 0}
-.stats.cr-flat{border-radius:0}
+/* stats corner radius — uses same --r var as sections */
+.stats.cr-rounded,.stats.cr-sharp,.stats.cr-pill{border-radius:var(--r);border:1px solid var(--gb);margin:10px 14px 0;overflow:hidden}
+.stats.cr-flat{border-radius:0;border-left:none;border-right:none;margin-top:10px}
+/* line section style */
+body.sec-line .sec{background:transparent!important;border:none!important;border-top:1px solid rgba(255,255,255,.1)!important}
+/* col shadow */
+#col-shadow{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:var(--max);z-index:0;pointer-events:none;box-shadow:0 0 100px 30px rgba(0,0,0,.65)}
+/* BADGE GRID */
+.badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.badge-card{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-card .bi{font-size:14px;flex-shrink:0;width:18px;text-align:center;line-height:1}
+.badge-card .bl{flex:1;font-size:11px;font-weight:600;line-height:1.2}
 .si{flex:1;padding:13px 0;text-align:center;position:relative}
 .si+.si::before{content:"";position:absolute;left:0;top:24%;bottom:24%;width:1px;background:var(--gb)}
 .sv{font-size:18px;font-weight:700;letter-spacing:-.5px;line-height:1}
@@ -297,6 +304,7 @@ body.spacing-spacious{--sp:16px;--ip:22px}
   <div class="ldm">Loading profile</div>
 </div>
 
+<div id="col-shadow"></div>
 <div id="vignette"></div>
 <div id="prf" style="display:none">
   <div id="pg">
@@ -365,34 +373,34 @@ const PL={instagram:{l:"Instagram",bg:"rgba(225,48,108,.12)",c:"#E1306C"},spotif
 
 // Badge display config — maps DB badge_type to display label + style
 const BADGE_MAP={
-  founding_artist:{cls:"bpf",label:"Founding Artist",icon:"★"},
-  verified_artist:{cls:"bpv",label:"Verified"},
-  top_rated:{cls:"bpc",label:"Top Rated"},
-  perfect_score:{cls:"bpf",label:"Perfect Score"},
-  perfect_year:{cls:"bpf",label:"Perfect Year"},
-  early_adopter:{cls:"bpg",label:"Early Adopter"},
-  pro_member:{cls:"bpc",label:"Pro Member"},
-  in_demand:{cls:"bpc",label:"In Demand"},
-  most_wanted:{cls:"bpc",label:"Most Wanted"},
-  legend:{cls:"bpf",label:"Legend"},
-  first_booking:{cls:"bpg",label:"First Gig"},
-  five_bookings:{cls:"bpg",label:"5 Gigs"},
-  ten_bookings:{cls:"bpg",label:"10 Gigs"},
-  twentyfive_bookings:{cls:"bpg",label:"25 Gigs"},
-  fifty_bookings:{cls:"bpf",label:"50 Gigs"},
-  reliable:{cls:"bpv",label:"Reliable"},
-  quick_responder:{cls:"bpv",label:"Quick Responder"},
-  booked_again:{cls:"bpg",label:"Booked Again"},
-  five_star_streak:{cls:"bpf",label:"5 Star Streak"},
-  streak:{cls:"bpg",label:"Streak"},
-  sold_out:{cls:"bpc",label:"Sold Out"},
-  genre_specialist:{cls:"bpc",label:"Genre Specialist"},
-  genre_versatile:{cls:"bpc",label:"Versatile"},
-  profile_complete:{cls:"bpv",label:"Profile Complete"},
-  collab_connector:{cls:"bpg",label:"Collab Connector"},
-  community_voice:{cls:"bpp",label:"Community Voice"},
-  group_leader:{cls:"bpp",label:"Group Leader"},
-  first_review:{cls:"bpg",label:"First Review"},
+  founding_artist:{cls:"bpf",label:"Founding Artist",icon:"★",pri:0},
+  legend:{cls:"bpf",label:"Legend",icon:"◆",pri:1},
+  perfect_score:{cls:"bpf",label:"Perfect Score",icon:"◆",pri:2},
+  perfect_year:{cls:"bpf",label:"Perfect Year",icon:"◆",pri:3},
+  fifty_bookings:{cls:"bpf",label:"50 Gigs",icon:"♦",pri:4},
+  five_star_streak:{cls:"bpf",label:"5★ Streak",icon:"★",pri:5},
+  verified_artist:{cls:"bpv",label:"Verified",icon:"✓",pri:6},
+  top_rated:{cls:"bpc",label:"Top Rated",icon:"▲",pri:7},
+  pro_member:{cls:"bpc",label:"Pro Member",icon:"●",pri:8},
+  in_demand:{cls:"bpc",label:"In Demand",icon:"▶",pri:9},
+  most_wanted:{cls:"bpc",label:"Most Wanted",icon:"▶",pri:10},
+  sold_out:{cls:"bpc",label:"Sold Out",icon:"●",pri:11},
+  genre_specialist:{cls:"bpc",label:"Specialist",icon:"◈",pri:12},
+  genre_versatile:{cls:"bpc",label:"Versatile",icon:"◈",pri:13},
+  early_adopter:{cls:"bpg",label:"Early Adopter",icon:"⚡",pri:14},
+  twentyfive_bookings:{cls:"bpg",label:"25 Gigs",icon:"♦",pri:15},
+  ten_bookings:{cls:"bpg",label:"10 Gigs",icon:"♦",pri:16},
+  five_bookings:{cls:"bpg",label:"5 Gigs",icon:"♦",pri:17},
+  first_booking:{cls:"bpg",label:"First Gig",icon:"♦",pri:18},
+  booked_again:{cls:"bpg",label:"Booked Again",icon:"↺",pri:19},
+  streak:{cls:"bpg",label:"Streak",icon:"⚡",pri:20},
+  collab_connector:{cls:"bpg",label:"Collab",icon:"↔",pri:21},
+  first_review:{cls:"bpg",label:"First Review",icon:"★",pri:22},
+  reliable:{cls:"bpv",label:"Reliable",icon:"✓",pri:23},
+  quick_responder:{cls:"bpv",label:"Quick Reply",icon:"⚡",pri:24},
+  profile_complete:{cls:"bpv",label:"Complete",icon:"✓",pri:25},
+  community_voice:{cls:"bpp",label:"Community",icon:"◉",pri:26},
+  group_leader:{cls:"bpp",label:"Group Leader",icon:"◉",pri:27},
 };
 
 const FEAT_BADGE={
@@ -553,16 +561,17 @@ function hexLuminance(hex){
 function applyProfileCustomisation(p){
   const ap=p; // artist_profiles row
   const cfg=p.cfg||{};
-  // Accent colour
+  // Accent colour — scoped to #pg so the nav logo is unaffected
   const accent=ap.accent_colour||"#00D2FF";
   document.documentElement.style.setProperty("--accent",accent);
-  document.documentElement.style.setProperty("--cyan",accent);
+  const pgEl=document.getElementById("pg");
+  if(pgEl){pgEl.style.setProperty("--cyan",accent);pgEl.style.setProperty("--accent",accent);}
   // Base/background colour
   const base=ap.base_colour||"#09090F";
   // Cover mode: hero (default) fades quickly; full keeps image visible throughout
   const coverMode=cfg.cover_mode||"hero";
   if(coverMode==="full"){
-    document.getElementById("bgg").style.background=`linear-gradient(to bottom,${base}00 0%,${base}22 40%,${base}99 75%,${base}FF 100%)`;
+    document.getElementById("bgg").style.background=`rgba(0,0,0,.38)`;
   } else {
     document.getElementById("bgg").style.background=`linear-gradient(to bottom,${base}33 0%,${base}88 42%,${base}EE 68%,${base}FF 100%)`;
   }
@@ -570,12 +579,18 @@ function applyProfileCustomisation(p){
   const cRadius=ap.corner_radius||"rounded";
   const crMap={rounded:"14px",sharp:"4px",pill:"28px",flat:"0px"};
   document.documentElement.style.setProperty("--r",crMap[cRadius]||"14px");
-  // Stats bar: match section style + corner radius
-  const statsEl=document.getElementById("stats");
-  if(statsEl){
-    const sStyle=ap.section_style||"glass";
-    statsEl.className=`stats style-${sStyle} cr-${cRadius}`;
+  // Section style — update CSS vars so .sec and .stats both react
+  const sStyle=ap.section_style||"glass";
+  const glassMap={glass:"rgba(9,9,15,0.62)",ghost:"rgba(9,9,15,0.04)",solid:"rgba(9,9,15,.96)",line:"rgba(9,9,15,0.02)"};
+  const gbMap={glass:"rgba(255,255,255,0.09)",ghost:"rgba(255,255,255,0.04)",solid:"rgba(255,255,255,0.04)",line:"rgba(255,255,255,0.1)"};
+  if(pgEl){
+    pgEl.style.setProperty("--glass",glassMap[sStyle]||glassMap.glass);
+    pgEl.style.setProperty("--gb",gbMap[sStyle]||gbMap.glass);
   }
+  document.body.classList.toggle("sec-line",sStyle==="line");
+  // Stats bar
+  const statsEl=document.getElementById("stats");
+  if(statsEl)statsEl.className=`stats style-${sStyle} cr-${cRadius}`;
   // Avatar shape
   const avEl=document.getElementById("av");
   if(avEl)avEl.classList.toggle("sq",ap.avatar_shape==="square");
@@ -800,13 +815,24 @@ function render(p){
     },
     badges(){
       if(!p.badges?.length)return;
-      const d=document.createElement("div");d.className="bgr";
-      p.badges.forEach(b=>{
-        const cfg2=BADGE_MAP[b.badge_type];if(!cfg2)return;
-        const e=document.createElement("div");e.className=`bp ${cfg2.cls}`;
-        e.innerHTML=`${cfg2.icon?`<span>${cfg2.icon}</span>`:""}${esc(cfg2.label)}`;
+      const sorted=p.badges
+        .map(b=>({...b,m:BADGE_MAP[b.badge_type]}))
+        .filter(b=>b.m)
+        .sort((a,b)=>(a.m.pri??99)-(b.m.pri??99));
+      const MAX=6;
+      const show=sorted.slice(0,MAX);
+      const extra=sorted.length-show.length;
+      const d=document.createElement("div");d.className="badge-grid";
+      show.forEach(b=>{
+        const e=document.createElement("div");e.className=`badge-card ${b.m.cls}`;
+        e.innerHTML=`<span class="bi">${b.m.icon||"◆"}</span><span class="bl">${esc(b.m.label)}</span>`;
         d.appendChild(e);
       });
+      if(extra>0){
+        const e=document.createElement("div");e.className="badge-card bpv";
+        e.innerHTML=`<span class="bi">+${extra}</span><span class="bl">more</span>`;
+        d.appendChild(e);
+      }
       if(d.children.length)sec("sbg","Badges",d);
     },
     reviews(){
