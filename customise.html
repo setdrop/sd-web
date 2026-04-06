@@ -146,17 +146,17 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 .pv-tp{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.12);color:rgba(240,240,255,.6);background:rgba(255,255,255,.05)}
 #pv-feat{display:none;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:4px;align-self:flex-start}
 /* Stats */
-.pv-stats{display:flex;position:relative;z-index:3;background:var(--glass);border-top:1px solid var(--gb);border-bottom:1px solid var(--gb);backdrop-filter:blur(8px);margin:0 10px}
+.pv-stats{display:flex;position:relative;z-index:3;background:var(--glass);border-top:1px solid var(--gb);border-bottom:1px solid var(--gb);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);margin:0 10px}
 .pv-stat{flex:1;padding:8px 0;text-align:center}
 .pv-stat+.pv-stat{border-left:1px solid var(--gb)}
 .pv-sv{font-size:13px;font-weight:700}
 .pv-sl{font-size:8px;color:#888AAA;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 .pv-stats.style-line{border:none;border-top:1px solid var(--gb)}
-.pv-stats.cr-rounded,.pv-stats.cr-sharp{border-radius:var(--r);overflow:hidden}
+.pv-stats.cr-rounded,.pv-stats.cr-sharp{border-radius:var(--r);border:1px solid var(--gb);margin:6px 10px 0;overflow:hidden}
 .pv-stats.cr-flat{border-radius:0;border-left:none;border-right:none}
 /* Sections */
 #pv-sections{padding:7px 10px 20px;display:flex;flex-direction:column;gap:6px;position:relative;z-index:3}
-.pv-sec{border-radius:var(--r);background:var(--glass);border:1px solid var(--gb);overflow:hidden;transition:all .3s}
+.pv-sec{border-radius:var(--r);background:var(--glass);border:1px solid var(--gb);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;transition:all .3s}
 .pv-sec.line{background:transparent!important;border:none!important;border-top:1px solid var(--gb)!important;border-radius:0!important;padding-top:5px}
 .pv-sec.cr-flat{border-radius:0}
 .pv-sec-in{padding:9px 10px 7px}
@@ -374,10 +374,10 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
         <div class="pv-genpills" id="pv-genpills"></div>
       </div>
       <div class="pv-stats style-glass" id="pv-stats">
-        <div class="pv-stat"><div class="pv-sv" id="pv-sf" style="color:var(--cyan)">0</div><div class="pv-sl">Followers</div></div>
-        <div class="pv-stat"><div class="pv-sv" style="color:#F0F0FF">0</div><div class="pv-sl">Gigs</div></div>
-        <div class="pv-stat"><div class="pv-sv" style="color:#F0F0FF">—</div><div class="pv-sl">Rating</div></div>
-        <div class="pv-stat"><div class="pv-sv" style="color:#F0F0FF">1</div><div class="pv-sl">Years</div></div>
+        <div class="pv-stat"><div class="pv-sv" id="pv-sf">0</div><div class="pv-sl">Followers</div></div>
+        <div class="pv-stat"><div class="pv-sv">0</div><div class="pv-sl">Gigs</div></div>
+        <div class="pv-stat"><div class="pv-sv">—</div><div class="pv-sl">Rating</div></div>
+        <div class="pv-stat"><div class="pv-sv">1</div><div class="pv-sl">Years</div></div>
       </div>
       <div id="pv-sections"></div>
     </div>
@@ -405,13 +405,14 @@ async function initAuth(){
 async function doSignOut(){localStorage.removeItem("sb_at");window.location.href="/";}
 
 function hasSectionData(sid){
-  if(sid==="bio")return !!(ARTIST?.bio_full||ARTIST?.bio_short);
-  if(sid==="links")return !!(ARTIST?.links?.length);
-  if(sid==="media")return !!(ARTIST?.media?.length);
-  if(sid==="past_gigs")return !!(ARTIST?.past_gigs?.length);
+  if(sid==="bio")return ARTIST?.bio_full===undefined&&ARTIST?.bio_short===undefined?true:!!(ARTIST?.bio_full||ARTIST?.bio_short);
+  if(sid==="links")return ARTIST?.links===undefined?true:!!(ARTIST?.links?.length);
+  if(sid==="media")return !!(ARTIST?.galleryPhotos?.length||ARTIST?.video_embeds?.length)||
+    (ARTIST?.galleryPhotos===undefined&&ARTIST?.video_embeds===undefined);
+  if(sid==="past_gigs")return ARTIST?.past_gigs===undefined?true:!!(ARTIST?.past_gigs?.length);
   if(sid==="press_quotes")return !!(_quotes?.length);
-  if(sid==="badges")return !!(ARTIST?.badges?.length);
-  if(sid==="reviews")return !!(ARTIST?.reviews?.length);
+  if(sid==="badges")return ARTIST?.badges===undefined?true:!!(ARTIST?.badges?.length);
+  if(sid==="reviews")return ARTIST?.reviews===undefined?true:!!(ARTIST?.reviews?.length);
   if(sid==="contact")return !!(CFG?.contact_methods?.length);
   return true;
 }
@@ -470,11 +471,12 @@ function renderQuotes(){
       +'<button class="qdel" style="margin-top:5px">Remove</button>';
     div.querySelectorAll("input")[0].oninput=e=>{_quotes[i].text=e.target.value;applyPreview();};
     div.querySelectorAll("input")[1].oninput=e=>{_quotes[i].source=e.target.value;};
-    div.querySelector(".qdel").onclick=()=>{_quotes.splice(i,1);renderQuotes();applyPreview();};
+    div.querySelector(".qdel").onclick=()=>{_quotes.splice(i,1);renderQuotes();rebuildSecList();applyPreview()};
     list.appendChild(div);
   });
 }
-function addQuote(){_quotes.push({text:"",source:""});renderQuotes();}
+function addQuote(){_quotes.push({text:"",source:""});renderQuotes();rebuildSecList();}
+function rebuildSecList(){if(typeof DRAFT!=="undefined")buildSecList(DRAFT.section_order||[],DRAFT.hidden_sections||[]);}
 
 // Cover type toggle
 function setCoverType(type){
@@ -513,7 +515,7 @@ function renderContactList(){
 }
 function addContactMethod(){_contacts.push({type:"email",value:""});renderContactList();}
 function removeContact(i){_contacts.splice(i,1);renderContactList();saveContacts();}
-function saveContacts(){DRAFT.contact_methods=[..._contacts];if(typeof CFG!=="undefined")CFG.contact_methods=[..._contacts];applyPreview();}
+function saveContacts(){DRAFT.contact_methods=[..._contacts];if(typeof CFG!=="undefined")CFG.contact_methods=[..._contacts];rebuildSecList();applyPreview();}
 
 let DRAFT={};
 
@@ -585,7 +587,7 @@ function applyPreview(){
   const crMap={rounded:"10px",sharp:"3px",flat:"0"};
   phone.style.setProperty("--r",crMap[cr]||"10px");
   // Set --glass and --gb so stats + sections inherit correct backgrounds
-  const glassMap={glass:"rgba(9,9,15,0.55)",ghost:"rgba(9,9,15,0.04)",solid:"rgba(9,9,15,.96)",line:"rgba(9,9,15,0.02)"};
+  const glassMap={glass:"rgba(9,9,15,0.62)",ghost:"rgba(9,9,15,0.04)",solid:"rgba(9,9,15,.96)",line:"rgba(9,9,15,0.02)"};
   const gbMap={glass:"rgba(255,255,255,0.09)",ghost:"rgba(255,255,255,0.04)",solid:"rgba(255,255,255,0.04)",line:"rgba(255,255,255,0.1)"};
   phone.style.setProperty("--glass",glassMap[ss]||glassMap.glass);
   phone.style.setProperty("--gb",gbMap[ss]||gbMap.glass);
@@ -633,19 +635,22 @@ function applyPreview(){
   // Artist type + genre pills
   const gp=document.getElementById("pv-genpills");gp.innerHTML="";
   (ARTIST?.artist_type||[]).forEach(t=>{
-    const s=document.createElement("span");s.className="pv-tp";s.textContent=t;gp.appendChild(s);
+    const s=document.createElement("span");s.className="pv-tp";s.textContent=t;s.style.color=acc;s.style.borderColor=acc+"55";gp.appendChild(s);
   });
   (ARTIST?.genres||[]).forEach(g=>{
-    const s=document.createElement("span");s.className="pv-gp";s.textContent=g;gp.appendChild(s);
+    const s=document.createElement("span");s.className="pv-gp";s.textContent=g;s.style.color=acc;s.style.borderColor=acc+"44";gp.appendChild(s);
   });
 
   // Hero alignment
   document.getElementById("pv-hero").className="pv-hero "+(hl==="classic"?"left":"center");
 
-  // Stats — accent only on followers value, not text generally
+  // Stats
   const stats=document.getElementById("pv-stats");
   stats.className="pv-stats style-"+ss+" cr-"+cr;
-  document.getElementById("pv-sf").style.color=acc;
+  document.querySelectorAll("#pv-stats .pv-sv").forEach(sv=>sv.style.color=acc);
+
+  // Stage name accent
+  document.getElementById("pv-name").style.color=acc;
 
   // Sections
   const order=DRAFT.section_order||CFG?.section_order||["bio","links","media","past_gigs","press_quotes","badges","reviews","contact"];
@@ -668,7 +673,7 @@ function applyPreview(){
     if(hidden.has(sid))return;
     const d=document.createElement("div");
     d.className="pv-sec "+ss+" cr-"+cr;
-    d.innerHTML='<div class="pv-sec-in"><div class="pv-st">'+(LBL[sid]||sid)+'</div><div class="pv-sb">'+(BOD[sid]||"")+'</div></div>';
+    d.innerHTML='<div class="pv-sec-in"><div class="pv-st" style="color:'+acc+'">'+(LBL[sid]||sid)+'</div><div class="pv-sb">'+(BOD[sid]||"")+'</div></div>';
     sec.appendChild(d);
   });
 

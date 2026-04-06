@@ -107,9 +107,13 @@ body.light-bg .gp{color:#0077aa;border-color:rgba(0,120,170,.4);background:rgba(
 .pills{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:2px}
 .gp{font-size:10px;font-weight:500;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 9px;color:rgba(240,240,255,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .tp{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.18);color:var(--white);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-/* Accent scoping — decoration only, not text */
+/* Accent scoping — avatar border, stat numbers, section titles, stage name, pills */
 #pg .av{border-color:var(--accent,var(--cyan))}
-#pg .sv.c{color:var(--accent,var(--cyan))}
+#pg .sv{color:var(--accent,var(--cyan))}
+#pg .nm{color:var(--accent,var(--white))}
+#pg .st{color:var(--accent,var(--muted))}
+#pg .gp{color:var(--accent,rgba(240,240,255,.8));border-color:var(--accent,rgba(255,255,255,.15))}
+#pg .tp{color:var(--accent,var(--white));border-color:var(--accent,rgba(255,255,255,.18))}
 #fbadge-wrap{margin-top:8px;display:none}
 .fbadge{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700}
 .fbadge.founding{background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.3);color:var(--gold)}
