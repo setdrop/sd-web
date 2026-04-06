@@ -137,9 +137,9 @@ body.sec-line .sec{background:transparent!important;border:none!important;border
 /* Rain — two layers: full background + column-confined, clipped between navbars */
 #rain-bg-canvas{position:fixed;top:calc(52px + env(safe-area-inset-top));left:0;width:100%;height:calc(100vh - 52px - env(safe-area-inset-top) - var(--abar-h,0px));z-index:1;pointer-events:none;display:none}
 #rain-canvas{position:fixed;top:calc(52px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);height:calc(100vh - 52px - env(safe-area-inset-top) - var(--abar-h,0px));z-index:9;pointer-events:none;display:none}
-@keyframes efx-fire{0%,100%{box-shadow:inset 0 0 22px 7px rgba(255,65,0,.5),inset 0 0 44px 3px rgba(255,120,0,.22)}50%{box-shadow:inset 0 0 32px 12px rgba(255,85,0,.65),inset 0 0 60px 6px rgba(255,150,0,.32)}}
-@keyframes efx-laser{0%,100%{box-shadow:inset 0 0 18px 5px rgba(var(--gcr),var(--gcg),var(--gcb),.55),inset 0 100px 24px -28px rgba(var(--gcr),var(--gcg),var(--gcb),.4)}50%{box-shadow:inset 0 0 18px 5px rgba(var(--gcr),var(--gcg),var(--gcb),.55),inset 0 -100px 24px -28px rgba(var(--gcr),var(--gcg),var(--gcb),.4)}}
-@keyframes efx-pulse{0%,100%{box-shadow:inset 0 0 14px 3px rgba(var(--gcr),var(--gcg),var(--gcb),.22)}50%{box-shadow:inset 0 0 30px 10px rgba(var(--gcr),var(--gcg),var(--gcb),.65)}}
+@keyframes efx-fire{0%,100%{box-shadow:inset 0 0 10px 2px rgba(255,65,0,.45),inset 0 0 20px 1px rgba(255,120,0,.18)}50%{box-shadow:inset 0 0 16px 4px rgba(255,85,0,.58),inset 0 0 28px 2px rgba(255,150,0,.26)}}
+@keyframes efx-laser{0%,100%{box-shadow:inset 0 0 8px 2px rgba(var(--gcr),var(--gcg),var(--gcb),.45),inset 0 60px 12px -20px rgba(var(--gcr),var(--gcg),var(--gcb),.3)}50%{box-shadow:inset 0 0 8px 2px rgba(var(--gcr),var(--gcg),var(--gcb),.45),inset 0 -60px 12px -20px rgba(var(--gcr),var(--gcg),var(--gcb),.3)}}
+@keyframes efx-pulse{0%,100%{box-shadow:inset 0 0 6px 1px rgba(var(--gcr),var(--gcg),var(--gcb),.18)}50%{box-shadow:inset 0 0 14px 4px rgba(var(--gcr),var(--gcg),var(--gcb),.52)}}
 /* BADGE GRID */
 .badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .badge-card{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:10px;font-size:11px;font-weight:600}
@@ -369,7 +369,7 @@ body.spacing-spacious{--sp:16px;--ip:22px}
 </div>
 
 <div class="abar" id="abar">
-  <button class="bfl" id="bfl" onclick="toggleFollow()">Follow</button>
+  <a class="bfl" id="bfl" href="https://www.setdrop.com" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Follow on Setdrop</a>
   <button class="bsh" onclick="doShare()">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
@@ -723,10 +723,18 @@ function render(p){
     }
     vid.src=p.cfg.cover_video_url;
     vid.load();
-    vid.oncanplay=()=>{
-      vid.play().catch(()=>{});
-      requestAnimationFrame(()=>{vid.style.opacity="0.78";});
+    const _vidShow=()=>{vid.style.opacity="0.78";};
+    // Play immediately — works on desktop + Android. iOS Safari needs explicit .play() call.
+    const _tryPlay=()=>{
+      const p2=vid.play();
+      if(p2!==undefined)p2.then(_vidShow).catch(()=>{
+        // Autoplay blocked — show on first user touch
+        document.addEventListener("touchstart",()=>{vid.play().then(_vidShow).catch(()=>{});},{once:true,passive:true});
+      });
+      else _vidShow(); // older Safari returns undefined
     };
+    if(vid.readyState>=2)_tryPlay();
+    else vid.addEventListener("canplay",_tryPlay,{once:true});
   } else {
     const bgSrc=p.cfg?.cover_photo_url||p.banner_url||p.photo_url;
     if(bgSrc){
