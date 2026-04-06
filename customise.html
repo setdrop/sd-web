@@ -129,7 +129,9 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 /* BG layers */
 #pv-bgi{position:sticky;top:0;left:0;width:100%;height:200px;background-size:cover;background-position:center top;margin-bottom:-200px;pointer-events:none;transition:background-image .4s,opacity .5s;opacity:0}
 #pv-bgi.show{opacity:.78;filter:brightness(.88)}
+#pv-bgi.full{position:absolute;inset:0;height:100%;margin-bottom:0;background-position:center;z-index:0}
 #pv-bgg{position:sticky;top:0;left:0;width:100%;height:200px;margin-bottom:-200px;pointer-events:none}
+#pv-bgg.full{position:absolute;inset:0;height:100%;margin-bottom:0;z-index:1}
 /* Preview hero */
 #pv-hero{padding:26px 14px 10px;position:relative;z-index:3;display:flex;flex-direction:column}
 #pv-hero.center{align-items:center;text-align:center}
@@ -140,36 +142,29 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 .pv-name{font-size:14px;font-weight:700;color:#F0F0FF;margin-bottom:1px;text-shadow:0 1px 6px rgba(0,0,0,.8)}
 .pv-handle{font-size:10px;color:rgba(200,200,220,.75);margin-bottom:5px;text-shadow:0 1px 4px rgba(0,0,0,.8)}
 .pv-genpills{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:5px}
-.pv-gp{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;border:1px solid rgba(0,210,255,.28);color:var(--cyan);background:rgba(0,0,0,.45)}
+.pv-gp{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.18);color:rgba(240,240,255,.8);background:rgba(0,0,0,.45)}
+.pv-tp{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.12);color:rgba(240,240,255,.6);background:rgba(255,255,255,.05)}
+#pv-feat{display:none;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:4px;align-self:flex-start}
 /* Stats */
-.pv-stats{display:flex;position:relative;z-index:3;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);backdrop-filter:blur(8px)}
+.pv-stats{display:flex;position:relative;z-index:3;background:var(--glass);border-top:1px solid var(--gb);border-bottom:1px solid var(--gb);backdrop-filter:blur(8px);margin:0 10px}
 .pv-stat{flex:1;padding:8px 0;text-align:center}
-.pv-stat+.pv-stat{border-left:1px solid rgba(255,255,255,.07)}
+.pv-stat+.pv-stat{border-left:1px solid var(--gb)}
 .pv-sv{font-size:13px;font-weight:700}
 .pv-sl{font-size:8px;color:#888AAA;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
-.pv-stats.style-glass{background:rgba(9,9,15,0.55)}
-.pv-stats.style-ghost{background:rgba(0,0,0,.1)}
-.pv-stats.style-solid{background:rgba(9,9,15,.96)}
-.pv-stats.style-line{background:transparent;border:none;border-top:1px solid rgba(255,255,255,.1)}
-.pv-stats.cr-rounded,.pv-stats.cr-sharp,.pv-stats.cr-pill{border-radius:var(--r);margin:0 10px;overflow:hidden}
+.pv-stats.style-line{border:none;border-top:1px solid var(--gb)}
+.pv-stats.cr-rounded,.pv-stats.cr-sharp{border-radius:var(--r);overflow:hidden}
 .pv-stats.cr-flat{border-radius:0;margin:0;border-left:none;border-right:none}
 /* Sections */
 #pv-sections{padding:7px 10px 20px;display:flex;flex-direction:column;gap:6px;position:relative;z-index:3}
-.pv-sec{border-radius:var(--r);overflow:hidden;transition:all .3s}
-.pv-sec.glass{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)}
-.pv-sec.ghost{background:rgba(0,0,0,.05);border:1px solid rgba(255,255,255,.14)}
-.pv-sec.solid{background:rgba(16,16,26,.97);border:1px solid rgba(255,255,255,.06)}
-.pv-sec.line{background:transparent;border:none;border-top:1px solid rgba(255,255,255,.1);border-radius:0;padding-top:5px}
-.pv-sec.cr-rounded{border-radius:10px}
-.pv-sec.cr-sharp{border-radius:3px}
-.pv-sec.cr-pill{border-radius:20px}
+.pv-sec{border-radius:var(--r);background:var(--glass);border:1px solid var(--gb);overflow:hidden;transition:all .3s}
+.pv-sec.line{background:transparent!important;border:none!important;border-top:1px solid var(--gb)!important;border-radius:0!important;padding-top:5px}
 .pv-sec.cr-flat{border-radius:0}
 .pv-sec-in{padding:9px 10px 7px}
 .pv-st{font-size:8px;font-weight:600;color:rgba(180,180,200,.7);letter-spacing:.9px;text-transform:uppercase;margin-bottom:5px}
 .pv-sb{font-size:10px;color:rgba(210,210,220,.75);line-height:1.55}
 
 /* Zoom hint */
-#zoom-hint{position:absolute;bottom:16px;right:16px;font-size:10px;color:rgba(255,255,255,.25);pointer-events:none;z-index:5;text-align:right;line-height:1.5}
+#zoom-hint{position:absolute;bottom:16px;left:336px;font-size:10px;color:rgba(255,255,255,.25);pointer-events:none;z-index:5;text-align:left;line-height:1.5}
 </style></head><body>
 <div id="page-loading"><div class="spin"></div></div>
 <div id="app">
@@ -180,13 +175,29 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 
 <!-- COVER IMAGE -->
 <div class="sg">
-  <div class="sg-head">Cover image</div>
+  <div class="sg-head">Cover media</div>
   <div class="sg-body">
-    <div class="cover-drop" id="cover-drop">
-      <input type="file" id="cover-inp" accept="image/*">
-      <p><strong style="color:var(--white)">Tap to upload</strong> · displays behind your profile</p>
-      <div class="cover-prev-wrap" id="cover-prev-wrap">
-        <img id="cover-prev" src="" alt="">
+    <div class="ctrl-row">
+      <span class="ctrl-label">Type</span>
+      <div class="trow">
+        <button class="topt active" id="cover-type-img" onclick="setCoverType('image')">Image</button>
+        <button class="topt" id="cover-type-vid" onclick="setCoverType('video')">Video (loop)</button>
+      </div>
+    </div>
+    <div id="cover-img-area">
+      <div class="cover-drop" id="cover-drop">
+        <input type="file" id="cover-inp" accept="image/*">
+        <p><strong style="color:var(--white)">Tap to upload</strong> · displays behind your profile</p>
+        <div class="cover-prev-wrap" id="cover-prev-wrap">
+          <img id="cover-prev" src="" alt="">
+        </div>
+      </div>
+    </div>
+    <div id="cover-vid-area" style="display:none">
+      <input class="inp" id="cover-vid-url" type="url" placeholder="Video URL (.mp4, .webm)" style="margin-bottom:6px">
+      <button class="topt" style="width:100%;justify-content:center" onclick="applyVideoUrl()">Set video URL</button>
+      <div id="cover-vid-prev" style="display:none;margin-top:8px;border-radius:7px;overflow:hidden;height:110px;background:#000">
+        <video id="cover-vid-el" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover"></video>
       </div>
     </div>
     <div class="ctrl-row" style="margin-top:10px">
@@ -321,7 +332,7 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 </div>
 
 <!-- FEATURED BADGE -->
-<div class="sg" style="border-bottom:none">
+<div class="sg">
   <div class="sg-head">Featured badge</div>
   <div class="sg-body">
     <select class="inp" id="feat-badge">
@@ -335,6 +346,15 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
   </div>
 </div>
 
+<!-- CONTACT METHODS -->
+<div class="sg" style="border-bottom:none">
+  <div class="sg-head">Contact methods <button onclick="addContactMethod()" style="font-size:10px;padding:2px 8px;border-radius:5px;border:1px solid rgba(0,210,255,.25);background:rgba(0,210,255,.07);color:var(--cyan);cursor:pointer;font-family:inherit;font-weight:600">+ Add</button></div>
+  <div class="sg-body">
+    <div id="contact-list" style="display:flex;flex-direction:column;gap:6px"></div>
+    <p style="font-size:11px;color:var(--dim);margin-top:6px">Add the Contact section via Section Order to show on your profile.</p>
+  </div>
+</div>
+
 </div></div>
 <div id="preview-area">
 
@@ -344,8 +364,10 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
     <canvas id="pv-tex" style="position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.18;width:100%;height:100%"></canvas>
     <div id="phone-inner">
       <div id="pv-bgi"></div>
+      <video id="pv-bgi-vid" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;opacity:0;transition:opacity .5s;display:none"></video>
       <div id="pv-bgg"></div>
       <div id="pv-hero" class="pv-hero center">
+        <div id="pv-feat"></div>
         <div class="pv-av" id="pv-av"></div>
         <div class="pv-name" id="pv-name">—</div>
         <div class="pv-handle" id="pv-handle"></div>
@@ -382,16 +404,31 @@ async function initAuth(){
 }
 async function doSignOut(){localStorage.removeItem("sb_at");window.location.href="/";}
 
+function hasSectionData(sid){
+  if(sid==="bio")return !!(ARTIST?.bio_full||ARTIST?.bio_short);
+  if(sid==="links")return !!(ARTIST?.links?.length);
+  if(sid==="media")return !!(ARTIST?.media?.length);
+  if(sid==="past_gigs")return !!(ARTIST?.past_gigs?.length);
+  if(sid==="press_quotes")return !!(_quotes?.length);
+  if(sid==="badges")return !!(ARTIST?.badges?.length);
+  if(sid==="reviews")return !!(ARTIST?.reviews?.length);
+  if(sid==="contact")return !!(CFG?.contact_methods?.length);
+  return true;
+}
 function buildSecList(order,hidden){
   const list=document.getElementById("sec-list");list.innerHTML="";
   const hiddenSet=new Set(hidden||[]);
   const lock=document.createElement("div");lock.className="sec-item locked";
   lock.innerHTML='<span class="dh" style="opacity:.2">⠿</span><span class="sn">Stats Row</span><span style="font-size:9px;color:var(--dim)">pinned</span>';
   list.appendChild(lock);
-  const ALL=["bio","media","links","past_gigs","press_quotes","badges","reviews","groups"];
-  const LBL={"bio":"About","media":"Media","links":"Links","past_gigs":"Past Gigs","press_quotes":"Press Quotes","badges":"Badges","reviews":"Reviews","groups":"Groups"};
+  const ALL=["bio","links","media","past_gigs","press_quotes","badges","reviews","contact","groups"];
+  const LBL={"bio":"About","media":"Media","links":"Links","past_gigs":"Past Gigs","press_quotes":"Press Quotes","badges":"Badges","reviews":"Reviews","groups":"Groups","contact":"Contact"};
+  // Build ordered list: saved order first, then any missing added after
   const ordered=[...order];ALL.forEach(id=>{if(!ordered.includes(id))ordered.push(id);});
-  ordered.forEach(sid=>{
+  const hasData=[];const noData=[];
+  ordered.forEach(sid=>{if(hasSectionData(sid))hasData.push(sid);else noData.push(sid);});
+  // Render sections with data first
+  hasData.forEach(sid=>{
     const on=!hiddenSet.has(sid);
     const el=document.createElement("div");el.className="sec-item";el.dataset.id=sid;el.draggable=true;
     el.innerHTML='<span class="dh">⠿</span><span class="sn">'+LBL[sid]+'</span><button class="stog '+(on?"on":"off")+'"></button>';
@@ -401,6 +438,19 @@ function buildSecList(order,hidden){
     el.ondragover=e=>{e.preventDefault();if(window._ds&&window._ds!==el)list.insertBefore(window._ds,el);};
     list.appendChild(el);
   });
+  // Render sections without data as unavailable (not draggable, toggle disabled)
+  if(noData.length){
+    const sep=document.createElement("div");
+    sep.style.cssText="font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;padding:8px 9px 3px;font-weight:600";
+    sep.textContent="Unavailable — no content";
+    list.appendChild(sep);
+    noData.forEach(sid=>{
+      const el=document.createElement("div");el.className="sec-item locked";el.dataset.id=sid;
+      el.style.opacity=".35";
+      el.innerHTML='<span class="dh" style="opacity:.2">⠿</span><span class="sn">'+LBL[sid]+'</span><span style="font-size:9px;color:var(--dim)">no data</span>';
+      list.appendChild(el);
+    });
+  }
 }
 function collectSecOrder(){
   const items=[...document.getElementById("sec-list").querySelectorAll(".sec-item:not(.locked)")];
@@ -425,6 +475,45 @@ function renderQuotes(){
   });
 }
 function addQuote(){_quotes.push({text:"",source:""});renderQuotes();}
+
+// Cover type toggle
+function setCoverType(type){
+  document.getElementById("cover-img-area").style.display=type==="image"?"block":"none";
+  document.getElementById("cover-vid-area").style.display=type==="video"?"block":"none";
+  document.getElementById("cover-type-img").classList.toggle("active",type==="image");
+  document.getElementById("cover-type-vid").classList.toggle("active",type==="video");
+  DRAFT.cover_type=type;
+  if(type==="image"){DRAFT.cover_video_url=null;}
+  applyPreview();
+}
+function applyVideoUrl(){
+  const url=document.getElementById("cover-vid-url").value.trim();
+  if(!url)return;
+  DRAFT.cover_video_url=url;DRAFT.cover_photo_url=null;
+  const prev=document.getElementById("cover-vid-prev");
+  const vid=document.getElementById("cover-vid-el");
+  vid.src=url;prev.style.display="block";
+  applyPreview();
+}
+
+// Contact methods
+let _contacts=[];
+function renderContactList(){
+  const list=document.getElementById("contact-list");list.innerHTML="";
+  _contacts.forEach((c,i)=>{
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;gap:6px;align-items:center";
+    row.innerHTML='<select class="inp" style="width:90px;flex-shrink:0"><option value="phone"'+(c.type==="phone"?" selected":"")+'>Phone</option><option value="email"'+(c.type==="email"?" selected":"")+'>Email</option><option value="website"'+(c.type==="website"?" selected":"")+'>Website</option><option value="dm"'+(c.type==="dm"?" selected":"")+'>DM Link</option></select>'
+      +'<input class="inp" type="text" placeholder="Value" value="'+(c.value||"").replace(/"/g,"&quot;")+'"> '
+      +'<button style="font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid rgba(200,60,60,.2);background:rgba(200,60,60,.07);color:#f88;cursor:pointer;font-family:inherit;flex-shrink:0" onclick="removeContact('+i+')">✕</button>';
+    row.querySelectorAll("select,input")[0].onchange=e=>{_contacts[i].type=e.target.value;saveContacts();};
+    row.querySelectorAll("select,input")[1].oninput=e=>{_contacts[i].value=e.target.value;saveContacts();};
+    list.appendChild(row);
+  });
+}
+function addContactMethod(){_contacts.push({type:"email",value:""});renderContactList();}
+function removeContact(i){_contacts.splice(i,1);renderContactList();saveContacts();}
+function saveContacts(){DRAFT.contact_methods=[..._contacts];if(typeof CFG!=="undefined")CFG.contact_methods=[..._contacts];applyPreview();}
 
 let DRAFT={};
 
@@ -495,46 +584,91 @@ function applyPreview(){
   phone.style.background=base;
   const crMap={rounded:"10px",sharp:"3px",flat:"0"};
   phone.style.setProperty("--r",crMap[cr]||"10px");
+  // Set --glass and --gb so stats + sections inherit correct backgrounds
+  const glassMap={glass:"rgba(9,9,15,0.55)",ghost:"rgba(9,9,15,0.04)",solid:"rgba(9,9,15,.96)",line:"rgba(9,9,15,0.02)"};
+  const gbMap={glass:"rgba(255,255,255,0.09)",ghost:"rgba(255,255,255,0.04)",solid:"rgba(255,255,255,0.04)",line:"rgba(255,255,255,0.1)"};
+  phone.style.setProperty("--glass",glassMap[ss]||glassMap.glass);
+  phone.style.setProperty("--gb",gbMap[ss]||gbMap.glass);
 
-  // Cover + gradient overlay — matches profile.html logic exactly
+  // Cover + gradient overlay (image or video)
   const bgi=document.getElementById("pv-bgi");
-  if(cover){bgi.style.backgroundImage='url("'+cover+'")';bgi.classList.add("show");}
-  else{bgi.classList.remove("show");}
+  const pvVid=document.getElementById("pv-bgi-vid");
+  const isFull=coverMode==="full";
+  bgi.classList.toggle("full",isFull);
+  const coverType=DRAFT.cover_type||CFG?.cover_type||"image";
+  const coverVid=DRAFT.cover_video_url||CFG?.cover_video_url||"";
+  if(coverType==="video"&&coverVid){
+    pvVid.style.display="block";pvVid.style.opacity="0.82";
+    if(pvVid.src!==coverVid)pvVid.src=coverVid;
+    bgi.classList.remove("show");bgi.style.backgroundImage="";
+    pvVid.classList.toggle("full",isFull);
+  } else {
+    pvVid.style.display="none";pvVid.src="";
+    if(cover){bgi.style.backgroundImage='url("'+cover+'")';bgi.classList.add("show");}
+    else{bgi.classList.remove("show");}
+  }
   const bgg=document.getElementById("pv-bgg");
-  if(coverMode==="full"){
+  bgg.classList.toggle("full",isFull);
+  if(isFull){
     bgg.style.background="rgba(0,0,0,.38)";
   } else {
     bgg.style.background="linear-gradient(to bottom,"+base+"33 0%,"+base+"88 42%,"+base+"EE 68%,"+base+"FF 100%)";
   }
 
-  // Avatar
+  // Avatar — border/tint only, no text color change
   const av=document.getElementById("pv-av");
-  av.style.borderColor=acc;av.style.color=acc;av.style.background=acc+"1A";
+  av.style.borderColor=acc;av.style.background=acc+"1A";av.style.color="";
   av.className="pv-av"+(avs==="square"?" sq":"");
 
-  // Genre pills
-  document.querySelectorAll(".pv-gp").forEach(p=>{
-    p.style.borderColor=acc+"44";p.style.color=acc;
+  // Featured badge
+  const featEl=document.getElementById("pv-feat");
+  const ft=DRAFT.featured_badge_type||CFG?.featured_badge_type;
+  const FEAT_LABELS={"top_artist":"Top Artist","trending":"Trending","new_arrival":"New Arrival","verified":"Verified","spotlight":"Spotlight"};
+  if(ft&&FEAT_LABELS[ft]){
+    featEl.textContent=FEAT_LABELS[ft];
+    featEl.style.cssText="display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:4px;background:"+acc+"22;color:"+acc+";border:1px solid "+acc+"55;align-self:flex-start";
+  } else {
+    featEl.style.display="none";featEl.textContent="";
+  }
+
+  // Artist type + genre pills
+  const gp=document.getElementById("pv-genpills");gp.innerHTML="";
+  (ARTIST?.artist_type||[]).forEach(t=>{
+    const s=document.createElement("span");s.className="pv-tp";s.textContent=t;gp.appendChild(s);
+  });
+  (ARTIST?.genres||[]).forEach(g=>{
+    const s=document.createElement("span");s.className="pv-gp";s.textContent=g;gp.appendChild(s);
   });
 
   // Hero alignment
   document.getElementById("pv-hero").className="pv-hero "+(hl==="classic"?"left":"center");
 
-  // Stats
+  // Stats — accent only on followers value, not text generally
   const stats=document.getElementById("pv-stats");
   stats.className="pv-stats style-"+ss+" cr-"+cr;
   document.getElementById("pv-sf").style.color=acc;
 
   // Sections
-  const order=DRAFT.section_order||CFG?.section_order||["bio","media","links","past_gigs","press_quotes","badges","reviews"];
+  const order=DRAFT.section_order||CFG?.section_order||["bio","links","media","past_gigs","press_quotes","badges","reviews","contact"];
   const hidden=new Set(DRAFT.hidden_sections||ARTIST?.hidden_sections||[]);
-  const LBL={"bio":"About","media":"Media","links":"Links","past_gigs":"Past Gigs","press_quotes":"Press Quotes","badges":"Badges","reviews":"Reviews","groups":"Groups"};
-  const BOD={"bio":ARTIST?.bio_full||"Bio goes here","media":"Photos · Videos","links":"Instagram · Spotify","past_gigs":"Revolver · Corner Hotel","press_quotes":(_quotes.length&&_quotes[0].text)?'"'+_quotes[0].text+'"':"Press quotes","badges":"Founding Artist","reviews":"★★★★★  Verified booking","groups":"Groups"};
+  const LBL={"bio":"About","media":"Media","links":"Links","past_gigs":"Past Gigs","press_quotes":"Press Quotes","badges":"Badges","reviews":"Reviews","groups":"Groups","contact":"Contact"};
+  const linksPreview=ARTIST?.links?.length?ARTIST.links.slice(0,3).map(l=>l.label||l.platform||"Link").join(" · "):"No links added";
+  const BOD={
+    "bio":ARTIST?.bio_full||ARTIST?.bio_short||"Bio goes here",
+    "media":(ARTIST?.media?.length||0)+" media items",
+    "links":linksPreview,
+    "past_gigs":ARTIST?.past_gigs?.length?(ARTIST.past_gigs[0].venue_name||"Past Gig")+" + more":"No gigs yet",
+    "press_quotes":(_quotes.length&&_quotes[0].text)?'"'+_quotes[0].text+'"':"No press quotes",
+    "badges":ARTIST?.badges?.length?ARTIST.badges[0].label||"Badge":"No badges",
+    "reviews":ARTIST?.reviews?.length?"★★★★★  "+ARTIST.reviews.length+" reviews":"No reviews yet",
+    "groups":ARTIST?.groups?.length||"No groups",
+    "contact":"Phone · Email · Message"
+  };
   const sec=document.getElementById("pv-sections");sec.innerHTML="";
   order.forEach(sid=>{
     if(hidden.has(sid))return;
     const d=document.createElement("div");
-    d.className="pv-sec "+ss+" cr-"+cr;
+    d.className="pv-sec cr-"+cr;
     d.innerHTML='<div class="pv-sec-in"><div class="pv-st">'+(LBL[sid]||sid)+'</div><div class="pv-sb">'+(BOD[sid]||"")+'</div></div>';
     sec.appendChild(d);
   });
@@ -655,7 +789,7 @@ function doTex(type){
 async function saveAll(){
   const token=localStorage.getItem("sb_at");
   const aH={...H,Authorization:"Bearer "+token,"Content-Type":"application/json",Prefer:"return=minimal"};
-  const cfgK=["cover_photo_url","featured_badge_type","section_order","press_quotes","cover_mode"];
+  const cfgK=["cover_photo_url","cover_video_url","cover_type","featured_badge_type","section_order","press_quotes","cover_mode","contact_methods"];
   const apK=["accent_colour","base_colour","bg_texture","header_layout","avatar_shape","section_style","corner_radius","edge_effect","hidden_sections"];
   const cfgB={},apB={};
   cfgK.forEach(k=>{if(DRAFT[k]!==undefined)cfgB[k]=DRAFT[k];});
@@ -700,21 +834,29 @@ async function saveAll(){
   });
   document.getElementById("feat-badge").value=CFG.featured_badge_type||"";
 
-  const cv=CFG.cover_photo_url||ARTIST.banner_url||"";
-  if(cv){const p=document.getElementById("cover-prev");p.src=cv;document.getElementById("cover-prev-wrap").style.display="block";}
+  // Load cover (image or video)
+  if(CFG.cover_type==="video"&&CFG.cover_video_url){
+    setCoverType("video");
+    document.getElementById("cover-vid-url").value=CFG.cover_video_url;
+    const vid=document.getElementById("cover-vid-el");
+    vid.src=CFG.cover_video_url;document.getElementById("cover-vid-prev").style.display="block";
+  } else {
+    const cv=CFG.cover_photo_url||ARTIST.banner_url||"";
+    if(cv){const p=document.getElementById("cover-prev");p.src=cv;document.getElementById("cover-prev-wrap").style.display="block";}
+  }
 
-  buildSecList(CFG.section_order||["bio","media","links","past_gigs","press_quotes","badges","reviews"],ARTIST.hidden_sections||[]);
+  buildSecList(CFG.section_order||["bio","links","media","past_gigs","press_quotes","badges","reviews","contact"],ARTIST.hidden_sections||[]);
   _quotes=(CFG.press_quotes||[]).map(q=>Object.assign({},q));
   renderQuotes();
+  _contacts=(CFG.contact_methods||[]).map(c=>Object.assign({},c));
+  renderContactList();
 
-  // Profile preview
+  // Profile preview name/handle (genres/type handled in applyPreview)
   const av=document.getElementById("pv-av");
   if(ARTIST.photo_url)av.innerHTML='<img src="'+ARTIST.photo_url+'" alt="">';
   else av.textContent=(ARTIST.stage_name||"?")[0].toUpperCase();
   document.getElementById("pv-name").textContent=ARTIST.stage_name||ARTIST.username||"—";
   document.getElementById("pv-handle").textContent="@"+(ARTIST.username||"");
-  const gp=document.getElementById("pv-genpills");
-  (ARTIST.genres||[]).forEach(g=>{const s=document.createElement("span");s.className="pv-gp";s.textContent=g;gp.appendChild(s);});
 
   applyPreview();
   document.getElementById("page-loading").classList.add("gone");

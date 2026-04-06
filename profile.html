@@ -104,8 +104,11 @@ body.light-bg .gp{color:#0077aa;border-color:rgba(0,120,170,.4);background:rgba(
 
 /* type/genre pills */
 .pills{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:2px}
-.gp{font-size:10px;font-weight:500;background:rgba(0,0,0,.45);border:1px solid rgba(0,210,255,.28);border-radius:20px;padding:3px 9px;color:var(--cyan);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.gp{font-size:10px;font-weight:500;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 9px;color:rgba(240,240,255,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .tp{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.18);color:var(--white);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+/* Accent scoping — decoration only, not text */
+#pg .av{border-color:var(--accent,var(--cyan))}
+#pg .sv.c{color:var(--accent,var(--cyan))}
 #fbadge-wrap{margin-top:8px;display:none}
 .fbadge{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700}
 .fbadge.founding{background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.3);color:var(--gold)}
@@ -119,12 +122,12 @@ body.light-bg .gp{color:#0077aa;border-color:rgba(0,120,170,.4);background:rgba(
 /* stats matches section style */
 .stats.style-line{border:none;border-top:1px solid var(--gb)}
 /* stats corner radius — uses same --r var as sections */
-.stats.cr-rounded,.stats.cr-sharp,.stats.cr-pill{border-radius:var(--r);border:1px solid var(--gb);margin:10px 14px 0;overflow:hidden}
-.stats.cr-flat{border-radius:0;border-left:none;border-right:none;margin-top:10px}
+.stats.cr-rounded,.stats.cr-sharp{border-radius:var(--r);border:1px solid var(--gb);margin:10px 14px 0;overflow:hidden}
+.stats.cr-flat{border-radius:0;margin:10px 14px 0;border-left:none;border-right:none}
 /* line section style */
 body.sec-line .sec{background:transparent!important;border:none!important;border-top:1px solid rgba(255,255,255,.1)!important}
 /* col shadow */
-#col-shadow{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:var(--max);z-index:0;pointer-events:none;box-shadow:0 0 100px 30px rgba(0,0,0,.65)}
+#col-shadow{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:var(--max);z-index:0;pointer-events:none;box-shadow:0 0 100px 30px rgba(0,0,0,.65),inset 0 0 0 1px var(--gb,rgba(255,255,255,.09))}
 /* Edge glow — CSS inner glow around entire profile column */
 #edge-glow{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);z-index:10;pointer-events:none}
 #edge-glow.fx-fire{animation:efx-fire 1.7s ease-in-out infinite}
@@ -567,11 +570,11 @@ function hexLuminance(hex){
 function applyProfileCustomisation(p){
   const ap=p; // artist_profiles row
   const cfg=p.cfg||{};
-  // Accent colour — scoped to #pg so the nav logo is unaffected
+  // Accent colour — only set --accent, never --cyan (to keep text colors neutral)
   const accent=ap.accent_colour||"#00D2FF";
-  document.documentElement.style.setProperty("--accent",accent);
   const pgEl=document.getElementById("pg");
-  if(pgEl){pgEl.style.setProperty("--cyan",accent);pgEl.style.setProperty("--accent",accent);}
+  document.documentElement.style.setProperty("--accent",accent);
+  if(pgEl){pgEl.style.setProperty("--accent",accent);}
   // Base/background colour
   const base=ap.base_colour||"#09090F";
   document.documentElement.style.setProperty("--base",base);
@@ -590,10 +593,13 @@ function applyProfileCustomisation(p){
   const sStyle=ap.section_style||"glass";
   const glassMap={glass:"rgba(9,9,15,0.62)",ghost:"rgba(9,9,15,0.04)",solid:"rgba(9,9,15,.96)",line:"rgba(9,9,15,0.02)"};
   const gbMap={glass:"rgba(255,255,255,0.09)",ghost:"rgba(255,255,255,0.04)",solid:"rgba(255,255,255,0.04)",line:"rgba(255,255,255,0.1)"};
+  const gbVal=gbMap[sStyle]||gbMap.glass;
   if(pgEl){
     pgEl.style.setProperty("--glass",glassMap[sStyle]||glassMap.glass);
-    pgEl.style.setProperty("--gb",gbMap[sStyle]||gbMap.glass);
+    pgEl.style.setProperty("--gb",gbVal);
   }
+  // Also set on root so fixed elements like #col-shadow can use it
+  document.documentElement.style.setProperty("--gb",gbVal);
   document.body.classList.toggle("sec-line",sStyle==="line");
   // Stats bar
   const statsEl=document.getElementById("stats");
@@ -653,12 +659,24 @@ function render(p){
   applyCustomisation(p.cfg);
   applyProfileCustomisation(p);
 
-  // Background — cover_photo_url > banner_url > photo_url
-  const bgSrc=p.cfg?.cover_photo_url||p.banner_url||p.photo_url;
-  if(bgSrc){
-    const bgi=document.getElementById("bgi");
-    bgi.style.backgroundImage=`url("${bgSrc}")`;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>bgi.classList.add("on")));
+  // Background — video takes priority, then image
+  if(p.cfg?.cover_type==="video"&&p.cfg?.cover_video_url){
+    let vid=document.getElementById("bgi-vid");
+    if(!vid){
+      vid=document.createElement("video");
+      vid.id="bgi-vid";vid.autoplay=true;vid.muted=true;vid.loop=true;vid.playsInline=true;
+      vid.style.cssText="position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);height:100%;object-fit:cover;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.1s ease";
+      document.getElementById("bgi").insertAdjacentElement("afterend",vid);
+    }
+    vid.src=p.cfg.cover_video_url;
+    vid.oncanplay=()=>requestAnimationFrame(()=>{vid.style.opacity="0.78";});
+  } else {
+    const bgSrc=p.cfg?.cover_photo_url||p.banner_url||p.photo_url;
+    if(bgSrc){
+      const bgi=document.getElementById("bgi");
+      bgi.style.backgroundImage=`url("${bgSrc}")`;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>bgi.classList.add("on")));
+    }
   }
 
   // Avatar
@@ -815,6 +833,25 @@ function render(p){
       });
       sec("srev","Reviews",d,{count:`${p.reviews.length} review${p.reviews.length!==1?"s":""}`});
     },
+    contact(){
+      const methods=p.cfg?.contact_methods;
+      if(!methods?.length)return;
+      const d=document.createElement("div");d.className="lkl";
+      methods.forEach(m=>{
+        const e=document.createElement("a");
+        e.className="lk";
+        const icons={phone:"📞",email:"✉️",website:"🔗",dm:"💬"};
+        const labels={phone:"Call",email:"Email",website:"Website",dm:"Message"};
+        let href=m.value||"";
+        if(m.type==="phone"&&href)href="tel:"+href.replace(/\s/g,"");
+        else if(m.type==="email"&&href)href="mailto:"+href;
+        else if(!href.startsWith("http"))href="https://"+href;
+        e.href=href;e.target="_blank";e.rel="noopener";
+        e.innerHTML=`<div class="lic" style="background:rgba(0,210,255,.1);color:var(--cyan)">${icons[m.type]||"🔗"}</div><div class="lt"><div class="ln">${esc(labels[m.type]||m.type)}</div><div class="lh">${esc(m.value||"")}</div></div><div class="lar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></div>`;
+        d.appendChild(e);
+      });
+      sec("scontact","Contact",d);
+    },
     // Groups — placeholder (no public data yet)
     groups(){},
     // EPK
@@ -829,7 +866,7 @@ function render(p){
   };
 
   // Render in exact section_order, respecting hidden_sections
-  const order=p.cfg?.section_order||["bio","links","media","past_gigs","press_quotes","badges","reviews"];
+  const order=p.cfg?.section_order||["bio","links","media","past_gigs","press_quotes","badges","reviews","contact"];
   const hiddenSections=new Set(p.hidden_sections||[]);
   order.forEach(key=>{if(!hiddenSections.has(key)&&builders[key])builders[key]();});
 }
