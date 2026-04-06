@@ -144,12 +144,11 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 .pv-stats.style-ghost{background:rgba(0,0,0,.1)}
 .pv-stats.style-solid{background:rgba(9,9,15,.96)}
 .pv-stats.style-line{background:transparent;border:none;border-top:1px solid rgba(255,255,255,.1)}
-.pv-stats.cr-rounded{border-radius:10px;margin:0 10px;overflow:hidden}
-.pv-stats.cr-sharp{border-radius:3px;margin:0 10px;overflow:hidden}
-.pv-stats.cr-pill{border-radius:22px;margin:0 10px;overflow:hidden}
+.pv-stats.cr-rounded,.pv-stats.cr-sharp,.pv-stats.cr-pill{border-radius:var(--r);margin:0 10px;overflow:hidden}
+.pv-stats.cr-flat{border-radius:0;margin:0;border-left:none;border-right:none}
 /* Sections */
 #pv-sections{padding:7px 10px 20px;display:flex;flex-direction:column;gap:6px;position:relative;z-index:3}
-.pv-sec{border-radius:10px;overflow:hidden;transition:all .3s}
+.pv-sec{border-radius:var(--r);overflow:hidden;transition:all .3s}
 .pv-sec.glass{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)}
 .pv-sec.ghost{background:rgba(0,0,0,.05);border:1px solid rgba(255,255,255,.14)}
 .pv-sec.solid{background:rgba(16,16,26,.97);border:1px solid rgba(255,255,255,.06)}
@@ -486,7 +485,10 @@ function applyPreview(){
   const cover=DRAFT.cover_photo_url||CFG?.cover_photo_url||ARTIST?.banner_url||"";
   const coverMode=DRAFT.cover_mode||CFG?.cover_mode||"hero";
 
-  document.getElementById("phone").style.background=base;
+  const phone=document.getElementById("phone");
+  phone.style.background=base;
+  const crMap={rounded:"10px",sharp:"3px",pill:"22px",flat:"0"};
+  phone.style.setProperty("--r",crMap[cr]||"10px");
 
   // Cover + gradient overlay — matches profile.html logic exactly
   const bgi=document.getElementById("pv-bgi");
