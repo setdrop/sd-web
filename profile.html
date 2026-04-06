@@ -513,10 +513,13 @@ async function load(u){
   if(!r.ok)return null;
   const rows=await r.json();if(!rows.length)return null;
   const p=rows[0];
+  // Fire config fetch NOW — don't wait for other data — so video can start immediately
+  const cfgPromise=fetch(`${SB}/rest/v1/artist_profile_config?artist_id=eq.${p.id}`,{headers:H}).then(r=>r.ok?r.json():[]);
+  cfgPromise.then(rows=>_bootVid(rows[0]||null));
   const[links,badges,cfgRows,epkRows,followers,gigCount,reviews,bookings]=await Promise.all([
     fetch(`${SB}/rest/v1/artist_links?artist_id=eq.${p.id}&order=sort_order.asc`,{headers:H}).then(r=>r.ok?r.json():[]),
     fetch(`${SB}/rest/v1/artist_badges?artist_id=eq.${p.id}`,{headers:H}).then(r=>r.ok?r.json():[]),
-    fetch(`${SB}/rest/v1/artist_profile_config?artist_id=eq.${p.id}`,{headers:H}).then(r=>r.ok?r.json():[]),
+    cfgPromise,
     fetch(`${SB}/rest/v1/artist_epk?artist_id=eq.${p.id}&limit=1`,{headers:H}).then(r=>r.ok?r.json():[]),
     fetch(`${SB}/rest/v1/follows?following_id=eq.${p.id}&select=id`,{headers:{...H,Prefer:"count=exact",Range:"0-0"}}).then(r=>{const h=r.headers.get("content-range");return h?parseInt(h.split("/")[1])||0:0;}).catch(()=>0),
     fetch(`${SB}/rest/v1/bookings?artist_id=eq.${p.id}&status=eq.completed&select=id`,{headers:{...H,Prefer:"count=exact",Range:"0-0"}}).then(r=>{const h=r.headers.get("content-range");return h?parseInt(h.split("/")[1])||0:0;}).catch(()=>0),
@@ -705,43 +708,52 @@ function renderBgTexture(type){
   else if(type==="rain"){for(let i=0;i<200;i++){const x=Math.random()*w,y=Math.random()*h,l=Math.random()*14+5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+1,y+l);ctx.stroke();}}
 }
 
+// ── VIDEO BOOT — fires as soon as config is available, before full render ─────
+let _vidBooted=false;
+function _bootVid(cfg){
+  if(!cfg||cfg.cover_type!=="video"||!cfg.cover_video_url)return;
+  if(_vidBooted)return;
+  _vidBooted=true;
+  let vid=document.getElementById("bgi-vid");
+  if(!vid){
+    vid=document.createElement("video");
+    vid.id="bgi-vid";
+    vid.setAttribute("autoplay","");vid.setAttribute("muted","");vid.setAttribute("loop","");
+    vid.setAttribute("playsinline","");vid.setAttribute("webkit-playsinline","");vid.setAttribute("preload","auto");
+    vid.muted=true;
+    vid.style.cssText="position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);height:100%;object-fit:cover;z-index:0;pointer-events:none;opacity:0;transition:opacity .45s ease";
+    document.getElementById("bgi").insertAdjacentElement("afterend",vid);
+  }
+  if(cfg.cover_photo_url){
+    vid.setAttribute("poster",cfg.cover_photo_url);
+    const bgi=document.getElementById("bgi");
+    bgi.style.backgroundImage=`url("${cfg.cover_photo_url}")`;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>bgi.classList.add("on")));
+  }
+  vid.src=cfg.cover_video_url;
+  vid.load();
+  const _show=()=>{vid.style.opacity="0.78";};
+  const _tryPlay=()=>{
+    const pr=vid.play();
+    if(pr!==undefined)pr.then(_show).catch(()=>{});
+    else _show();
+  };
+  // Touch fallback — registered upfront before play() so it catches iOS policy blocks
+  document.addEventListener("touchstart",()=>{
+    if(vid.paused)vid.play().then(_show).catch(()=>{});
+  },{once:true,passive:true});
+  if(vid.readyState>=2)_tryPlay();
+  else vid.addEventListener("canplay",_tryPlay,{once:true});
+}
+
 function render(p){
   document.title=`${p.stage_name} (@${p.username}) · Setdrop`;
   applyCustomisation(p.cfg);
   applyProfileCustomisation(p);
 
-  // Background — video takes priority, then image
+  // Background — video: _bootVid already fired early; call again as no-op if needed
   if(p.cfg?.cover_type==="video"&&p.cfg?.cover_video_url){
-    let vid=document.getElementById("bgi-vid");
-    if(!vid){
-      vid=document.createElement("video");
-      vid.id="bgi-vid";
-      vid.setAttribute("autoplay","");vid.setAttribute("muted","");vid.setAttribute("loop","");vid.setAttribute("playsinline","");vid.setAttribute("webkit-playsinline","");vid.setAttribute("preload","auto");
-      vid.muted=true;
-      vid.style.cssText="position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);height:100%;object-fit:cover;z-index:0;pointer-events:none;opacity:0;transition:opacity .45s ease";
-      document.getElementById("bgi").insertAdjacentElement("afterend",vid);
-    }
-    // Show cover photo immediately as still while video buffers
-    if(p.cfg.cover_photo_url){
-      vid.setAttribute("poster",p.cfg.cover_photo_url);
-      const bgi=document.getElementById("bgi");
-      bgi.style.backgroundImage=`url("${p.cfg.cover_photo_url}")`;
-      requestAnimationFrame(()=>requestAnimationFrame(()=>bgi.classList.add("on")));
-    }
-    vid.src=p.cfg.cover_video_url;
-    vid.load();
-    const _vidShow=()=>{vid.style.opacity="0.78";};
-    // Play immediately — works on desktop + Android. iOS Safari needs explicit .play() call.
-    const _tryPlay=()=>{
-      const p2=vid.play();
-      if(p2!==undefined)p2.then(_vidShow).catch(()=>{
-        // Autoplay blocked — show on first user touch
-        document.addEventListener("touchstart",()=>{vid.play().then(_vidShow).catch(()=>{});},{once:true,passive:true});
-      });
-      else _vidShow(); // older Safari returns undefined
-    };
-    if(vid.readyState>=2)_tryPlay();
-    else vid.addEventListener("canplay",_tryPlay,{once:true});
+    _bootVid(p.cfg);
   } else {
     const bgSrc=p.cfg?.cover_photo_url||p.banner_url||p.photo_url;
     if(bgSrc){
