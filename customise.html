@@ -147,15 +147,13 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 .pv-gp{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.18);color:rgba(240,240,255,.8);background:rgba(0,0,0,.45)}
 .pv-tp{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.12);color:rgba(240,240,255,.6);background:rgba(255,255,255,.05)}
 #pv-feat{display:none;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:4px;align-self:flex-start}
-/* Stats */
-.pv-stats{display:flex;position:relative;z-index:3;background:var(--glass);border-top:1px solid var(--gb);border-bottom:1px solid var(--gb);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);margin:0 10px}
+/* Stats — always matches section appearance */
+.pv-stats{display:flex;position:relative;z-index:3;background:var(--glass);border:1px solid var(--gb);border-radius:var(--r);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);margin:6px 10px 0;overflow:hidden}
 .pv-stat{flex:1;padding:8px 0;text-align:center}
 .pv-stat+.pv-stat{border-left:1px solid var(--gb)}
 .pv-sv{font-size:13px;font-weight:700}
 .pv-sl{font-size:8px;color:#888AAA;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
-.pv-stats.style-line{border:none;border-top:1px solid var(--gb)}
-.pv-stats.cr-rounded,.pv-stats.cr-sharp{border-radius:var(--r);border:1px solid var(--gb);margin:6px 10px 0;overflow:hidden}
-.pv-stats.cr-flat{border-radius:0;border-left:none;border-right:none}
+.pv-stats.style-line{background:transparent;border:none;border-top:1px solid var(--gb);border-radius:0;margin:6px 0 0}
 /* Sections */
 #pv-sections{padding:7px 10px 20px;display:flex;flex-direction:column;gap:6px;position:relative;z-index:3}
 .pv-sec{border-radius:var(--r);background:var(--glass);border:1px solid var(--gb);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;transition:all .3s}
@@ -573,7 +571,7 @@ function applyPreview(){
   const ss=DRAFT.section_style||ARTIST?.section_style||"glass";
   const cr=DRAFT.corner_radius||ARTIST?.corner_radius||"rounded";
   const avs=DRAFT.avatar_shape||ARTIST?.avatar_shape||"circle";
-  const edge=DRAFT.edge_effect||ARTIST?.edge_effect||"none";
+  const edge=DRAFT.edge_effect||CFG?.edge_effect||"none";
   const tex=DRAFT.bg_texture||ARTIST?.bg_texture||"clean";
   const hl=DRAFT.header_layout||ARTIST?.header_layout||"centered";
   const cover=DRAFT.cover_photo_url||CFG?.cover_photo_url||ARTIST?.banner_url||"";
@@ -643,7 +641,7 @@ function applyPreview(){
 
   // Stats
   const stats=document.getElementById("pv-stats");
-  stats.className="pv-stats style-"+ss+" cr-"+cr;
+  stats.className="pv-stats style-"+ss;
   document.querySelectorAll("#pv-stats .pv-sv").forEach(sv=>sv.style.color=acc);
 
   // Stage name accent
@@ -821,8 +819,8 @@ function doTex(type){
 async function saveAll(){
   const token=localStorage.getItem("sb_at");
   const aH={...H,Authorization:"Bearer "+token,"Content-Type":"application/json",Prefer:"return=minimal"};
-  const cfgK=["cover_photo_url","cover_video_url","cover_type","featured_badge_type","section_order","press_quotes","cover_mode","contact_methods"];
-  const apK=["accent_colour","base_colour","bg_texture","header_layout","avatar_shape","section_style","corner_radius","edge_effect","hidden_sections"];
+  const cfgK=["cover_photo_url","cover_video_url","cover_type","featured_badge_type","section_order","press_quotes","cover_mode","contact_methods","edge_effect"];
+  const apK=["accent_colour","base_colour","bg_texture","header_layout","avatar_shape","section_style","corner_radius","hidden_sections"];
   // Collect current section order from DOM before saving
   collectSecOrder();
   const cfgB={},apB={};
@@ -865,7 +863,7 @@ async function saveAll(){
   act("avatar_shape",ARTIST.avatar_shape||"circle");
   act("section_style",ARTIST.section_style||"glass");
   act("corner_radius",ARTIST.corner_radius||"rounded");
-  act("edge_effect",ARTIST.edge_effect||"none");
+  act("edge_effect",CFG.edge_effect||"none");
   act("bg_texture",ARTIST.bg_texture||"clean");
   act("cover_mode",CFG.cover_mode||"hero");
   ["accent-sw","base-sw"].forEach(id=>{
