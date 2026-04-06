@@ -22,7 +22,7 @@ body{min-height:100vh;font-family:var(--font);color:var(--white);overflow-x:hidd
 
 /* BACKGROUND — independent fixed layers, no wrapper */
 #bgi{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);z-index:0;background-size:cover;background-position:center top;opacity:0;transition:opacity 1.1s ease;pointer-events:none;will-change:transform}
-#bgi.on{opacity:1}
+#bgi.on{opacity:.78;filter:brightness(.88)}
 #bgg{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);z-index:1;background:linear-gradient(to bottom,rgba(6,9,14,.15) 0%,rgba(6,9,14,.45) 25%,rgba(6,9,14,.82) 55%,rgba(6,9,14,.97) 80%,rgba(6,9,14,1) 100%);pointer-events:none}
 
 /* LOADING */
@@ -72,12 +72,25 @@ body{min-height:100vh;font-family:var(--font);color:var(--white);overflow-x:hidd
 
 /* HERO */
 .hero{padding:calc(max(68px,env(safe-area-inset-top)) + 20px) 20px 16px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.hero.classic{align-items:flex-start;text-align:left}
+.hero.classic .avpills,.hero.classic .pills{justify-content:flex-start}
 .avw{position:relative;margin-bottom:12px}
-.av{width:80px;height:80px;border-radius:50%;border:2px solid var(--cyan);background:rgba(0,210,255,.1);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:var(--cyan)}
+.av{width:80px;height:80px;border-radius:50%;border:2px solid var(--cyan);background:rgba(0,210,255,.1);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:var(--cyan);transition:border-radius .3s}
+.av.sq{border-radius:16px}
 .av img{width:100%;height:100%;object-fit:cover;display:block}
 .vbdg{position:absolute;bottom:-1px;right:-1px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:2px solid var(--bg);align-items:center;justify-content:center;display:none}
-.nm{font-size:22px;font-weight:700;letter-spacing:-.4px;line-height:1.15;margin-bottom:3px;text-shadow:0 1px 12px rgba(0,0,0,.9),0 2px 4px rgba(0,0,0,.7)}
-.hnd{font-size:11px;color:var(--muted);margin-bottom:5px;text-shadow:0 1px 6px rgba(0,0,0,.9)}
+.nm{font-size:22px;font-weight:700;letter-spacing:-.4px;line-height:1.15;margin-bottom:3px;text-shadow:0 1px 14px rgba(0,0,0,.95),0 2px 6px rgba(0,0,0,.85),0 0 40px rgba(0,0,0,.7)}
+.hnd{font-size:11px;color:var(--muted);margin-bottom:5px;text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 24px rgba(0,0,0,.8)}
+/* Light background text readability */
+body.light-bg .nm{color:#111;text-shadow:0 1px 3px rgba(255,255,255,.3)}
+body.light-bg .hnd,body.light-bg .loc{color:#444;text-shadow:none}
+body.light-bg .st{color:#444}
+body.light-bg .abt{color:#222}
+body.light-bg .sv{color:#111}
+body.light-bg .sl{color:#555}
+body.light-bg .gp{color:#0077aa;border-color:rgba(0,120,170,.4);background:rgba(0,120,170,.08)}
+/* Vignette */
+#vignette{position:fixed;inset:0;z-index:5;pointer-events:none;background:radial-gradient(ellipse 110% 90% at 50% 50%,transparent 38%,rgba(0,0,0,.72) 100%)}
 .loc{font-size:11px;color:var(--muted);margin-bottom:7px;display:none}
 
 /* availability pills */
@@ -284,6 +297,7 @@ body.spacing-spacious{--sp:16px;--ip:22px}
   <div class="ldm">Loading profile</div>
 </div>
 
+<div id="vignette"></div>
 <div id="prf" style="display:none">
   <div id="pg">
     <div class="hero">
@@ -530,6 +544,12 @@ function applyCustomisation(cfg){
   if(cfg.spacing_style&&cfg.spacing_style!=="standard")document.body.classList.add(`spacing-${cfg.spacing_style}`);
 }
 
+function hexLuminance(hex){
+  const c=(hex||"").replace("#","");
+  if(c.length<6)return 0;
+  const r=parseInt(c.slice(0,2),16)/255,g=parseInt(c.slice(2,4),16)/255,b=parseInt(c.slice(4,6),16)/255;
+  return 0.299*r+0.587*g+0.114*b;
+}
 function applyProfileCustomisation(p){
   const ap=p; // artist_profiles row
   const cfg=p.cfg||{};
@@ -537,17 +557,34 @@ function applyProfileCustomisation(p){
   const accent=ap.accent_colour||"#00D2FF";
   document.documentElement.style.setProperty("--accent",accent);
   document.documentElement.style.setProperty("--cyan",accent);
-  // Base/background colour for gradient
+  // Base/background colour
   const base=ap.base_colour||"#09090F";
-  document.getElementById("bgg").style.background=`linear-gradient(to bottom,${base}11 0%,${base}66 45%,${base}FA 100%)`;
+  // Cover mode: hero (default) fades quickly; full keeps image visible throughout
+  const coverMode=cfg.cover_mode||"hero";
+  if(coverMode==="full"){
+    document.getElementById("bgg").style.background=`linear-gradient(to bottom,${base}00 0%,${base}22 40%,${base}99 75%,${base}FF 100%)`;
+  } else {
+    document.getElementById("bgg").style.background=`linear-gradient(to bottom,${base}33 0%,${base}88 42%,${base}EE 68%,${base}FF 100%)`;
+  }
+  // Corner radius — change CSS variable so all .sec elements pick it up
+  const cRadius=ap.corner_radius||"rounded";
+  const crMap={rounded:"14px",sharp:"4px",pill:"28px",flat:"0px"};
+  document.documentElement.style.setProperty("--r",crMap[cRadius]||"14px");
   // Stats bar: match section style + corner radius
   const statsEl=document.getElementById("stats");
   if(statsEl){
     const sStyle=ap.section_style||"glass";
-    const cRadius=ap.corner_radius||"rounded";
     statsEl.className=`stats style-${sStyle} cr-${cRadius}`;
   }
-  // Edge effects — rendered on left+right edges
+  // Avatar shape
+  const avEl=document.getElementById("av");
+  if(avEl)avEl.classList.toggle("sq",ap.avatar_shape==="square");
+  // Header layout
+  const heroEl=document.querySelector(".hero");
+  if(heroEl)heroEl.classList.toggle("classic",ap.header_layout==="classic");
+  // Text readability on light backgrounds
+  document.body.classList.toggle("light-bg",hexLuminance(base)>0.45);
+  // Edge effects
   const edge=ap.edge_effect||"none";
   if(edge&&edge!=="none")renderEdgeEffects(edge,accent);
   // Background texture
@@ -612,7 +649,7 @@ function renderBgTexture(type){
   let c=document.getElementById("bg-texture-canvas");
   if(!c){
     c=document.createElement("canvas");c.id="bg-texture-canvas";
-    c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.065;";
+    c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.18;";
     document.getElementById("bgi").insertAdjacentElement("afterend",c);
   }
   const w=window.innerWidth,h=window.innerHeight;
@@ -797,9 +834,10 @@ function render(p){
     },
   };
 
-  // Render in exact section_order from DB config
+  // Render in exact section_order, respecting hidden_sections
   const order=p.cfg?.section_order||["bio","links","media","past_gigs","press_quotes","badges","reviews"];
-  order.forEach(key=>{if(builders[key])builders[key]();});
+  const hiddenSections=new Set(p.hidden_sections||[]);
+  order.forEach(key=>{if(!hiddenSections.has(key)&&builders[key])builders[key]();});
 }
 
 let fol=false;

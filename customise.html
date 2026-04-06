@@ -76,7 +76,8 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 .cover-drop:hover,.cover-drop.over{border-color:rgba(0,210,255,.4);background:rgba(0,210,255,.04)}
 .cover-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .cover-drop p{font-size:12px;color:var(--muted);pointer-events:none}
-#cover-prev{max-width:100%;max-height:90px;border-radius:7px;margin-top:8px;display:none;object-fit:cover;width:100%}
+.cover-prev-wrap{width:100%;height:110px;border-radius:7px;margin-top:8px;display:none;background:rgba(0,0,0,.4);overflow:hidden;position:relative}
+#cover-prev{width:100%;height:100%;object-fit:contain;display:block}
 
 /* Quote rows */
 .qrow{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px;margin-bottom:7px;display:flex;flex-direction:column}
@@ -120,7 +121,7 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
 #pv-tex{position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.07;width:100%;height:100%}
 /* BG layers */
 #pv-bgi{position:sticky;top:0;left:0;width:100%;height:200px;background-size:cover;background-position:center top;margin-bottom:-200px;pointer-events:none;transition:background-image .4s,opacity .5s;opacity:0}
-#pv-bgi.show{opacity:.8}
+#pv-bgi.show{opacity:.78;filter:brightness(.88)}
 #pv-bgg{position:sticky;top:0;left:0;width:100%;height:200px;margin-bottom:-200px;pointer-events:none}
 /* Preview hero */
 #pv-hero{padding:26px 14px 10px;position:relative;z-index:3;display:flex;flex-direction:column}
@@ -178,7 +179,16 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
     <div class="cover-drop" id="cover-drop">
       <input type="file" id="cover-inp" accept="image/*">
       <p><strong style="color:var(--white)">Tap to upload</strong> · displays behind your profile</p>
-      <img id="cover-prev" src="" alt="">
+      <div class="cover-prev-wrap" id="cover-prev-wrap">
+        <img id="cover-prev" src="" alt="">
+      </div>
+    </div>
+    <div class="ctrl-row" style="margin-top:10px">
+      <span class="ctrl-label">Cover style</span>
+      <div class="trow">
+        <button class="topt active" data-key="cover_mode" data-val="hero">Hero / Fade</button>
+        <button class="topt" data-key="cover_mode" data-val="full">Full Background</button>
+      </div>
     </div>
   </div>
 </div>
@@ -327,7 +337,7 @@ html,body{background:var(--bg);color:var(--white);font-family:var(--font);-webki
   <div id="phone">
     <div class="pv-edge" id="pv-el"><canvas id="canvas-l"></canvas></div>
     <div class="pv-edge" id="pv-er"><canvas id="canvas-r"></canvas></div>
-    <canvas id="pv-tex" style="position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.07;width:100%;height:100%"></canvas>
+    <canvas id="pv-tex" style="position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.18;width:100%;height:100%"></canvas>
     <div id="phone-inner">
       <div id="pv-bgi"></div>
       <div id="pv-bgg"></div>
@@ -449,14 +459,15 @@ async function doCover(file){
   if(!file||!ARTIST)return;
   const local=URL.createObjectURL(file);
   const prev=document.getElementById("cover-prev");
-  prev.src=local;prev.style.display="block";
+  const wrap=document.getElementById("cover-prev-wrap");
+  prev.src=local;wrap.style.display="block";
   applyPreview();
   const token=localStorage.getItem("sb_at");
   const path=ARTIST.user_id+"/cover_"+Date.now()+"."+file.name.split(".").pop();
   const r=await fetch(SB+"/storage/v1/object/artist-photos/"+path,{
     method:"POST",headers:{apikey:K,Authorization:"Bearer "+token,"Content-Type":file.type},body:file
   });
-  if(r.ok){const url=SB+"/storage/v1/object/public/artist-photos/"+path;DRAFT.cover_photo_url=url;prev.src=url;}
+  if(r.ok){const url=SB+"/storage/v1/object/public/artist-photos/"+path;DRAFT.cover_photo_url=url;prev.src=url;wrap.style.display="block";}
 }
 
 // Featured badge
@@ -473,16 +484,20 @@ function applyPreview(){
   const tex=DRAFT.bg_texture||ARTIST?.bg_texture||"clean";
   const hl=DRAFT.header_layout||ARTIST?.header_layout||"centered";
   const cover=DRAFT.cover_photo_url||CFG?.cover_photo_url||ARTIST?.banner_url||"";
+  const coverMode=DRAFT.cover_mode||CFG?.cover_mode||"hero";
 
   document.getElementById("phone").style.background=base;
 
-  // Cover + gradient overlay — darker gradient for readability
+  // Cover + gradient overlay — matches profile.html logic exactly
   const bgi=document.getElementById("pv-bgi");
   if(cover){bgi.style.backgroundImage='url("'+cover+'")';bgi.classList.add("show");}
   else{bgi.classList.remove("show");}
-  // Always strong gradient for text readability regardless of cover brightness
-  document.getElementById("pv-bgg").style.background=
-    "linear-gradient(to bottom,"+base+"44 0%,"+base+"88 35%,"+base+"EE 65%,"+base+"FF 100%)";
+  const bgg=document.getElementById("pv-bgg");
+  if(coverMode==="full"){
+    bgg.style.background="linear-gradient(to bottom,"+base+"00 0%,"+base+"22 40%,"+base+"99 75%,"+base+"FF 100%)";
+  } else {
+    bgg.style.background="linear-gradient(to bottom,"+base+"33 0%,"+base+"88 42%,"+base+"EE 68%,"+base+"FF 100%)";
+  }
 
   // Avatar
   const av=document.getElementById("pv-av");
@@ -663,7 +678,7 @@ function doTex(type){
 async function saveAll(){
   const token=localStorage.getItem("sb_at");
   const aH={...H,Authorization:"Bearer "+token,"Content-Type":"application/json",Prefer:"return=minimal"};
-  const cfgK=["cover_photo_url","featured_badge_type","section_order","press_quotes"];
+  const cfgK=["cover_photo_url","featured_badge_type","section_order","press_quotes","cover_mode"];
   const apK=["accent_colour","base_colour","bg_texture","header_layout","avatar_shape","section_style","corner_radius","edge_effect","hidden_sections"];
   const cfgB={},apB={};
   cfgK.forEach(k=>{if(DRAFT[k]!==undefined)cfgB[k]=DRAFT[k];});
@@ -700,6 +715,7 @@ async function saveAll(){
   act("corner_radius",ARTIST.corner_radius||"rounded");
   act("edge_effect",ARTIST.edge_effect||"none");
   act("bg_texture",ARTIST.bg_texture||"clean");
+  act("cover_mode",CFG.cover_mode||"hero");
   ["accent-sw","base-sw"].forEach(id=>{
     const key=id==="accent-sw"?"accent_colour":"base_colour";
     const val=ARTIST[key]||(id==="accent-sw"?"#00D2FF":"#09090F");
@@ -708,7 +724,7 @@ async function saveAll(){
   document.getElementById("feat-badge").value=CFG.featured_badge_type||"";
 
   const cv=CFG.cover_photo_url||ARTIST.banner_url||"";
-  if(cv){const p=document.getElementById("cover-prev");p.src=cv;p.style.display="block";}
+  if(cv){const p=document.getElementById("cover-prev");p.src=cv;document.getElementById("cover-prev-wrap").style.display="block";}
 
   buildSecList(CFG.section_order||["bio","media","links","past_gigs","press_quotes","badges","reviews"],ARTIST.hidden_sections||[]);
   _quotes=(CFG.press_quotes||[]).map(q=>Object.assign({},q));
