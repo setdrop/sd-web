@@ -422,14 +422,12 @@ function buildSecList(order,hidden){
   const lock=document.createElement("div");lock.className="sec-item locked";
   lock.innerHTML='<span class="dh" style="opacity:.2">⠿</span><span class="sn">Stats Row</span><span style="font-size:9px;color:var(--dim)">pinned</span>';
   list.appendChild(lock);
-  const ALL=["bio","links","media","past_gigs","press_quotes","badges","reviews","contact","groups"];
-  const LBL={"bio":"About","media":"Media","links":"Links","past_gigs":"Past Gigs","press_quotes":"Press Quotes","badges":"Badges","reviews":"Reviews","groups":"Groups","contact":"Contact"};
+  const ALL=["bio","links","media","past_gigs","press_quotes","badges","reviews","contact"];
+  const LBL={"bio":"About","media":"Media","links":"Links","past_gigs":"Past Gigs","press_quotes":"Press Quotes","badges":"Badges","reviews":"Reviews","contact":"Contact"};
   // Build ordered list: saved order first, then any missing added after
   const ordered=[...order];ALL.forEach(id=>{if(!ordered.includes(id))ordered.push(id);});
-  const hasData=[];const noData=[];
-  ordered.forEach(sid=>{if(hasSectionData(sid))hasData.push(sid);else noData.push(sid);});
-  // Render sections with data first
-  hasData.forEach(sid=>{
+  ordered.forEach(sid=>{
+    if(!LBL[sid])return;
     const on=!hiddenSet.has(sid);
     const el=document.createElement("div");el.className="sec-item";el.dataset.id=sid;el.draggable=true;
     el.innerHTML='<span class="dh">⠿</span><span class="sn">'+LBL[sid]+'</span><button class="stog '+(on?"on":"off")+'"></button>';
@@ -439,19 +437,6 @@ function buildSecList(order,hidden){
     el.ondragover=e=>{e.preventDefault();if(window._ds&&window._ds!==el)list.insertBefore(window._ds,el);};
     list.appendChild(el);
   });
-  // Render sections without data as unavailable (not draggable, toggle disabled)
-  if(noData.length){
-    const sep=document.createElement("div");
-    sep.style.cssText="font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;padding:8px 9px 3px;font-weight:600";
-    sep.textContent="Unavailable — no content";
-    list.appendChild(sep);
-    noData.forEach(sid=>{
-      const el=document.createElement("div");el.className="sec-item locked";el.dataset.id=sid;
-      el.style.opacity=".35";
-      el.innerHTML='<span class="dh" style="opacity:.2">⠿</span><span class="sn">'+LBL[sid]+'</span><span style="font-size:9px;color:var(--dim)">no data</span>';
-      list.appendChild(el);
-    });
-  }
 }
 function collectSecOrder(){
   const items=[...document.getElementById("sec-list").querySelectorAll(".sec-item:not(.locked)")];
@@ -476,7 +461,10 @@ function renderQuotes(){
   });
 }
 function addQuote(){_quotes.push({text:"",source:""});renderQuotes();rebuildSecList();}
-function rebuildSecList(){if(typeof DRAFT!=="undefined")buildSecList(DRAFT.section_order||[],DRAFT.hidden_sections||[]);}
+function rebuildSecList(){
+  collectSecOrder();
+  buildSecList(DRAFT.section_order||CFG?.section_order||[],DRAFT.hidden_sections||ARTIST?.hidden_sections||[]);
+}
 
 // Cover type toggle
 function setCoverType(type){
@@ -557,13 +545,18 @@ async function doCover(file){
   const prev=document.getElementById("cover-prev");
   const wrap=document.getElementById("cover-prev-wrap");
   prev.src=local;wrap.style.display="block";
+  DRAFT.cover_photo_url=local;DRAFT.cover_type="image";
   applyPreview();
   const token=localStorage.getItem("sb_at");
   const path=ARTIST.user_id+"/cover_"+Date.now()+"."+file.name.split(".").pop();
   const r=await fetch(SB+"/storage/v1/object/artist-photos/"+path,{
     method:"POST",headers:{apikey:K,Authorization:"Bearer "+token,"Content-Type":file.type},body:file
   });
-  if(r.ok){const url=SB+"/storage/v1/object/public/artist-photos/"+path;DRAFT.cover_photo_url=url;prev.src=url;wrap.style.display="block";}
+  if(r.ok){
+    const url=SB+"/storage/v1/object/public/artist-photos/"+path;
+    DRAFT.cover_photo_url=url;prev.src=url;wrap.style.display="block";
+    applyPreview();
+  }
 }
 
 // Featured badge
@@ -659,7 +652,7 @@ function applyPreview(){
   const linksPreview=ARTIST?.links?.length?ARTIST.links.slice(0,3).map(l=>l.label||l.platform||"Link").join(" · "):"No links added";
   const BOD={
     "bio":ARTIST?.bio_full||ARTIST?.bio_short||"Bio goes here",
-    "media":(ARTIST?.media?.length||0)+" media items",
+    "media":((ARTIST?.galleryPhotos?.length||0)+(ARTIST?.video_embeds?.length||0)||0)+" media items",
     "links":linksPreview,
     "past_gigs":ARTIST?.past_gigs?.length?(ARTIST.past_gigs[0].venue_name||"Past Gig")+" + more":"No gigs yet",
     "press_quotes":(_quotes.length&&_quotes[0].text)?'"'+_quotes[0].text+'"':"No press quotes",
@@ -795,14 +788,23 @@ async function saveAll(){
   const aH={...H,Authorization:"Bearer "+token,"Content-Type":"application/json",Prefer:"return=minimal"};
   const cfgK=["cover_photo_url","cover_video_url","cover_type","featured_badge_type","section_order","press_quotes","cover_mode","contact_methods"];
   const apK=["accent_colour","base_colour","bg_texture","header_layout","avatar_shape","section_style","corner_radius","edge_effect","hidden_sections"];
+  // Collect current section order from DOM before saving
+  collectSecOrder();
   const cfgB={},apB={};
-  cfgK.forEach(k=>{if(DRAFT[k]!==undefined)cfgB[k]=DRAFT[k];});
+  cfgK.forEach(k=>{
+    if(DRAFT[k]===undefined)return;
+    // Skip blob URLs — upload still in progress
+    if(typeof DRAFT[k]==="string"&&DRAFT[k].startsWith("blob:"))return;
+    cfgB[k]=DRAFT[k];
+  });
   apK.forEach(k=>{if(DRAFT[k]!==undefined)apB[k]=DRAFT[k];});
   // Always save press quotes from _quotes
   cfgB.press_quotes=_quotes;
   try{
     const ps=[];
-    if(Object.keys(cfgB).length)ps.push(fetch(SB+"/rest/v1/artist_profile_config?artist_id=eq."+ARTIST.id,{method:"PATCH",headers:aH,body:JSON.stringify(cfgB)}));
+    // Use POST upsert so config row is created if it doesn't exist yet
+    cfgB.artist_id=ARTIST.id;
+    ps.push(fetch(SB+"/rest/v1/artist_profile_config",{method:"POST",headers:{...aH,Prefer:"return=minimal,resolution=merge-duplicates"},body:JSON.stringify(cfgB)}));
     if(Object.keys(apB).length)ps.push(fetch(SB+"/rest/v1/artist_profiles?id=eq."+ARTIST.id,{method:"PATCH",headers:aH,body:JSON.stringify(apB)}));
     await Promise.all(ps);
     Object.assign(CFG,cfgB);Object.assign(ARTIST,apB);
