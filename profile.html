@@ -67,9 +67,9 @@ body{min-height:100vh;font-family:var(--font);color:var(--white);overflow-x:hidd
 .nav-owner{display:none;align-items:center;gap:6px}
 
 /* LAYOUT */
+#scroll-stage{position:fixed;top:calc(52px + env(safe-area-inset-top));bottom:var(--abar-h,0px);left:0;right:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;z-index:3}
 #pg{position:relative;z-index:2;max-width:var(--max);margin:0 auto;
-  padding-top:calc(52px + env(safe-area-inset-top));
-  padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+  padding-top:0;padding-bottom:20px}
 
 /* HERO */
 .hero{padding:calc(max(68px,env(safe-area-inset-top)) + 20px) 20px 16px;display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -134,9 +134,9 @@ body.sec-line .sec{background:transparent!important;border:none!important;border
 #edge-glow.fx-fire{animation:efx-fire 1.7s ease-in-out infinite}
 #edge-glow.fx-laser{animation:efx-laser 2.4s linear infinite}
 #edge-glow.fx-pulse{animation:efx-pulse 1.9s ease-in-out infinite}
-/* Rain — two layers: full background + column-confined */
-#rain-bg-canvas{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:1;pointer-events:none;display:none}
-#rain-canvas{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);height:100vh;z-index:9;pointer-events:none;display:none}
+/* Rain — two layers: full background + column-confined, clipped between navbars */
+#rain-bg-canvas{position:fixed;top:calc(52px + env(safe-area-inset-top));left:0;width:100%;height:calc(100vh - 52px - env(safe-area-inset-top) - var(--abar-h,0px));z-index:1;pointer-events:none;display:none}
+#rain-canvas{position:fixed;top:calc(52px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);height:calc(100vh - 52px - env(safe-area-inset-top) - var(--abar-h,0px));z-index:9;pointer-events:none;display:none}
 @keyframes efx-fire{0%,100%{box-shadow:inset 0 0 22px 7px rgba(255,65,0,.5),inset 0 0 44px 3px rgba(255,120,0,.22)}50%{box-shadow:inset 0 0 32px 12px rgba(255,85,0,.65),inset 0 0 60px 6px rgba(255,150,0,.32)}}
 @keyframes efx-laser{0%,100%{box-shadow:inset 0 0 18px 5px rgba(var(--gcr),var(--gcg),var(--gcb),.55),inset 0 100px 24px -28px rgba(var(--gcr),var(--gcg),var(--gcb),.4)}50%{box-shadow:inset 0 0 18px 5px rgba(var(--gcr),var(--gcg),var(--gcb),.55),inset 0 -100px 24px -28px rgba(var(--gcr),var(--gcg),var(--gcb),.4)}}
 @keyframes efx-pulse{0%,100%{box-shadow:inset 0 0 14px 3px rgba(var(--gcr),var(--gcg),var(--gcb),.22)}50%{box-shadow:inset 0 0 30px 10px rgba(var(--gcr),var(--gcg),var(--gcb),.65)}}
@@ -321,7 +321,7 @@ body.spacing-spacious{--sp:16px;--ip:22px}
 <div id="edge-glow"></div>
 <canvas id="rain-bg-canvas"></canvas>
 <canvas id="rain-canvas"></canvas>
-<div id="prf" style="display:none">
+<div id="scroll-stage"><div id="prf" style="display:none">
   <div id="pg">
     <div class="hero">
       <div class="avw">
@@ -354,7 +354,7 @@ body.spacing-spacious{--sp:16px;--ip:22px}
       </a>
     </div>
   </div>
-</div>
+</div></div>
 
 <div id="nf" style="display:none">
   <div class="nfs">
@@ -658,8 +658,9 @@ function renderEdgeEffects(type,accent){
   g.className="";
   if(!type||type==="none")return;
   if(type==="rain"){
-    // Background layer — full viewport, white, low opacity
-    const bw=window.innerWidth,bh=window.innerHeight;
+    // Background layer — full content area (below nav, above abar)
+    const stage=document.getElementById("scroll-stage");
+    const bw=window.innerWidth,bh=stage?stage.clientHeight:window.innerHeight;
     rb.style.display="block";rb.width=bw;rb.height=bh;
     const bDrops=_makeDrops(Math.round(bw/12),bw,bh,.03,.1);
     const bCtx=rb.getContext("2d");
@@ -938,6 +939,7 @@ function doShare(){if(navigator.share)navigator.share({url:location.href}).catch
   if(u==="demo"){
     document.getElementById("prf").style.display="block";
     document.getElementById("abar").style.display="flex";
+    document.documentElement.style.setProperty("--abar-h",document.getElementById("abar").offsetHeight+"px");
     updateNavForAuth(user,null);
     render({stage_name:"Alfred Jay",username:"alfredjay",bio_short:"Melbourne based DJ.",bio_full:"Melbourne based DJ and producer. Electronic and house sounds across venues and festivals.",artist_type:["DJ"],genres:["Electronic","House","Techno"],verified:false,available:true,open_to_collab:true,live_now:false,location_city:"Melbourne, AU",photo_url:null,banner_url:null,followers:0,gigCount:0,reviews:[],bookings:[],gigDetails:{},orgDetails:{},links:[{id:"1",platform:"instagram",url:"https://instagram.com/setdrop.au",label:"@setdrop.au",sort_order:0}],badges:[{badge_type:"founding_artist"},{badge_type:"early_adopter"}],cfg:{featured_badge_type:"founding_artist",colour_scheme:"default",font_style:"dm_sans",section_order:["bio","links","media","past_gigs","press_quotes","badges","reviews"],press_quotes:[{text:"One of Melbourne's most exciting acts.",source:"Beat Magazine"}],featured_link_ids:["1"],spacing_style:"standard",separator_style:"inset"},epk:null,show_mini_epk:false,video_embeds:[],galleryPhotos:[],user_id:null});
     return;
@@ -946,6 +948,7 @@ function doShare(){if(navigator.share)navigator.share({url:location.href}).catch
   if(!p){document.getElementById("nf").style.display="flex";updateNavForAuth(user,null);return;}
   document.getElementById("prf").style.display="block";
   document.getElementById("abar").style.display="flex";
+  document.documentElement.style.setProperty("--abar-h",document.getElementById("abar").offsetHeight+"px");
   updateNavForAuth(user,p.user_id);
   render(p);
 })();

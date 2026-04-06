@@ -835,9 +835,13 @@ async function saveAll(){
   cfgB.press_quotes=_quotes;
   try{
     const ps=[];
-    // Use POST upsert so config row is created if it doesn't exist yet
-    cfgB.artist_id=ARTIST.id;
-    ps.push(fetch(SB+"/rest/v1/artist_profile_config",{method:"POST",headers:{...aH,Prefer:"return=minimal,resolution=merge-duplicates"},body:JSON.stringify(cfgB)}));
+    // PATCH if config row exists, POST (insert) if not
+    if(CFG&&CFG.id){
+      ps.push(fetch(SB+"/rest/v1/artist_profile_config?id=eq."+CFG.id,{method:"PATCH",headers:aH,body:JSON.stringify(cfgB)}));
+    } else {
+      cfgB.artist_id=ARTIST.id;
+      ps.push(fetch(SB+"/rest/v1/artist_profile_config",{method:"POST",headers:{...aH,Prefer:"return=representation"},body:JSON.stringify(cfgB)}).then(async r=>{if(r.ok){const rows=await r.json();if(rows&&rows[0])CFG.id=rows[0].id;}}));
+    }
     if(Object.keys(apB).length)ps.push(fetch(SB+"/rest/v1/artist_profiles?id=eq."+ARTIST.id,{method:"PATCH",headers:aH,body:JSON.stringify(apB)}));
     await Promise.all(ps);
     Object.assign(CFG,cfgB);Object.assign(ARTIST,apB);
