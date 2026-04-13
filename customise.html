@@ -605,7 +605,10 @@ function applyPreview(){
   const coverVid=DRAFT.cover_video_url||CFG?.cover_video_url||"";
   if(coverType==="video"&&coverVid){
     pvVid.style.display="block";pvVid.style.opacity="0.72";
-    if(pvVid.src!==coverVid)pvVid.src=coverVid;
+    if(pvVid.src!==coverVid){pvVid.src=coverVid;pvVid.load();}
+    pvVid.muted=true;pvVid.loop=true;pvVid.playsInline=true;
+    const playPromise=pvVid.play();
+    if(playPromise!==undefined){playPromise.catch(()=>{pvVid.muted=true;pvVid.play().catch(()=>{});});}
     bgi.classList.remove("show");bgi.style.backgroundImage="";
   } else {
     pvVid.style.display="none";pvVid.src="";
@@ -898,7 +901,9 @@ async function saveAll(){
     setCoverType("video");
     document.getElementById("cover-vid-url").value=CFG.cover_video_url;
     const vid=document.getElementById("cover-vid-el");
-    vid.src=CFG.cover_video_url;document.getElementById("cover-vid-prev").style.display="block";
+    vid.src=CFG.cover_video_url;vid.muted=true;vid.load();
+    vid.play().catch(()=>{});
+    document.getElementById("cover-vid-prev").style.display="block";
   } else {
     const cv=CFG.cover_photo_url||ARTIST.banner_url||"";
     if(cv){const p=document.getElementById("cover-prev");p.src=cv;document.getElementById("cover-prev-wrap").style.display="block";}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Setdrop — Dev Console</title>
+<title>Setdrop Dev Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -143,12 +143,13 @@ tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer}
 </div>
 
 <!-- LOGIN -->
-<div id="view-login" style="padding:20px">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:0;padding:14px 28px;border-bottom:1px solid var(--border)">
+<div id="view-login" style="min-height:100vh;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 28px;border-bottom:1px solid var(--border)">
     <div class="nav-brand"><span class="s">set</span><span class="d">drop</span></div>
     <div class="tag">DEV CONSOLE</div>
   </div>
-  <div class="login-wrap">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px">
+  <div class="login-wrap" style="margin:0">
     <h2>Sign in</h2>
     <p>Admin access only. Use your Supabase admin credentials.</p>
     <div class="form-col">
@@ -157,6 +158,7 @@ tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer}
       <button class="btn-login" id="login-btn" onclick="doLogin()">Sign in</button>
       <p class="login-err" id="login-err" style="display:none"></p>
     </div>
+  </div>
   </div>
 </div>
 
@@ -200,7 +202,7 @@ tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer}
         <div class="nav-section">Operations</div>
         <div class="nav-item" onclick="showPage('onboarding')">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-          Onboarding Mgr
+          Onboarding
         </div>
         <div class="nav-item" onclick="showPage('support')">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -282,7 +284,7 @@ tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer}
         </div>
         <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
           <div class="stat"><div class="stat-val c" id="w-total">—</div><div class="stat-lbl">Total signups</div></div>
-          <div class="stat"><div class="stat-val" id="w-remaining">—</div><div class="stat-lbl">Spots remaining</div><div class="stat-sub">of 500</div></div>
+          <div class="stat"><div class="stat-val" id="w-remaining">—</div><div class="stat-lbl">Founding spots left</div><div class="stat-sub">cap of 250</div></div>
           <div class="stat"><div class="stat-val g" id="w-today">—</div><div class="stat-lbl">Joined today</div></div>
           <div class="stat"><div class="stat-val" id="w-week">—</div><div class="stat-lbl">This week</div></div>
         </div>
@@ -291,8 +293,8 @@ tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>#</th><th>Email</th><th>Joined</th><th>Source</th></tr></thead>
-            <tbody id="w-tbody"><tr><td colspan="4" class="state-row">Loading...</td></tr></tbody>
+            <thead><tr><th>#</th><th>Email</th><th>Tier</th><th>Joined</th><th>Source</th></tr></thead>
+            <tbody id="w-tbody"><tr><td colspan="5" class="state-row">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -513,7 +515,7 @@ async function loadAnalytics() {
   setText('a-reports', reports);
   const wn = wCount || 0;
   setText('a-waitlist', wn);
-  setText('a-waitlist-sub', `${Math.max(0, 500 - wn)} spots left`);
+  setText('a-waitlist-sub', wn >= 250 ? 'Founding cap reached' : `${250 - wn} founding spots left`);
 }
 
 // ── WAITLIST ──────────────────────────────────────────
@@ -529,7 +531,7 @@ async function loadWaitlist() {
   const now = new Date(), tod = new Date(now); tod.setHours(0,0,0,0);
   const wkAgo = new Date(now - 7 * 86400000);
   setText('w-total', rows.length);
-  setText('w-remaining', Math.max(0, 500 - rows.length));
+  setText('w-remaining', Math.max(0, 250 - rows.length));
   setText('w-today', rows.filter(r => new Date(r.submitted_at) >= tod).length);
   setText('w-week', rows.filter(r => new Date(r.submitted_at) >= wkAgo).length);
   setText('nav-waitlist-count', rows.length);
@@ -538,12 +540,17 @@ async function loadWaitlist() {
 function renderWaitlist(rows) {
   const tbody = document.getElementById('w-tbody');
   const now = new Date(), hourAgo = new Date(now - 3600000);
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="state-row">No signups yet.</td></tr>'; return; }
-  tbody.innerHTML = rows.map(r => {
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" class="state-row">No signups yet.</td></tr>'; return; }
+  tbody.innerHTML = rows.map((r, i) => {
     const isNew = new Date(r.submitted_at) > hourAgo;
+    const isFounding = (r.founding_number && r.founding_number <= 250) || (i < 250);
+    const tierBadge = isFounding
+      ? '<span class="badge badge-amber" style="background:rgba(212,160,23,0.12);color:#D4A017;border:1px solid rgba(212,160,23,0.25)">Founding</span>'
+      : '<span class="badge badge-dim">Standard</span>';
     return `<tr>
       <td class="mono" style="color:var(--cyan)">#${r.founding_number||'—'}</td>
       <td class="td-email mono">${esc(r.email)}${isNew ? ' <span class="badge badge-new">NEW</span>' : ''}</td>
+      <td>${tierBadge}</td>
       <td class="td-muted mono" style="font-size:11px">${fmtTime(new Date(r.submitted_at))}</td>
       <td><span class="badge badge-dim">${esc(r.source||'landing_page')}</span></td>
     </tr>`;

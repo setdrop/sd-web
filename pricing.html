@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Setdrop Pricing</title>
+<meta name="description" content="Simple, transparent pricing for artists and businesses on Setdrop.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090F;--cyan:#00D2FF;--white:#F0F0FF;--muted:#888AAA;--dim:#3A3A5A;--green:#1D9E75;--gold:#D4A017;
+  --glass:rgba(255,255,255,0.05);--gb:rgba(255,255,255,0.09);
+  --gc:rgba(0,210,255,0.05);--gcb:rgba(0,210,255,0.15)
+}
+html{background:var(--bg);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100vh;background:var(--bg)}
+
+/* NAV */
+.nav{position:sticky;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;padding-top:env(safe-area-inset-top);height:calc(60px + env(safe-area-inset-top));background:rgba(9,9,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{font-size:22px;font-weight:700;letter-spacing:-0.5px;text-decoration:none;color:var(--white)}
+.nav-brand .d{color:var(--cyan)}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-link{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;transition:color 0.15s}
+.nav-link:hover,.nav-link.active{color:var(--white)}
+.nav-ctas{display:flex;gap:8px}
+.nav-btn{font-size:13px;font-weight:600;padding:8px 18px;border-radius:8px;cursor:pointer;text-decoration:none;transition:all 0.15s}
+.nav-btn-ghost{background:var(--glass);border:1px solid var(--gb);color:var(--white)}
+.nav-btn-ghost:hover{background:rgba(255,255,255,0.09)}
+.nav-btn-solid{background:var(--cyan);border:1px solid var(--cyan);color:var(--bg)}
+.nav-btn-solid:hover{opacity:0.88}
+
+/* PAGE */
+.page{max-width:860px;margin:0 auto;padding:64px 40px 100px}
+
+/* HEADER */
+.page-header{text-align:center;margin-bottom:56px}
+.lbl{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px}
+.page-h{font-size:clamp(32px,5vw,52px);font-weight:700;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px}
+.page-sub{font-size:16px;color:var(--muted);line-height:1.65;max-width:500px;margin:0 auto}
+
+/* TABS */
+.tabs{display:flex;background:rgba(255,255,255,0.04);border:1px solid var(--gb);border-radius:10px;padding:4px;gap:4px;margin-bottom:36px;width:fit-content;margin-left:auto;margin-right:auto}
+.tab{padding:8px 28px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;border:none;font-family:inherit;color:var(--muted);background:transparent}
+.tab.active-a{background:var(--cyan);color:var(--bg)}.tab.active-b{background:var(--white);color:var(--bg)}
+
+/* PANELS */
+.panel{display:none}.panel.on{display:flex;gap:14px;flex-wrap:wrap;align-items:stretch}
+
+/* TIER CARDS */
+.tier{flex:1;min-width:220px;border-radius:16px;padding:24px 22px;background:var(--glass);border:1px solid var(--gb);backdrop-filter:blur(16px);position:relative;display:flex;flex-direction:column}
+.tier-features{display:flex;flex-direction:column;gap:8px;flex:1}
+.tier-hl{background:var(--gc);border-color:var(--gcb)}
+.tier-badge{position:absolute;top:-10px;right:16px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;letter-spacing:0.3px}
+.badge-c{background:var(--cyan);color:var(--bg)}.badge-w{background:var(--white);color:var(--bg)}.badge-g{background:var(--gold);color:#000}
+.tier-name{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px}
+.tier-price{font-size:32px;font-weight:700;letter-spacing:-1px;line-height:1}
+.tier-price span{font-size:13px;color:var(--muted);font-weight:400}
+.tier-note{font-size:11px;color:var(--muted);margin-top:4px;margin-bottom:16px}
+.tier-div{height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px}
+.tf{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#C8C8DC;line-height:1.4}
+.tf.off{color:var(--dim)}
+.ic{width:13px;height:13px;flex-shrink:0;margin-top:1px}
+.fee-t{color:var(--cyan);font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.tf-section{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-top:6px;margin-bottom:2px}
+
+/* FOUNDING NOTE */
+.founding-note{width:100%;margin-top:14px;padding:18px 20px;border-radius:12px;background:rgba(212,160,23,0.08);border:1px solid rgba(212,160,23,0.22);display:flex;align-items:flex-start;gap:12px}
+.fn-icon{width:30px;height:30px;border-radius:7px;background:rgba(212,160,23,0.12);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.fn-t{font-size:13px;font-weight:600;margin-bottom:3px;color:var(--gold)}
+.fn-b{font-size:12px;color:var(--muted);line-height:1.6}
+.fn-b strong{color:var(--white);font-weight:500}
+
+/* FREE NOTE */
+.free-note{width:100%;margin-top:8px;padding:14px 18px;border-radius:10px;background:var(--gc);border:1px solid var(--gcb);font-size:12px;color:var(--muted);line-height:1.6}
+.free-note strong{color:var(--white);font-weight:600}
+
+/* CTA SECTION */
+.cta-section{margin-top:56px;text-align:center;padding:40px;border-radius:18px;background:var(--glass);border:1px solid var(--gb);backdrop-filter:blur(16px)}
+.cta-h{font-size:24px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px}
+.cta-sub{font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.cta-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cta-btn{padding:12px 28px;border-radius:9px;font-weight:700;font-size:14px;text-decoration:none;transition:opacity 0.15s;display:inline-block}
+.cta-btn-c{background:var(--cyan);color:var(--bg)}.cta-btn-g{background:var(--glass);border:1px solid var(--gb);color:var(--white)}
+.cta-btn:hover{opacity:0.85}
+
+@media(max-width:768px){
+  .nav{padding:0 18px;padding-top:env(safe-area-inset-top)}
+  .nav-links{display:none}
+  .nav-ctas .nav-btn-ghost{display:none}
+  .page{padding:40px 18px 80px}
+  .panel.on{flex-direction:column}
+  .tier{min-width:100%;width:100%}
+  .tabs{width:100%}
+  .tab{flex:1;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="/">set<span class="d">drop</span></a>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/pricing" class="nav-link active">Pricing</a>
+    <a href="/faq" class="nav-link">FAQ</a>
+  </div>
+  <div class="nav-ctas">
+    <a href="/onboard-artist" class="nav-btn nav-btn-ghost">For Artists</a>
+    <a href="/onboard-business" class="nav-btn nav-btn-solid">For Businesses</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <div class="lbl">Pricing</div>
+    <h1 class="page-h">Simple plans.<br>No surprises.</h1>
+    <p class="page-sub">Artists always pay zero booking fees. For businesses, straightforward plans that grow with your venue.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active-a" id="tab-artist" onclick="switchTab('artist')">For Artists</button>
+    <button class="tab" id="tab-biz" onclick="switchTab('biz')">For Businesses</button>
+  </div>
+
+  <!-- ARTIST PLANS -->
+  <div class="panel on" id="panel-artist">
+
+    <div class="tier">
+      <div class="tier-name">Free</div>
+      <div class="tier-price">$0</div>
+      <div class="tier-note">Forever. No catch.</div>
+      <div class="tier-div"></div>
+      <div class="tier-features">
+        <div class="tf"><span class="fee-t">0%</span> Booking fee. Always.</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Unlimited gig applications</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Shareable profile link</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Verified gig history</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Basic EPK</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Invoice Maker (1 profile)</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 5 photos, 3 videos</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Basic profile customisation</div>
+      </div>
+    </div>
+
+    <div class="tier tier-hl">
+      <div class="tier-badge badge-c">RECOMMENDED</div>
+      <div class="tier-name" style="color:var(--cyan)">Pro</div>
+      <div class="tier-price" style="color:var(--white)">$19.99<span>/mo</span></div>
+      <div class="tier-note">or $179.99/yr and save 25%</div>
+      <div class="tier-div" style="background:rgba(0,210,255,0.1)"></div>
+      <div class="tier-features">
+        <div class="tf"><span class="fee-t">0%</span> Booking fee. Always.</div>
+        <div class="tf-section">Everything in Free, plus:</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 10 photos, 6 videos</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Advanced EPK</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Invoice Maker (up to 5 profiles)</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Full profile customisation</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Gig Alert notifications</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> AI writing tools</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Full analytics &amp; earnings tracker</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Post scheduling</div>
+      </div>
+    </div>
+
+    <div class="founding-note">
+      <div class="fn-icon">&#9733;</div>
+      <div>
+        <div class="fn-t">Founding Artist pricing</div>
+        <div class="fn-b">First 250 artists get Pro locked at <strong>$14.99/mo for life</strong>, plus a permanent gold badge on their profile. Once 250 spots are filled, this offer closes permanently. <a href="/onboard-artist" style="color:var(--cyan);font-weight:600;text-decoration:none">Claim your spot</a></div>
+      </div>
+    </div>
+
+    <div class="free-note">
+      <strong>Artists always pay 0% booking fees.</strong> This is not a promotion or a tier perk. It is written into the Setdrop company constitution and cannot be changed under any ownership or circumstance.
+    </div>
+
+  </div>
+
+  <!-- BUSINESS PLANS -->
+  <div class="panel" id="panel-biz">
+
+    <div class="tier">
+      <div class="tier-name">Free</div>
+      <div class="tier-price">$0</div>
+      <div class="tier-note">6% booking fee per gig</div>
+      <div class="tier-div"></div>
+      <div class="tier-features">
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Post gigs (unlimited)</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Review &amp; approve applicants</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Auto booking contracts</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Artist roster (save &amp; rebook)</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Invoice manager</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 1 private brief per month</div>
+        <div class="tf off"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#3A3A5A" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg> No web dashboard</div>
+        <div class="tf off"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#3A3A5A" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg> No AI applicant scoring</div>
+      </div>
+    </div>
+
+    <div class="tier" style="border-color:rgba(255,255,255,0.15)">
+      <div class="tier-badge badge-w">POPULAR</div>
+      <div class="tier-name" style="color:var(--white)">Pro</div>
+      <div class="tier-price">$49.99<span>/mo</span></div>
+      <div class="tier-note">3% booking fee per gig</div>
+      <div class="tier-div"></div>
+      <div class="tier-features">
+        <div class="tf-section">Everything in Free, plus:</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Web dashboard</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> AI applicant scoring</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Full analytics</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 3 team seats + $9.99/seat</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 4 private briefs per month</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Post scheduling</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Roster availability overlay</div>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-name" style="color:var(--muted)">Pro+</div>
+      <div class="tier-price">$99.99<span>/mo</span></div>
+      <div class="tier-note">2% booking fee per gig</div>
+      <div class="tier-div"></div>
+      <div class="tier-features">
+        <div class="tf-section">Everything in Pro, plus:</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 8 team seats + $9.99/seat</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Unlimited private briefs</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Multi-venue management</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Custom booking page</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Verified Business badge</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Onboarding Manager (30 days)</div>
+        <div class="tf"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Real-time invoice dashboard</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-h">Ready to get started?</div>
+    <div class="cta-sub">Join the platform built for Australia's live music scene. Artists join free. Businesses join the waitlist.</div>
+    <div class="cta-btns">
+      <a href="/onboard-artist" class="cta-btn cta-btn-c">Get Started as an Artist →</a>
+      <a href="/onboard-business" class="cta-btn cta-btn-g">Join as a Business →</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(t){
+  document.getElementById('panel-artist').classList.toggle('on',t==='artist');
+  document.getElementById('panel-biz').classList.toggle('on',t==='biz');
+  document.getElementById('tab-artist').className='tab'+(t==='artist'?' active-a':'');
+  document.getElementById('tab-biz').className='tab'+(t==='biz'?' active-b':'');
+  // Check URL param
+  const url=new URL(location);url.searchParams.set('for',t);history.replaceState(null,'',url);
+}
+// Auto-switch from URL param or referrer
+const p=new URLSearchParams(location.search).get('for');
+if(p==='biz')switchTab('biz');
+</script>
+</body>
+</html>

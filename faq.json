@@ -1,0 +1,117 @@
+[
+  {
+    "category": "general",
+    "question": "What is Setdrop?",
+    "answer": "Setdrop is a platform that connects independent artists with venues, bars, and events that want live music. Artists create a professional profile to showcase their work and get discovered; businesses browse and book artists directly through the platform."
+  },
+  {
+    "category": "general",
+    "question": "Is Setdrop available now?",
+    "answer": "Setdrop is currently in its founding phase. Artists can sign up now to claim a Founding Artist spot. These come with lifetime perks and priority access when the platform fully launches. Businesses can join the waitlist to be notified when booking opens."
+  },
+  {
+    "category": "general",
+    "question": "Where is Setdrop based?",
+    "answer": "Setdrop is an Australian platform, initially launching in Melbourne. National and global expansion is on the roadmap."
+  },
+  {
+    "category": "general",
+    "question": "How do I contact support?",
+    "answer": "Email us at <a href=\"mailto:support@setdrop.com.au\">support@setdrop.com.au</a> and we'll get back to you as soon as possible. You can also reach us on Instagram <a href=\"https://instagram.com/setdrop.au\" target=\"_blank\" rel=\"noopener\">@setdrop.au</a>."
+  },
+  {
+    "category": "artists",
+    "question": "What is a Founding Artist?",
+    "answer": "Founding Artists are the first wave of musicians to join Setdrop. There are a limited number of spots available. Founding Artists receive a <strong>verified founder badge</strong>, <strong>locked-in pricing</strong> for life, and priority placement in search when the platform launches.<br><br>Spots are limited. Once they are gone, this tier closes permanently."
+  },
+  {
+    "category": "artists",
+    "question": "Does Setdrop take a cut of my bookings?",
+    "answer": "<strong>No.</strong> Setdrop charges artists a flat subscription fee, not a percentage of each booking. You keep 100% of what you earn. There are no hidden booking fees or commissions taken from your gigs."
+  },
+  {
+    "category": "artists",
+    "question": "What does my artist profile include?",
+    "answer": "Your profile is your professional home on Setdrop. It includes:<ul><li>A personalised link (setdrop.com.au/@yourname)</li><li>Cover photo or video</li><li>Bio, genre tags, location</li><li>Verified gig history and career highlights</li><li>Embedded music, links, and press kit</li><li>Contact section for direct booking enquiries</li><li>Customisable appearance (colours, layout, effects)</li></ul>"
+  },
+  {
+    "category": "artists",
+    "question": "What is the EPK feature?",
+    "answer": "Your Electronic Press Kit (EPK) is a shareable, professional summary of your career that you can send to venues, promoters, and media. It's automatically generated from your Setdrop profile and always up to date."
+  },
+  {
+    "category": "artists",
+    "question": "How does gig discovery work?",
+    "answer": "Businesses post gig opportunities on Setdrop. Artists can browse open calls and apply directly. You can filter by location, genre fit, pay range, and date. Businesses can also search for artists and reach out to you first."
+  },
+  {
+    "category": "artists",
+    "question": "Can I use Setdrop even if I already have a booking agent?",
+    "answer": "Absolutely. Setdrop complements your existing setup. It is an additional channel and a professional presence, not a replacement for your agent or management. You're always in control of your bookings."
+  },
+  {
+    "category": "artists",
+    "question": "What genres or types of artists does Setdrop support?",
+    "answer": "All genres and formats are welcome. Solo performers, bands, DJs, acoustic acts, cover artists, original musicians, electronic producers, and more. If you perform live, Setdrop is for you."
+  },
+  {
+    "category": "artists",
+    "question": "How does invoicing work?",
+    "answer": "Setdrop includes built-in invoicing so you can generate and send professional invoices directly from your account. No third party tools needed."
+  },
+  {
+    "category": "businesses",
+    "question": "What kind of businesses can use Setdrop?",
+    "answer": "Setdrop is built for any business that books or wants to book live music. This includes:<ul><li>Bars, clubs, and pubs</li><li>Restaurants and cafes</li><li>Hotels and resorts</li><li>Event spaces and function venues</li><li>Corporate event organisers</li><li>Festivals and markets</li></ul>"
+  },
+  {
+    "category": "businesses",
+    "question": "How does booking an artist work?",
+    "answer": "Browse artist profiles using filters like genre, location, availability, and budget. When you find the right fit, send a booking enquiry directly. You can also post an open call and let artists apply to you. Once agreed, Setdrop handles the paperwork and confirmation."
+  },
+  {
+    "category": "businesses",
+    "question": "Is there a minimum spend or commitment?",
+    "answer": "No minimum spend. You pay the artist what you agree directly, plus a small platform fee depending on your plan. There is no lock-in contract. You can book as often or as rarely as you need."
+  },
+  {
+    "category": "businesses",
+    "question": "How do I join as a business?",
+    "answer": "Setdrop is currently in its launch phase for businesses. Join the waitlist at <a href=\"/onboard-business\">setdrop.com.au/onboard-business</a> to be among the first to gain access when business accounts open."
+  },
+  {
+    "category": "businesses",
+    "question": "Can I manage multiple venues from one account?",
+    "answer": "Multi-venue management is available on our Pro+ plan."
+  },
+  {
+    "category": "pricing",
+    "question": "Is Setdrop free to join as an artist?",
+    "answer": "Yes. There is a free tier with core profile features. You can create your profile, get a personal link, Invoice, Network, and be discoverable at no cost. Paid plans unlock additional tools like advanced customisation, EPK exports, advanced analytics and more. <br><br>See the full breakdown on the <a href=\"/pricing\">Pricing page</a>."
+  },
+  {
+    "category": "pricing",
+    "question": "What does the Pro plan include?",
+    "answer": "Pro gives you the full Setdrop experience. Everything in Free, plus customised invoicing, EPK generation, advanced analytics, advanced profile customisation, and more. See the <a href=\"/pricing\">Pricing page</a> for the full feature list."
+  },
+  {
+    "category": "pricing",
+    "question": "What is the Founding Artist price?",
+    "answer": "Founding Artists who sign up during the launch phase lock in Pro at <strong>$14.99/month</strong>, a permanent discount from the standard $19.99/month rate. This price is guaranteed for life as long as your subscription stays active. Once founding spots are gone, this rate closes."
+  },
+  {
+    "category": "pricing",
+    "question": "Are there fees on top of my subscription?",
+    "answer": "For artists, no. Your subscription is the only charge. Setdrop does not take a percentage of your booking fees. Businesses pay a platform fee per booking, which varies by plan (see <a href=\"/pricing\">Pricing</a>)."
+  },
+  {
+    "category": "pricing",
+    "question": "Can I cancel my subscription at any time?",
+    "answer": "Yes. There are no lock-in contracts. You can cancel anytime from your account settings and your subscription will remain active until the end of the current billing period. Note: if you cancel a Founding Artist plan, the locked-in rate will not be available again."
+  },
+  {
+    "category": "pricing",
+    "question": "Do you offer refunds?",
+    "answer": "If you have an issue with a charge, reach out to us at <a href=\"mailto:support@setdrop.com.au\">support@setdrop.com.au</a> and we'll make it right. We review refund requests on a case-by-case basis."
+  }
+]

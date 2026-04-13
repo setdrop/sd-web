@@ -7,6 +7,10 @@
     { "source": "/@:username", "destination": "/profile.html" },
     { "source": "/verify", "destination": "/verify.html" },
     { "source": "/verify/:code", "destination": "/verify.html" },
-    { "source": "/confirmed", "destination": "/confirmed.html" }
+    { "source": "/confirmed", "destination": "/confirmed.html" },
+    { "source": "/onboard-artist", "destination": "/onboard-artist.html" },
+    { "source": "/onboard-business", "destination": "/onboard-business.html" },
+    { "source": "/pricing", "destination": "/pricing.html" },
+    { "source": "/faq", "destination": "/faq.html" }
   ]
 }

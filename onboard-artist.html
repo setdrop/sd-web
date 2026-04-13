@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Setdrop for Artists</title>
+<meta name="description" content="Join Setdrop as an artist. Zero booking fees. Verified career history. Founding spots open.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090F;--cyan:#00D2FF;--white:#F0F0FF;--muted:#888AAA;--dim:#3A3A5A;--green:#1D9E75;
+  --glass:rgba(255,255,255,0.05);--gb:rgba(255,255,255,0.09);
+  --gc:rgba(0,210,255,0.05);--gcb:rgba(0,210,255,0.15)
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 40px;padding-top:env(safe-area-inset-top);height:calc(60px + env(safe-area-inset-top));background:rgba(9,9,15,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{font-size:22px;font-weight:700;letter-spacing:-0.5px;display:flex;align-items:center;text-decoration:none;color:var(--white)}
+.nav-brand .d{color:var(--cyan)}
+.nav-progress{display:flex;align-items:center;gap:6px}
+.np{width:24px;height:3px;border-radius:2px;background:var(--dim);transition:all 0.4s}
+.np.done{background:rgba(0,210,255,0.35)}.np.active{background:var(--cyan);width:36px}
+.nav-spacer{width:90px}
+
+/* SLIDES */
+.slides{position:fixed;inset:0;top:60px;bottom:72px;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.55s cubic-bezier(0.4,0,0.2,1)}
+.slide-inner{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 48px;width:100%}
+.slide.top .slide-inner{justify-content:flex-start;padding-top:48px}
+@media(min-width:769px){.slide.top .slide-inner{justify-content:center;padding-top:40px}}
+@media(min-width:769px){.slide-inner>*{max-width:760px;width:100%}}
+.slide.active{opacity:1;pointer-events:all}
+.slide.active .r{animation:up 0.55s cubic-bezier(0.16,1,0.3,1) both}
+.slide.active .r:nth-child(1){animation-delay:0.05s}
+.slide.active .r:nth-child(2){animation-delay:0.13s}
+.slide.active .r:nth-child(3){animation-delay:0.21s}
+.slide.active .r:nth-child(4){animation-delay:0.29s}
+.slide.active .r:nth-child(5){animation-delay:0.36s}
+.slide.active .r:nth-child(6){animation-delay:0.42s}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* BOTTOM BAR */
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:200;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;padding-bottom:env(safe-area-inset-bottom);background:rgba(9,9,15,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06)}
+.slide-label{font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.slide-label strong{color:var(--white)}
+.nav-btns{display:flex;gap:8px;align-items:center}
+.btn-back{padding:9px 20px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;border:1px solid var(--gb);background:var(--glass);color:var(--muted);font-family:inherit;transition:all 0.15s}
+.btn-back:hover{color:var(--white);border-color:rgba(255,255,255,0.15)}
+.btn-back.hidden{opacity:0;pointer-events:none}
+.btn-next{padding:9px 24px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;border:none;background:var(--cyan);color:var(--bg);font-family:inherit;transition:opacity 0.15s;display:flex;align-items:center;gap:7px}
+.btn-next:hover{opacity:0.88}
+.btn-next.hidden{display:none}
+.btn-next svg{width:13px;height:13px;stroke:var(--bg)}
+
+/* SHARED */
+.pill{display:inline-flex;align-items:center;gap:7px;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.18);border-radius:20px;padding:5px 14px}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:blink 2s ease-in-out infinite}
+.pill-text{font-size:11px;color:var(--cyan);font-weight:600;letter-spacing:0.6px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.lbl{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-align:center}
+.lbl-c{color:var(--cyan)}.lbl-m{color:var(--muted);opacity:0.5}
+.sh{font-size:clamp(26px,4vw,46px);font-weight:700;letter-spacing:-1px;text-align:center;line-height:1.12}
+.ss{font-size:15px;color:var(--muted);line-height:1.65;text-align:center;max-width:500px;margin:0 auto}
+.hero-h{font-size:clamp(40px,6vw,72px);font-weight:700;line-height:1.06;letter-spacing:-2px;text-align:center;max-width:760px}
+.hero-h .c{color:var(--cyan)}
+.hero-sub{font-size:clamp(15px,1.8vw,18px);color:var(--muted);line-height:1.65;max-width:520px;text-align:center}
+
+/* Feature grid */
+.fg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:900px}
+.fc{padding:20px 18px;border-radius:12px;background:var(--glass);border:1px solid var(--gb);backdrop-filter:blur(16px)}
+.fc-cy{background:var(--gc);border-color:var(--gcb)}
+.fstat{font-size:30px;font-weight:700;color:var(--cyan);letter-spacing:-1px}
+.furl{font-size:11px;color:var(--cyan);background:rgba(0,210,255,0.07);display:inline-block;padding:2px 8px;border-radius:4px;font-family:monospace}
+.fvb{display:flex;align-items:center;gap:6px}.fvb span{font-size:11px;font-weight:500;color:var(--green)}
+.fi{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05)}
+.ft{font-size:13px;font-weight:600;margin:8px 0 4px}.fb{font-size:11px;color:var(--muted);line-height:1.6}
+
+/* Steps */
+.steps{display:flex;width:100%;max-width:680px}
+.step{flex:1;text-align:center;position:relative;padding:0 6px}
+.sn{width:34px;height:34px;border-radius:50%;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:12px;font-weight:700;color:var(--cyan)}
+.st{font-size:13px;font-weight:600;margin-bottom:4px}.sd{font-size:12px;color:var(--muted);line-height:1.5}
+.sl{position:absolute;top:17px;left:calc(50% + 20px);width:calc(100% - 40px);height:1px;background:linear-gradient(90deg,rgba(0,210,255,0.2),transparent)}
+
+/* Founding offer */
+.founding-card{width:100%;max-width:560px;padding:28px;border-radius:16px;background:var(--gc);border:1px solid var(--gcb);backdrop-filter:blur(16px)}
+.founding-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,160,23,0.12);border:1px solid rgba(212,160,23,0.3);border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;color:#D4A017;letter-spacing:0.5px;margin-bottom:14px}
+.prog-wrap{width:100%;margin:16px 0 6px}
+.pt2{height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--cyan),rgba(0,180,216,0.7));border-radius:2px;transition:width 1s ease}
+
+/* Sign up form */
+.sr{display:flex;gap:8px;width:100%;max-width:420px;margin:0 auto}
+.si{flex:1;background:var(--glass);border:1px solid var(--gb);border-radius:9px;padding:13px 16px;font-size:14px;color:var(--white);font-family:inherit;outline:none;transition:border-color 0.15s;backdrop-filter:blur(8px)}
+.si::placeholder{color:var(--dim)}.si:focus{border-color:rgba(0,210,255,0.35)}
+.sb{background:var(--cyan);color:var(--bg);padding:13px 22px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;border:none;font-family:inherit;transition:opacity 0.15s}
+.sb:hover{opacity:0.88}.sb:disabled{opacity:0.5;cursor:not-allowed}
+.form-err{font-size:12px;color:#ff6b6b;text-align:center}
+
+/* Stats */
+.cr{display:flex;align-items:stretch;justify-content:center;gap:0}
+.ci2{text-align:center;padding:0 28px}
+.cn{font-size:44px;font-weight:700;letter-spacing:-2px;line-height:1}.cn.cc{color:var(--cyan)}
+.cl{font-size:11px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:0.5px}
+.csep{width:1px;background:var(--gb);align-self:stretch}
+
+/* Thank you */
+.ty-glow-1{position:absolute;width:700px;height:700px;background:radial-gradient(ellipse,rgba(0,210,255,0.12) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:tyg 4s ease-in-out infinite alternate}
+.ty-glow-2{position:absolute;width:400px;height:400px;background:radial-gradient(ellipse,rgba(0,210,255,0.07) 0%,transparent 65%);top:35%;left:35%;transform:translate(-50%,-50%);pointer-events:none;animation:tyg 4s ease-in-out infinite alternate-reverse}
+@keyframes tyg{from{opacity:0.5;transform:translate(-50%,-50%) scale(1)}to{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+.ty-wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:620px}
+.ty-icon{width:64px;height:64px;border-radius:50%;background:rgba(0,210,255,0.1);border:1px solid rgba(0,210,255,0.25);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.ty-h{font-size:clamp(28px,4.5vw,52px);font-weight:700;letter-spacing:-1.5px;line-height:1.08;margin-bottom:12px}
+.ty-h .c{color:var(--cyan)}
+.ty-sub{font-size:15px;color:var(--muted);line-height:1.7;max-width:420px;margin-bottom:24px}
+.ty-sub strong{color:var(--white);font-weight:600}
+.ty-cards{display:flex;gap:10px;margin-bottom:24px;width:100%;max-width:560px}
+.ty-card{flex:1;padding:16px 18px;border-radius:12px;background:var(--glass);border:1px solid var(--gb);backdrop-filter:blur(16px);text-align:left}
+.ty-card-icon{width:28px;height:28px;border-radius:7px;background:rgba(0,210,255,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.ty-card-title{font-size:12px;font-weight:600;margin-bottom:3px}
+.ty-card-body{font-size:11px;color:var(--muted);line-height:1.5}
+.ty-num{font-size:20px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+.ty-small{font-size:12px;color:var(--dim);margin-top:14px}
+.ty-ig{display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:10px;background:linear-gradient(135deg,rgba(131,58,180,0.18),rgba(253,29,29,0.12),rgba(252,176,69,0.12));border:1px solid rgba(255,255,255,0.1);cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--white);transition:all 0.2s;text-decoration:none}
+.ty-ig:hover{background:linear-gradient(135deg,rgba(131,58,180,0.3),rgba(253,29,29,0.22),rgba(252,176,69,0.22));border-color:rgba(255,255,255,0.18)}
+.ty-ig svg{width:16px;height:16px;fill:var(--white);flex-shrink:0}
+
+@media(max-width:768px){
+  .nav{padding:0 18px;padding-top:env(safe-area-inset-top)}
+  .nav-spacer{display:none}
+  .bottom{padding:0 18px;padding-bottom:env(safe-area-inset-bottom)}
+  .slide-inner{padding:20px 18px 28px}
+  .slide.top .slide-inner{padding-top:28px}
+  .fg{grid-template-columns:1fr 1fr}
+  .steps{display:grid;grid-template-columns:1fr 1fr;gap:14px}.sl{display:none}
+  .sr{flex-direction:column}
+  .ty-cards{flex-direction:column}
+  .cr{width:100%}.ci2{padding:0 18px}
+  .cn{font-size:34px}
+  .hero-h{letter-spacing:-1.5px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="/">set<span class="d">drop</span></a>
+  <div class="nav-progress" id="nav-progress"></div>
+  <div class="nav-spacer"></div>
+</nav>
+
+<div class="slides">
+
+  <!-- 0: WELCOME -->
+  <div class="slide centred active" data-i="0">
+    <div class="slide-inner">
+    <div style="position:absolute;width:800px;height:600px;background:radial-gradient(ellipse,rgba(0,210,255,0.09) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center">
+      <div class="pill r" style="margin-bottom:26px"><div class="pill-dot"></div><span class="pill-text">FOR ARTISTS</span></div>
+      <h1 class="hero-h r" style="margin-bottom:20px">Get Booked.<br><span class="c">Get Heard.</span></h1>
+      <p class="hero-sub r" style="margin-bottom:14px">The booking platform built for independent artists. Zero booking fees. Verified career history. Your profile, your rules.</p>
+      <p class="r" style="font-size:13px;color:var(--dim);margin-bottom:0">Takes less than 2 minutes.</p>
+    </div>
+    </div>
+  </div>
+
+  <!-- 1: WHAT YOU GET -->
+  <div class="slide top" data-i="1">
+    <div class="slide-inner">
+    <div style="position:absolute;width:600px;height:380px;background:radial-gradient(ellipse,rgba(0,210,255,0.07) 0%,transparent 65%);top:40%;left:60%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div class="lbl lbl-c r" style="margin-bottom:10px">What You Get</div>
+    <h2 class="sh r" style="margin-bottom:22px">Your career. Your terms.</h2>
+    <div class="fg r">
+      <div class="fc fc-cy"><div class="fstat">0%</div><div class="ft">Booking fees. Forever.</div><div class="fb">Written into the company constitution. Not a promotion. A permanent structural guarantee.</div></div>
+      <div class="fc"><div class="furl">setdrop.com.au/you</div><div class="ft">Your profile link</div><div class="fb">One link that works as your profile, press kit, and booking page all in one. Perfect for your bio.</div></div>
+      <div class="fc"><div class="fi" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#888AAA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#888AAA" stroke-width="1.5"/></svg></div><div class="ft">Verified gig history</div><div class="fb">Every completed booking gets added to your verified record. Download a certificate anytime.</div></div>
+      <div class="fc"><div class="fi" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h3"/></svg></div><div class="ft">Invoice Maker</div><div class="fb">Professional invoices from the app. Multiple ABN and trading name profiles supported.</div></div>
+      <div class="fc"><div class="fi" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div><div class="ft">Auto EPK</div><div class="fb">Your press kit builds itself from your profile and gets sent automatically when you apply for a gig.</div></div>
+      <div class="fc"><div class="fi" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="ft">Profile Customisation</div><div class="fb">Make your page your own. Choose your layout, colours, cover media, and effects to match your brand.</div></div>
+      <div class="fc"><div class="fi" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="ft">Gig Discovery</div><div class="fb">Browse open gig calls matched to your genre, location, and availability and apply in one tap.</div></div>
+      <div class="fc"><div class="fi" style="margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg></div><div class="ft">Artist Network</div><div class="fb">Connect with other artists, find collaborators, and build relationships across the industry.</div></div>
+    </div>
+    </div>
+  </div>
+
+  <!-- 2: HOW BOOKING WORKS -->
+  <div class="slide centred" data-i="2">
+    <div class="slide-inner">
+    <div style="position:absolute;width:500px;height:380px;background:radial-gradient(ellipse,rgba(0,210,255,0.06) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%">
+      <div class="lbl lbl-c r" style="margin-bottom:12px">How It Works</div>
+      <h2 class="sh r" style="margin-bottom:10px">One platform. End to end.</h2>
+      <p class="ss r" style="margin-bottom:32px">Build your profile. Get booked. Get paid. All in one place.</p>
+      <div class="steps r">
+        <div class="step"><div class="sn">1</div><div class="st">Build your profile</div><div class="sd">Add your music, photos, and bio. Your profile is your pitch.</div><div class="sl"></div></div>
+        <div class="step"><div class="sn">2</div><div class="st">Apply for gigs</div><div class="sd">Browse matched gigs and apply with one tap. Your EPK goes with it automatically.</div><div class="sl"></div></div>
+        <div class="step"><div class="sn">3</div><div class="st">Get confirmed</div><div class="sd">The venue reviews and confirms you. A contract is generated straight away.</div><div class="sl"></div></div>
+        <div class="step"><div class="sn">4</div><div class="st">Play and get paid</div><div class="sd">Invoice sent. Payment settled. The gig goes on your verified history.</div></div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- 3: FOUNDING OFFER + SIGN UP -->
+  <div class="slide centred" data-i="3">
+    <div class="slide-inner">
+    <div style="position:absolute;width:700px;height:500px;background:radial-gradient(ellipse,rgba(0,210,255,0.09) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%;max-width:540px">
+      <div class="pill r" style="margin-bottom:22px" id="slide-3-pill"><div class="pill-dot"></div><span class="pill-text">LIMITED TO 250 FOUNDING ARTISTS</span></div>
+      <h2 class="sh r" style="margin-bottom:12px" id="slide-3-heading">Be one of the first.</h2>
+      <p class="ss r" style="margin-bottom:24px" id="slide-3-sub">Founding Artists get Pro locked at $14.99/mo for life, a permanent gold badge on their profile, and a say in how this platform grows. Once 250 spots are filled, this offer closes permanently.</p>
+      <div class="cr r" id="founding-stats" style="margin-bottom:10px;width:100%;max-width:380px">
+        <div class="ci2"><div class="cn cc" id="count-joined">—</div><div class="cl">Artists Joined</div></div>
+        <div class="csep"></div>
+        <div class="ci2"><div class="cn" id="count-remaining">—</div><div class="cl">Spots Remaining</div></div>
+      </div>
+      <div class="prog-wrap r" id="founding-progress" style="max-width:380px"><div class="pt2"><div class="pf" id="progress-fill" style="width:0%"></div></div></div>
+      <div class="r" style="width:100%;max-width:420px;margin-top:20px">
+        <div class="sr" style="margin-bottom:8px">
+          <input type="email" class="si" id="email-input" placeholder="your@email.com" onkeydown="if(event.key==='Enter')handleSignup()">
+          <button class="sb" id="submit-btn" onclick="handleSignup()">Join the Founding 250</button>
+        </div>
+        <p class="form-err" id="form-err" style="display:none"></p>
+      </div>
+      <p class="r" id="founding-disclaimer" style="font-size:12px;color:var(--dim);margin-top:10px;text-align:center">No credit card required. You will be first to access the app.</p>
+    </div>
+    </div>
+  </div>
+
+  <!-- 4: CHECK EMAIL -->
+  <div class="slide centred" data-i="4">
+    <div class="slide-inner">
+    <div class="ty-glow-1"></div><div class="ty-glow-2"></div>
+    <div class="ty-wrap">
+      <div class="ty-icon r" style="background:rgba(0,210,255,0.08);border-color:rgba(0,210,255,0.2)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+      </div>
+      <h2 class="ty-h r">Check your inbox.</h2>
+      <p class="ty-sub r">We sent a confirmation link to <strong id="check-email-addr">your email</strong>. Click it to lock in your founding spot.</p>
+      <div class="r" style="background:rgba(0,210,255,0.05);border:1px solid rgba(0,210,255,0.15);border-radius:12px;padding:16px 20px;width:100%;max-width:380px;text-align:left">
+        <p style="font-size:12px;color:var(--muted);margin:0 0 6px;font-weight:600;letter-spacing:.5px;text-transform:uppercase">What happens next</p>
+        <p style="font-size:13px;color:#CCC;line-height:1.65;margin:0">Once confirmed you will get your founding number, permanent gold badge, and Pro locked at $14.99/mo for life.</p>
+      </div>
+      <p class="ty-small r">No email? Check your spam or <button onclick="goTo(3)" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-size:12px;padding:0;font-family:inherit;text-decoration:underline">try a different address</button>.</p>
+    </div>
+    </div>
+  </div>
+
+  <!-- 5: YOU'RE IN -->
+  <div class="slide centred" data-i="5">
+    <div class="slide-inner">
+    <div class="ty-glow-1"></div><div class="ty-glow-2"></div>
+    <div class="ty-wrap">
+      <div class="ty-icon r">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <h2 class="ty-h r">You're in.<br><span class="c">This is just the beginning.</span></h2>
+      <p class="ty-sub r">Welcome to the founding group, <strong>Artist #<span id="ty-num">—</span></strong>. Your gold badge and lifetime rate are locked in.</p>
+      <div class="ty-cards r">
+        <div class="ty-card">
+          <div class="ty-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></div>
+          <div class="ty-num">#<span id="ty-num-card">—</span></div>
+          <div class="ty-card-title">Your founding number</div>
+          <div class="ty-card-body">Permanent. On your profile forever.</div>
+        </div>
+        <div class="ty-card">
+          <div class="ty-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+          <div class="ty-card-title">Pro at $14.99/mo</div>
+          <div class="ty-card-body">Your rate. Locked for life.</div>
+        </div>
+        <div class="ty-card">
+          <div class="ty-card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+          <div class="ty-card-title">Early access</div>
+          <div class="ty-card-body">Access to the app before it launches publicly.</div>
+        </div>
+      </div>
+      <a class="ty-ig r" href="https://instagram.com/setdrop.au" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" fill="currentColor"/></svg>
+        Follow @setdrop.au for launch updates
+      </a>
+      <p class="ty-small r">Melbourne, Australia. Built for the scene.</p>
+    </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom" id="bottom-bar">
+  <div class="slide-label" id="slide-label"></div>
+  <div class="nav-btns">
+    <button class="btn-back hidden" id="btn-back" onclick="prev()">Back</button>
+    <button class="btn-next" id="btn-next" onclick="next()">
+      <span id="btn-next-label">Get Started</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const SB_URL='https://hlqmsujjnwicclyecpkz.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscW1zdWpqbndpY2NseWVjcGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NTU0NDcsImV4cCI6MjA4OTEzMTQ0N30.BTgsCMxNZ1SYJf6lEpsVucm1qwJ4phmp1ooWeuX6HxQ';
+const HEADERS={'Content-Type':'application/json',apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`};
+
+const SLIDES=[
+  {label:'<strong>Welcome</strong>',next:'What You Get'},
+  {label:'<strong>Features</strong>',next:'How It Works'},
+  {label:'<strong>How It Works</strong>',next:'Founding 250'},
+  {label:'<strong>Founding 250</strong>',next:null},
+  {label:'<strong>Check Your Email</strong>',next:null},
+  {label:'<strong>You\'re In</strong>',next:null}
+];
+let cur=0;
+const total=SLIDES.length;
+
+function buildProgress(){
+  const el=document.getElementById('nav-progress');
+  el.innerHTML='';
+  // Only show progress for slides 0–3
+  for(let i=0;i<4;i++){const d=document.createElement('div');d.className='np'+(i===Math.min(cur,3)?' active':i<cur?' done':'');el.appendChild(d);}
+}
+function updateUI(){
+  const s=SLIDES[cur];
+  document.getElementById('slide-label').innerHTML=s.label;
+  const nb=document.getElementById('btn-next');
+  const lbl=document.getElementById('btn-next-label');
+  if(s.next===null){nb.classList.add('hidden');}
+  else{nb.classList.remove('hidden');lbl.textContent=s.next;}
+  const bb=document.getElementById('btn-back');
+  bb.classList.toggle('hidden',cur===0||cur>=4);
+  buildProgress();
+}
+function goTo(n){
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+  cur=Math.max(0,Math.min(total-1,n));
+  document.querySelector(`.slide[data-i="${cur}"]`).classList.add('active');
+  updateUI();
+}
+function next(){if(cur<3)goTo(cur+1);}
+function prev(){if(cur>0&&cur<4)goTo(cur-1);}
+
+async function getCount(){
+  try{const r=await fetch(`${SB_URL}/rest/v1/rpc/waitlist_count`,{method:'POST',headers:HEADERS,body:'{}'});return r.ok?await r.json():null;}catch{return null;}
+}
+async function sendOTP(email){
+  const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,options:{email_redirect_to:'https://setdrop.com.au/'}})});
+  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.msg||d.error_description||'Failed to send link');}
+}
+async function handleSignup(){
+  const email=document.getElementById('email-input').value.trim();
+  const err=document.getElementById('form-err');
+  err.style.display='none';
+  if(!email||!email.includes('@')){err.textContent='Please enter a valid email address.';err.style.display='block';return;}
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;btn.textContent='Sending…';
+  try{
+    await sendOTP(email);
+    document.getElementById('check-email-addr').textContent=email;
+    goTo(4);
+  }catch(e){
+    err.textContent=e.message||'Something went wrong. Please try again.';err.style.display='block';
+    btn.disabled=false;btn.textContent='Join the Founding 250';
+  }
+}
+
+// Check for confirmed token in URL (user clicked magic link)
+async function checkConfirmed(){
+  const hash=new URLSearchParams(window.location.hash.replace('#',''));
+  const token=hash.get('access_token');
+  if(!token)return;
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/user`,{headers:{...HEADERS,Authorization:`Bearer ${token}`}});
+    if(r.ok){
+      const user=await r.json();
+      // Get founding number
+      const wl=await fetch(`${SB_URL}/rest/v1/waitlist?email=eq.${encodeURIComponent(user.email)}&select=founding_number`,{headers:HEADERS});
+      if(wl.ok){const rows=await wl.json();if(rows[0]?.founding_number){document.getElementById('ty-num').textContent=rows[0].founding_number;document.getElementById('ty-num-card').textContent=rows[0].founding_number;}}
+      goTo(5);
+      history.replaceState(null,'',location.pathname);
+    }
+  }catch{}
+}
+
+const FOUNDING_CAP=250;
+async function init(){
+  checkConfirmed();
+  const count=await getCount();
+  if(count!=null){
+    const joined=count;
+    const remaining=Math.max(0,FOUNDING_CAP-joined);
+    const capReached=joined>=FOUNDING_CAP;
+    document.getElementById('count-joined').textContent=joined;
+    document.getElementById('count-remaining').textContent=remaining;
+    document.getElementById('progress-fill').style.width=Math.min(100,(joined/FOUNDING_CAP)*100)+'%';
+    if(capReached){
+      // Founding cap reached — update slide 3 copy
+      const pill=document.querySelector('#slide-3-pill');
+      if(pill)pill.innerHTML='<span class="pill-text">OPEN SIGNUP</span>';
+      const heading=document.querySelector('#slide-3-heading');
+      if(heading)heading.textContent='Join Setdrop.';
+      const subtext=document.querySelector('#slide-3-sub');
+      if(subtext)subtext.textContent='Sign up with your email and be among the first artists on the platform when we launch.';
+      const statsRow=document.getElementById('founding-stats');
+      if(statsRow)statsRow.style.display='none';
+      const prog=document.getElementById('founding-progress');
+      if(prog)prog.style.display='none';
+      const btn=document.getElementById('submit-btn');
+      if(btn)btn.textContent='Sign Up';
+      const disclaimer=document.getElementById('founding-disclaimer');
+      if(disclaimer)disclaimer.textContent='No credit card required.';
+    }
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')next();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prev();});
+let tx=0;
+document.querySelector('.slides').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+document.querySelector('.slides').addEventListener('touchend',e=>{const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>50&&cur<4){dx>0?next():prev();}},{passive:true});
+goTo(0);
+init();
+</script>
+</body>
+</html>
