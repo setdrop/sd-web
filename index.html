@@ -171,7 +171,14 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 .sf-review-by{font-size:8px;color:var(--dim);margin-top:5px}
 
 @media(max-width:1000px){.social-grid{grid-template-columns:1fr 1fr}.sf-card:first-child{grid-column:span 2}}
-@media(max-width:768px){.social-wrap{padding:60px 20px}.social-grid{grid-template-columns:1fr}.sf-card:first-child{grid-column:span 1}}
+@media(max-width:768px){
+  .social-wrap{padding:60px 0 60px}
+  .social-header{padding:0 20px}
+  .social-grid{display:flex;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:12px;padding:0 20px 4px}
+  .social-grid::-webkit-scrollbar{display:none}
+  .sf-card{flex:0 0 260px;min-width:260px}
+  .sf-card:first-child{grid-column:unset;flex:0 0 280px;min-width:280px}
+}
 
 /* VALUES GRID */
 .values-wrap{max-width:1100px;margin:0 auto;padding:96px 48px}
@@ -215,15 +222,21 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
   .values-grid{grid-template-columns:1fr}
 }
 @media(max-width:900px){
-  .hero{flex-direction:column-reverse;align-items:center;text-align:center;padding:40px 24px;min-height:auto}
+  .hero{flex-direction:column;align-items:center;text-align:center;padding:40px 24px 32px;min-height:auto;gap:28px}
   .hero::before{display:none}
-  .hero-left{align-items:center}
-  .hero-sub{max-width:100%}
-  .hero-right{width:100%;display:flex;flex-direction:column;align-items:center}
-  .phone{width:220px;height:440px}
+  .hero-left{align-items:center;gap:0;order:1}
+  .hero-h{margin-bottom:24px}
+  .hero-sub{display:none}
+  .hero-links{display:none}
+  .hero-right{width:100%;display:flex;flex-direction:column;align-items:center;order:2}
+  .phone{width:230px;height:460px}
+  .hero-mobile-sub{display:flex;flex-direction:column;align-items:center;gap:16px;padding:0 8px;order:3}
   .stats-inner{flex-wrap:wrap}
   .stat-item{min-width:50%;padding:24px 20px}
   .stat-item+.stat-item::before{display:none}
+}
+@media(min-width:901px){
+  .hero-mobile-sub{display:none}
 }
 @media(max-width:768px){
   .nav{padding:0 20px;padding-top:env(safe-area-inset-top)}
@@ -373,6 +386,14 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
       <a href="/faq">FAQ</a>
     </div>
   </div>
+  <!-- Mobile-only: sub + links shown below phone -->
+  <div class="hero-mobile-sub">
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;text-align:center">The booking platform connecting independent artists with venues. Zero booking fees for artists. Smart matching for businesses. Contracts and payments handled inside the app.</p>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center">
+      <a href="/pricing" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500">Pricing</a>
+      <a href="/faq" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500">FAQ</a>
+    </div>
+  </div>
 </section>
 </div>
 
@@ -462,7 +483,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
               <div class="hv-gig-tag">Sat 10pm</div>
             </div>
             <div style="display:flex;gap:8px;margin-top:6px">
-              <div style="flex:1;height:28px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 8px;font-size:9px;color:var(--muted)">$350 – $600</div>
+              <div style="flex:1;height:28px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 8px;font-size:9px;color:var(--muted)">$350 to $600</div>
               <div style="flex:1;height:28px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 8px;font-size:9px;color:var(--muted)">Collingwood</div>
             </div>
             <div class="hv-gig-btn" style="margin-top:14px">Post Gig →</div>
@@ -478,7 +499,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
         </div>
         <div class="how-step-visual">
           <div class="hv-applicants">
-            <div style="font-size:9px;font-weight:700;color:var(--muted);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Applicants — 6</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Applicants: 6</div>
             <div class="hv-app hv-app-top">
               <div class="hv-app-av" style="background:linear-gradient(135deg,rgba(0,210,255,0.4),rgba(0,210,255,0.1))"></div>
               <div><div class="hv-app-name">ZARA</div><div class="hv-app-sub">House · 31 verified gigs</div></div>
@@ -506,7 +527,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
         </div>
         <div class="how-step-visual">
           <div class="hv-contract">
-            <div class="hv-con-t">Booking Contract — #SD-2847</div>
+            <div class="hv-con-t">Booking Contract #SD-2847</div>
             <div class="hv-con-line"></div>
             <div class="hv-con-line hv-con-line-sm"></div>
             <div class="hv-con-line" style="width:85%"></div>
@@ -551,7 +572,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
   <div class="social-header">
     <div class="sec-label">Built for the Scene</div>
     <h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:700;letter-spacing:-1px;line-height:1.15;color:var(--white)">More than a booking tool.</h2>
-    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-top:16px">Setdrop includes the features that make the working relationship between artists and venues actually function — before, during, and after the gig.</p>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-top:16px">Setdrop includes the features that make the working relationship between artists and venues actually function. Before, during, and after the gig.</p>
   </div>
   <div class="social-grid">
 
@@ -636,7 +657,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
       <div class="sf-t">Booking analytics</div>
       <div class="sf-d">Venues can track spend by genre, see which nights perform best, and plan smarter. Artists see exactly where their applications are converting.</div>
       <div style="margin-top:18px;background:#0C0C16;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px">
-        <div style="font-size:9px;font-weight:700;color:var(--white);margin-bottom:12px">Spend by genre — last 30 days</div>
+        <div style="font-size:9px;font-weight:700;color:var(--white);margin-bottom:12px">Spend by genre, last 30 days</div>
         <div style="display:flex;flex-direction:column;gap:7px">
           <div>
             <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:8px;color:var(--muted)">House</span><span style="font-size:8px;font-weight:700;color:var(--white)">$2,140</span></div>
@@ -667,7 +688,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
   <div class="values-header">
     <div class="sec-label">What We Stand For</div>
     <h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:700;letter-spacing:-1px;line-height:1.15;color:var(--white)">Built with the scene, for the scene.</h2>
-    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-top:16px">Setdrop came from inside the industry — from someone who lived the frustrations independent artists face every day. That background shapes every decision we make.</p>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-top:16px">Setdrop came from inside the industry, from people who lived the frustrations independent artists face every day. That background shapes every decision we make.</p>
   </div>
   <div class="values-grid">
     <div class="val-card">
@@ -721,11 +742,6 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
           <h4>Company</h4>
           <a href="mailto:support@setdrop.com.au">Contact</a>
           <a href="https://instagram.com/setdrop.au" target="_blank" rel="noopener">Instagram</a>
-        </div>
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <a href="/terms">Terms and Conditions</a>
-          <a href="/privacy">Privacy Policy</a>
         </div>
       </div>
     </div>
