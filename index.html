@@ -51,22 +51,15 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 .sec-label{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px}
 
 /* HERO */
-.hero{min-height:calc(100vh - var(--nav-h) - var(--bar-h));display:flex;align-items:center;padding:60px 48px;gap:48px;max-width:1100px;margin:0 auto;position:relative}
+.hero{min-height:calc(100vh - var(--nav-h) - var(--bar-h));display:flex;flex-direction:column;justify-content:center;padding:60px 48px;max-width:1100px;margin:0 auto;position:relative}
 .hero::before{content:'';position:absolute;top:10%;right:5%;width:600px;height:600px;background:radial-gradient(ellipse,rgba(0,210,255,0.08) 0%,transparent 65%);pointer-events:none}
-.hero-left{flex:1;min-width:0;position:relative;z-index:1;display:flex;flex-direction:column;gap:20px}
+.hero-left{position:relative;z-index:1;display:flex;flex-direction:column;gap:20px}
 .hero-h{font-size:clamp(40px,5.5vw,72px);font-weight:700;line-height:1.05;letter-spacing:-2.5px}
 .hero-h .c{color:var(--cyan)}
-.hero-sub{font-size:clamp(15px,1.5vw,17px);color:var(--muted);line-height:1.7;max-width:440px}
+.hero-sub{font-size:clamp(15px,1.5vw,17px);color:var(--muted);line-height:1.7;max-width:560px}
 .hero-links{display:flex;gap:20px;flex-wrap:wrap}
 .hero-links a{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color 0.15s}
 .hero-links a:hover{color:var(--white)}
-.hero-right{flex-shrink:0;width:280px;position:relative;z-index:1}
-
-/* PHONE MOCKUP */
-.phone-wrap{display:flex;justify-content:center;align-items:center}
-.phone{width:260px;height:520px;background:#111118;border-radius:38px;border:6px solid #222230;box-shadow:0 0 0 1px rgba(255,255,255,0.06),0 40px 80px rgba(0,0,0,0.6),0 0 40px rgba(0,210,255,0.06);position:relative;overflow:hidden;margin:0 auto;flex-shrink:0}
-.phone::before{content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);width:60px;height:5px;background:#1a1a28;border-radius:3px;z-index:10}
-.phone-screen{position:absolute;inset:0;overflow:hidden}
 
 /* STATS STRIP */
 .stats-strip{border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);background:var(--surface)}
@@ -223,23 +216,12 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
   .values-grid{grid-template-columns:1fr}
 }
 @media(max-width:900px){
-  .hero{flex-direction:column;align-items:center;text-align:center;padding:40px 24px 32px;min-height:auto;gap:28px}
+  .hero{padding:40px 24px 48px;min-height:auto}
   .hero::before{display:none}
-  .hero-left{align-items:center;gap:0;order:1}
-  .hero-left .pill{margin-bottom:20px}
-  .hero-h{margin-bottom:0}
-  .hero-sub{display:none}
-  .hero-links{display:none}
-  .hero-right{width:100%;display:flex;flex-direction:column;align-items:center;order:2}
-  .phone-wrap{width:100%;overflow:visible}
-  .phone{transform:scale(0.78);transform-origin:top center;margin-bottom:-114px;}
-  .hero-mobile-sub{display:flex;flex-direction:column;align-items:center;gap:16px;padding:0 8px;order:3}
+  .hero-left{align-items:flex-start}
   .stats-inner{flex-wrap:wrap}
   .stat-item{min-width:50%;padding:24px 20px}
   .stat-item+.stat-item::before{display:none}
-}
-@media(min-width:901px){
-  .hero-mobile-sub{display:none}
 }
 @media(max-width:768px){
   .nav{padding:0 20px;padding-top:env(safe-area-inset-top)}
@@ -270,137 +252,6 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
 <!-- HERO -->
 <div style="max-width:1100px;margin:0 auto;padding:0 48px">
 <section class="hero" style="padding-left:0;padding-right:0">
-  <div class="hero-right">
-    <div class="phone-wrap">
-    <div class="phone">
-      <div class="phone-screen" style="background:#09090F;display:flex;flex-direction:column;text-align:left">
-        <!-- Status bar -->
-        <div style="padding:10px 16px 4px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-          <div style="font-size:10px;font-weight:700;color:var(--white)">9:41</div>
-          <div style="display:flex;gap:4px;align-items:center">
-            <svg width="10" height="8" viewBox="0 0 12 9" fill="none"><rect x="0" y="4" width="2" height="5" rx="0.5" fill="rgba(240,240,255,0.4)"/><rect x="3" y="3" width="2" height="6" rx="0.5" fill="rgba(240,240,255,0.55)"/><rect x="6" y="1.5" width="2" height="7.5" rx="0.5" fill="rgba(240,240,255,0.75)"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="rgba(240,240,255,0.9)"/></svg>
-            <svg width="11" height="8" viewBox="0 0 13 9" fill="none"><rect x="0.5" y="0.5" width="10" height="8" rx="1.5" stroke="rgba(240,240,255,0.5)" stroke-width="1"/><rect x="2" y="2" width="6.5" height="5" rx="0.5" fill="rgba(240,240,255,0.8)"/><path d="M11.5 3v3a1.5 1.5 0 000-3z" fill="rgba(240,240,255,0.5)"/></svg>
-          </div>
-        </div>
-        <!-- App header -->
-        <div style="padding:4px 12px 8px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06)">
-          <div>
-            <div style="font-size:15px;font-weight:700;letter-spacing:-0.4px;color:var(--white);line-height:1.2">set<span style="color:var(--cyan)">drop</span></div>
-            <div style="font-size:9px;color:var(--muted);margin-top:1px">Open gigs near you</div>
-          </div>
-          <div style="position:relative;width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(240,240,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-            <div style="position:absolute;top:3px;right:3px;width:4px;height:4px;border-radius:50%;background:var(--cyan);border:1px solid #09090F"></div>
-          </div>
-        </div>
-        <!-- Filter chips -->
-        <div style="display:flex;gap:5px;padding:8px 12px;flex-shrink:0;overflow:hidden">
-          <div style="padding:4px 9px;border-radius:20px;background:var(--cyan);font-size:9px;font-weight:700;color:#09090F;white-space:nowrap">All</div>
-          <div style="padding:4px 9px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:9px;font-weight:600;color:var(--muted);white-space:nowrap">Electronic</div>
-          <div style="padding:4px 9px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:9px;font-weight:600;color:var(--muted);white-space:nowrap">House</div>
-          <div style="padding:4px 9px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:9px;font-weight:600;color:var(--muted);white-space:nowrap">Techno</div>
-        </div>
-        <!-- Gig listings -->
-        <div style="flex:1;overflow:hidden;padding:0 10px;display:flex;flex-direction:column;gap:7px">
-
-          <!-- Gig 1 -->
-          <div style="background:rgba(0,210,255,0.05);border:1px solid rgba(0,210,255,0.18);border-radius:10px;padding:10px;position:relative;overflow:hidden">
-            <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(ellipse,rgba(0,210,255,0.08) 0%,transparent 70%);pointer-events:none"></div>
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px">
-              <div style="min-width:0">
-                <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:2px;text-align:left">Resident DJ Friday Night</div>
-                <div style="font-size:9px;color:var(--muted);text-align:left">Beneath, Collingwood</div>
-              </div>
-              <div style="font-size:10px;font-weight:700;color:var(--cyan);flex-shrink:0;margin-left:6px;white-space:nowrap">$280–$420</div>
-            </div>
-            <div style="display:flex;gap:3px;margin-bottom:5px;overflow:hidden">
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.15);font-size:8px;font-weight:600;color:var(--cyan)">House</div>
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.15);font-size:8px;font-weight:600;color:var(--cyan)">Techno</div>
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-size:8px;color:var(--muted)">Fri 11 Apr · 10pm</div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:8px;color:var(--muted)">5 hrs · 4 applicants</div>
-              <div style="padding:4px 10px;border-radius:6px;background:var(--cyan);font-size:9px;font-weight:700;color:#09090F">Apply</div>
-            </div>
-          </div>
-
-          <!-- Gig 2 -->
-          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px">
-              <div style="min-width:0">
-                <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:2px;text-align:left">Opening Set Saturday</div>
-                <div style="font-size:9px;color:var(--muted);text-align:left">Section 8, CBD</div>
-              </div>
-              <div style="font-size:9px;font-weight:600;color:var(--muted);flex-shrink:0;margin-left:6px">Negotiable</div>
-            </div>
-            <div style="display:flex;gap:3px;margin-bottom:5px">
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);font-size:8px;font-weight:600;color:var(--muted)">Electronic</div>
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);font-size:8px;color:var(--muted)">Sat 12 Apr · 9pm</div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:8px;color:var(--muted)">4 hrs · 2 applicants</div>
-              <div style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);font-size:9px;font-weight:700;color:var(--white)">Apply</div>
-            </div>
-          </div>
-
-          <!-- Gig 3 -->
-          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px">
-              <div style="min-width:0">
-                <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:2px;text-align:left">Late Night Techno</div>
-                <div style="font-size:9px;color:var(--muted);text-align:left">The Toff, CBD</div>
-              </div>
-              <div style="font-size:10px;font-weight:700;color:var(--white);flex-shrink:0;margin-left:6px">$500</div>
-            </div>
-            <div style="display:flex;gap:3px;margin-bottom:5px">
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);font-size:8px;font-weight:600;color:var(--muted)">Techno</div>
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);font-size:8px;color:var(--muted)">Sat 12 Apr · 11pm</div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:8px;color:var(--muted)">6 hrs · 7 applicants</div>
-              <div style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);font-size:9px;font-weight:700;color:var(--white)">Apply</div>
-            </div>
-          </div>
-
-          <!-- Gig 4 (partial — fills remaining space) -->
-          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px">
-              <div style="min-width:0">
-                <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:2px;text-align:left">Sunday Rooftop Session</div>
-                <div style="font-size:9px;color:var(--muted);text-align:left">Howler, Brunswick</div>
-              </div>
-              <div style="font-size:10px;font-weight:700;color:var(--white);flex-shrink:0;margin-left:6px">$350</div>
-            </div>
-            <div style="display:flex;gap:3px">
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);font-size:8px;font-weight:600;color:var(--muted)">House</div>
-              <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);font-size:8px;color:var(--muted)">Sun 13 Apr · 4pm</div>
-            </div>
-          </div>
-
-        </div>
-        <!-- Bottom nav -->
-        <div style="padding:7px 12px 10px;display:flex;justify-content:space-around;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:#09090F">
-          <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            <div style="font-size:7px;color:var(--cyan);font-weight:600">Gigs</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(136,138,170,0.5)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-            <div style="font-size:7px;color:rgba(136,138,170,0.5);font-weight:600">Explore</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(136,138,170,0.5)" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            <div style="font-size:7px;color:rgba(136,138,170,0.5);font-weight:600">Messages</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(136,138,170,0.5)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-            <div style="font-size:7px;color:rgba(136,138,170,0.5);font-weight:600">Profile</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div><!-- /phone-wrap -->
-  </div>
   <div class="hero-left">
     <div class="pill" style="width:fit-content"><div class="pill-dot"></div><span class="pill-text">LAUNCHING IN MELBOURNE</span></div>
     <h1 class="hero-h">Get booked.<br><span class="c">Get heard.</span></h1>
@@ -408,14 +259,6 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
     <div class="hero-links">
       <a href="/pricing">Pricing</a>
       <a href="/faq">FAQ</a>
-    </div>
-  </div>
-  <!-- Mobile-only: sub + links shown below phone -->
-  <div class="hero-mobile-sub">
-    <p style="font-size:15px;color:var(--muted);line-height:1.7;text-align:center">The booking platform connecting independent artists with venues. Zero booking fees for artists. Smart matching for businesses. Contracts and payments handled inside the app.</p>
-    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center">
-      <a href="/pricing" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500">Pricing</a>
-      <a href="/faq" style="font-size:13px;color:var(--muted);text-decoration:none;font-weight:500">FAQ</a>
     </div>
   </div>
 </section>
