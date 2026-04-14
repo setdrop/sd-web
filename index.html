@@ -275,7 +275,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
     <div class="phone">
       <div class="phone-screen" style="background:#09090F;display:flex;flex-direction:column;text-align:left">
         <!-- Status bar -->
-        <div style="padding:10px 12px 4px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="padding:10px 16px 4px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
           <div style="font-size:10px;font-weight:700;color:var(--white)">9:41</div>
           <div style="display:flex;gap:4px;align-items:center">
             <svg width="10" height="8" viewBox="0 0 12 9" fill="none"><rect x="0" y="4" width="2" height="5" rx="0.5" fill="rgba(240,240,255,0.4)"/><rect x="3" y="3" width="2" height="6" rx="0.5" fill="rgba(240,240,255,0.55)"/><rect x="6" y="1.5" width="2" height="7.5" rx="0.5" fill="rgba(240,240,255,0.75)"/><rect x="9" y="0" width="2" height="9" rx="0.5" fill="rgba(240,240,255,0.9)"/></svg>
@@ -313,7 +313,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
               </div>
               <div style="font-size:10px;font-weight:700;color:var(--cyan);flex-shrink:0;margin-left:6px;white-space:nowrap">$280–$420</div>
             </div>
-            <div style="display:flex;gap:3px;margin-bottom:5px;flex-wrap:wrap">
+            <div style="display:flex;gap:3px;margin-bottom:5px;overflow:hidden">
               <div style="padding:2px 7px;border-radius:5px;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.15);font-size:8px;font-weight:600;color:var(--cyan)">House</div>
               <div style="padding:2px 7px;border-radius:5px;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.15);font-size:8px;font-weight:600;color:var(--cyan)">Techno</div>
               <div style="padding:2px 7px;border-radius:5px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-size:8px;color:var(--muted)">Fri 11 Apr · 10pm</div>
@@ -793,17 +793,15 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
 <script>
 (async()=>{
   try{
-    const r=await fetch('https://hlqmsujjnwicclyecpkz.supabase.co/rest/v1/rpc/waitlist_count',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscW1zdWpqbndpY2NseWVjcGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NTU0NDcsImV4cCI6MjA4OTEzMTQ0N30.BTgsCMxNZ1SYJf6lEpsVucm1qwJ4phmp1ooWeuX6HxQ'},
-      body:'{}'
+    const r=await fetch('https://hlqmsujjnwicclyecpkz.supabase.co/rest/v1/waitlist?select=id',{
+      method:'HEAD',
+      headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscW1zdWpqbndpY2NseWVjcGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NTU0NDcsImV4cCI6MjA4OTEzMTQ0N30.BTgsCMxNZ1SYJf6lEpsVucm1qwJ4phmp1ooWeuX6HxQ','Prefer':'count=exact'}
     });
-    if(r.ok){
-      const count=await r.json();
-      if(count!=null){
-        const el=document.getElementById('stat-artists');
-        el.innerHTML='<span class="cy">'+count+'</span>+';
-      }
+    const range=r.headers.get('Content-Range');
+    const count=range&&range.split('/')[1];
+    if(count!=null&&count!=='*'){
+      const el=document.getElementById('stat-artists');
+      el.innerHTML='<span class="cy">'+count+'</span>+';
     }
   }catch{}
 })();
