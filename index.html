@@ -658,9 +658,9 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
 <script>
 (async()=>{
   try{
-    const r=await fetch('https://hlqmsujjnwicclyecpkz.supabase.co/rest/v1/waitlist?select=id',{
+    const r=await fetch('https://qkvlhafhwbwcjbxkfgqm.supabase.co/rest/v1/waitlist?select=id',{
       method:'HEAD',
-      headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscW1zdWpqbndpY2NseWVjcGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NTU0NDcsImV4cCI6MjA4OTEzMTQ0N30.BTgsCMxNZ1SYJf6lEpsVucm1qwJ4phmp1ooWeuX6HxQ','Prefer':'count=exact'}
+      headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrdmxoYWZod2J3Y2pieGtmZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1OTgyMjksImV4cCI6MjA5MjE3NDIyOX0.FGeIR34-BW01azVLkb6Z3GNhFHKi4sV5bZ4FG_9ciG4','Prefer':'count=exact'}
     });
     const range=r.headers.get('Content-Range');
     const count=range&&range.split('/')[1];

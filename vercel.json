@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/dev", "destination": "/dev.html" },
+    { "source": "/dev", "destination": "/dev_console.html" },
     { "source": "/edit", "destination": "/edit.html" },
     { "source": "/customise", "destination": "/customise.html" },
     { "source": "/analytics", "destination": "/analytics.html" },
