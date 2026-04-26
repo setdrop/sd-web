@@ -29,7 +29,7 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:0 48px;padding-top:env(safe-area-inset-top);height:calc(var(--nav-h) + env(safe-area-inset-top));background:rgba(9,9,15,0.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
 .nav-brand{font-size:22px;font-weight:700;letter-spacing:-0.5px;text-decoration:none;color:var(--white)}
-.nav-brand .d{color:var(--cyan)}
+.nav-brand .d{color:var(--white)}
 .nav-links{display:flex;align-items:center;gap:4px}
 .nav-links a{font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;padding:7px 14px;border-radius:8px;transition:color 0.15s,background 0.15s}
 .nav-links a:hover{color:var(--white);background:var(--glass)}
@@ -52,7 +52,7 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 
 /* HERO */
 .hero{min-height:calc(100vh - var(--nav-h) - var(--bar-h));display:flex;flex-direction:column;justify-content:center;padding:60px 48px;max-width:1100px;margin:0 auto;position:relative}
-.hero::before{content:'';position:absolute;top:10%;right:5%;width:600px;height:600px;background:radial-gradient(ellipse,rgba(0,210,255,0.08) 0%,transparent 65%);pointer-events:none}
+.hero::before{content:'';position:absolute;top:50%;left:-120px;transform:translateY(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(0,210,255,0.08) 0%,transparent 65%);pointer-events:none}
 .hero-left{position:relative;z-index:1;display:flex;flex-direction:column;gap:20px}
 .hero-h{font-size:clamp(40px,5.5vw,72px);font-weight:700;line-height:1.05;letter-spacing:-2.5px}
 .hero-h .c{color:var(--cyan)}
@@ -67,7 +67,7 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 .stat-item{flex:1;padding:32px 24px;display:flex;flex-direction:column;gap:4px;position:relative}
 .stat-item+.stat-item::before{content:'';position:absolute;left:0;top:24px;bottom:24px;width:1px;background:rgba(255,255,255,0.06)}
 .stat-n{font-size:clamp(32px,4vw,48px);font-weight:700;letter-spacing:-2px;color:var(--white);line-height:1}
-.stat-n .cy{color:var(--cyan)}
+.stat-n .cy{color:inherit}
 .stat-l{font-size:12px;color:var(--white);margin-top:6px;line-height:1.5}
 
 /* PROBLEM SECTION - split layout */
@@ -102,9 +102,9 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 .how-step{display:flex;align-items:center;gap:64px;padding:48px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
 .how-step:last-child{border-bottom:none;padding-bottom:0}
 .how-step:first-child{padding-top:0}
-.how-step-rev{flex-direction:row-reverse}
+.how-step-rev{flex-direction:row}
 .how-step-text{flex:1}
-.how-step-n{font-size:clamp(60px,8vw,100px);font-weight:700;letter-spacing:-4px;color:rgba(0,210,255,0.07);line-height:1;margin-bottom:12px}
+.how-step-n{font-size:clamp(60px,8vw,100px);font-weight:700;letter-spacing:-4px;color:rgba(0,210,255,0.5);line-height:1;margin-bottom:12px}
 .how-step-t{font-size:clamp(18px,2.5vw,24px);font-weight:700;letter-spacing:-0.5px;color:var(--white);margin-bottom:10px}
 .how-step-d{font-size:15px;color:var(--muted);line-height:1.75;max-width:380px}
 .how-step-visual{flex-shrink:0;width:320px;height:200px;border-radius:16px;border:1px solid rgba(255,255,255,0.07);background:#0C0C16;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
@@ -145,8 +145,6 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 .social-header{max-width:600px;margin-bottom:56px}
 .social-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 .sf-card{background:var(--surface);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:28px;position:relative;overflow:hidden}
-.sf-card:first-child{grid-column:span 2;background:rgba(0,210,255,0.025);border-color:rgba(0,210,255,0.1)}
-.sf-card::before{content:'';position:absolute;top:0;right:0;width:160px;height:160px;background:radial-gradient(ellipse,rgba(0,210,255,0.04) 0%,transparent 65%);pointer-events:none}
 .sf-icon{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
 .sf-t{font-size:16px;font-weight:700;letter-spacing:-0.3px;color:var(--white);margin-bottom:8px}
 .sf-d{font-size:13px;color:var(--muted);line-height:1.7}
@@ -164,14 +162,13 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 .sf-review-d{font-size:9px;color:var(--muted);line-height:1.5}
 .sf-review-by{font-size:8px;color:var(--dim);margin-top:5px}
 
-@media(max-width:1000px){.social-grid{grid-template-columns:1fr 1fr}.sf-card:first-child{grid-column:span 2}}
+@media(max-width:1000px){.social-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){
   .social-wrap{padding:60px 0 60px}
   .social-header{padding:0 20px}
   .social-grid{display:flex;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:12px;padding:0 20px 4px}
   .social-grid::-webkit-scrollbar{display:none}
   .sf-card{flex:0 0 260px;min-width:260px}
-  .sf-card:first-child{grid-column:unset;flex:0 0 280px;min-width:280px}
 }
 
 /* VALUES GRID */
@@ -180,7 +177,6 @@ body{width:100%;background:var(--bg);color:var(--white);font-family:'DM Sans',sy
 .values-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden}
 .val-card{background:var(--bg);padding:36px 32px;position:relative;overflow:hidden}
 .val-card:nth-child(1){background:rgba(0,210,255,0.025)}
-.val-card::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(0,210,255,0.04) 0%,transparent 65%);pointer-events:none}
 .val-icon{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
 .val-t{font-size:17px;font-weight:700;letter-spacing:-0.3px;color:var(--white);margin-bottom:8px}
 .val-d{font-size:13px;color:var(--muted);line-height:1.7}
@@ -194,7 +190,7 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
 .footer-top{display:flex;gap:48px;margin-bottom:40px;flex-wrap:wrap}
 .footer-brand{flex-shrink:0}
 .footer-logo{font-size:20px;font-weight:700;letter-spacing:-0.5px;color:var(--white);text-decoration:none;display:inline-block;margin-bottom:10px}
-.footer-logo .d{color:var(--cyan)}
+.footer-logo .d{color:var(--white)}
 .footer-tagline{font-size:13px;color:var(--muted);line-height:1.6;max-width:200px}
 .footer-cols{display:flex;gap:48px;flex:1;flex-wrap:wrap}
 .footer-col h4{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
@@ -543,6 +539,32 @@ footer{background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);pad
           <div style="flex:1;text-align:center"><div style="font-size:13px;font-weight:700;color:var(--white);letter-spacing:-0.5px">12</div><div style="font-size:8px;color:var(--muted);margin-top:1px">Gigs booked</div></div>
           <div style="flex:1;text-align:center"><div style="font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:-0.5px">94%</div><div style="font-size:8px;color:var(--muted);margin-top:1px">Fill rate</div></div>
           <div style="flex:1;text-align:center"><div style="font-size:13px;font-weight:700;color:var(--white);letter-spacing:-0.5px">4.9★</div><div style="font-size:8px;color:var(--muted);margin-top:1px">Avg rating</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sf-card">
+      <div class="sf-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888AAA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+      <div class="sf-t">Gig Alerts</div>
+      <div class="sf-d">Save the filters that fit your style. Get a push the moment a new gig lands that matches. Stop refreshing the feed.</div>
+      <div style="margin-top:18px;background:#0C0C16;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:9px;font-weight:700;color:var(--white)">Melbourne house gigs</div>
+          <div style="font-size:8px;color:var(--cyan);font-weight:600">Active</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <div style="padding:3px 8px;border-radius:5px;background:rgba(0,210,255,0.07);border:1px solid rgba(0,210,255,0.12);font-size:8px;color:var(--cyan);font-weight:600">House</div>
+          <div style="padding:3px 8px;border-radius:5px;background:rgba(0,210,255,0.07);border:1px solid rgba(0,210,255,0.12);font-size:8px;color:var(--cyan);font-weight:600">Deep house</div>
+          <div style="padding:3px 8px;border-radius:5px;background:rgba(0,210,255,0.07);border:1px solid rgba(0,210,255,0.12);font-size:8px;color:var(--cyan);font-weight:600">DJ</div>
+          <div style="padding:3px 8px;border-radius:5px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);font-size:8px;color:var(--muted);font-weight:600">$300+</div>
+          <div style="padding:3px 8px;border-radius:5px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);font-size:8px;color:var(--muted);font-weight:600">30km</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:7px;background:rgba(0,210,255,0.05);border:1px solid rgba(0,210,255,0.12);margin-top:2px">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0;animation:blink 2s ease-in-out infinite"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:9px;font-weight:600;color:var(--white)">New match · Fitzroy Friday</div>
+            <div style="font-size:8px;color:var(--muted)">Peak slot · $500-600 · 4 hours ago</div>
+          </div>
         </div>
       </div>
     </div>
