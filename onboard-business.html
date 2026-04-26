@@ -295,7 +295,7 @@ async function handleBizSignup(){
     });
     if(!r.ok&&r.status!==409){
       // Fallback: try OTP magic link if table doesn't exist
-      const fb=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,options:{email_redirect_to:'https://setdrop.com.au/'}})});
+      const fb=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,options:{email_redirect_to:'https://setdrop.com.au/confirmed'}})});
       if(!fb.ok)throw new Error('Something went wrong. Please try again.');
     }
     document.getElementById('biz-conf-email').textContent=email;

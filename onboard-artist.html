@@ -348,7 +348,7 @@ async function getCount(){
   try{const r=await fetch(`${SB_URL}/rest/v1/rpc/waitlist_count`,{method:'POST',headers:HEADERS,body:'{}'});return r.ok?await r.json():null;}catch{return null;}
 }
 async function sendOTP(email){
-  const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,options:{email_redirect_to:'https://setdrop.com.au/'}})});
+  const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,options:{email_redirect_to:'https://setdrop.com.au/confirmed'}})});
   if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.msg||d.error_description||'Failed to send link');}
 }
 async function handleSignup(){
@@ -357,14 +357,16 @@ async function handleSignup(){
   err.style.display='none';
   if(!email||!email.includes('@')){err.textContent='Please enter a valid email address.';err.style.display='block';return;}
   const btn=document.getElementById('submit-btn');
+  const originalLabel=btn.textContent;
   btn.disabled=true;btn.textContent='Sending…';
   try{
     await sendOTP(email);
     document.getElementById('check-email-addr').textContent=email;
+    btn.disabled=false;btn.textContent=originalLabel;
     goTo(4);
   }catch(e){
     err.textContent=e.message||'Something went wrong. Please try again.';err.style.display='block';
-    btn.disabled=false;btn.textContent='Join the Founding 250';
+    btn.disabled=false;btn.textContent=originalLabel;
   }
 }
 
