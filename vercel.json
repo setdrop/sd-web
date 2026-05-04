@@ -12,6 +12,7 @@
     { "source": "/onboard-artist", "destination": "/onboard-artist.html" },
     { "source": "/onboard-business", "destination": "/onboard-business.html" },
     { "source": "/pricing", "destination": "/pricing.html" },
-    { "source": "/faq", "destination": "/faq.html" }
+    { "source": "/faq", "destination": "/faq.html" },
+    { "source": "/reset-password", "destination": "/reset-password.html" }
   ]
 }

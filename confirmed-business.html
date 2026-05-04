@@ -198,14 +198,33 @@ a{color:inherit;text-decoration:none}
     </a>
   </div>
 
-  <p class="foot r">Melbourne, Australia. Launching soon.</p>
+  <p class="foot r">For the rooms that book live.</p>
 </div>
 
 <script>
-// Strip the auth fragment from the URL so a refresh doesn't reuse the consumed token.
-if(window.location.hash && window.location.hash.includes('access_token')){
-  history.replaceState(null,'',location.pathname);
-}
+// Custom verification: token comes from the email link as ?token=...
+// We strip it from the URL bar before any UI renders and POST it to the
+// waitlist-verify Edge Function which marks the business_waitlist row
+// verified. There's no founding programme on the business side, so the
+// success copy stays the same regardless.
+(async()=>{
+  const SB_URL='https://qkvlhafhwbwcjbxkfgqm.supabase.co';
+  const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrdmxoYWZod2J3Y2pieGtmZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1OTgyMjksImV4cCI6MjA5MjE3NDIyOX0.FGeIR34-BW01azVLkb6Z3GNhFHKi4sV5bZ4FG_9ciG4';
+  const url=new URL(window.location.href);
+  const token=url.searchParams.get('token');
+  if(token){
+    url.searchParams.delete('token');
+    history.replaceState(null,'',url.pathname+(url.searchParams.toString()?'?'+url.searchParams.toString():'')+url.hash);
+  }
+  if(!token)return;
+  try{
+    await fetch(`${SB_URL}/functions/v1/waitlist-verify`,{
+      method:'POST',
+      headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json'},
+      body:JSON.stringify({token,account_type:'business'})
+    });
+  }catch{}
+})();
 </script>
 
 </body>

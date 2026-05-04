@@ -348,9 +348,15 @@ async function getCount(){
   try{const r=await fetch(`${SB_URL}/rest/v1/rpc/waitlist_count`,{method:'POST',headers:HEADERS,body:'{}'});return r.ok?await r.json():null;}catch{return null;}
 }
 async function sendOTP(email){
-  const redirect=encodeURIComponent('https://setdrop.com.au/confirmed');
-  const r=await fetch(`${SB_URL}/auth/v1/otp?redirect_to=${redirect}`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,data:{account_type:'artist'}})});
-  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.msg||d.error_description||'Failed to send link');}
+  // Custom waitlist signup. Hits the waitlist-signup Edge Function which
+  // writes ONLY to public.waitlist (no auth.users row) and dispatches the
+  // verification email via Resend's HTTP API.
+  const r=await fetch(`${SB_URL}/functions/v1/waitlist-signup`,{
+    method:'POST',
+    headers:HEADERS,
+    body:JSON.stringify({email,account_type:'artist'})
+  });
+  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error((d&&d.error&&d.error.message)||'Failed to send link');}
 }
 async function handleSignup(){
   const email=document.getElementById('email-input').value.trim();

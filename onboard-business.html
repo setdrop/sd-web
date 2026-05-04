@@ -222,7 +222,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
           <div class="ty-what-text">Your feedback shapes the business-side features</div>
         </div>
       </div>
-      <p class="ty-small r">Melbourne, Australia. Launching soon.</p>
+      <p class="ty-small r">Watch your inbox.</p>
     </div>
     </div>
   </div>
@@ -289,22 +289,17 @@ async function handleBizSignup(){
   const originalLabel=btn.textContent;
   btn.disabled=true;btn.textContent='Sending…';
   try{
-    // Send the confirmation email via Supabase Auth -> Resend SMTP. The
-    // BEFORE-INSERT trigger on auth.users routes the new row into
-    // public.business_waitlist when account_type === 'business'.
-    const redirect=encodeURIComponent('https://setdrop.com.au/confirmed-business');
-    const r=await fetch(`${SB_URL}/auth/v1/otp?redirect_to=${redirect}`,{
+    // Custom waitlist signup. Hits the waitlist-signup Edge Function which
+    // writes ONLY to public.business_waitlist (no auth.users row) and
+    // dispatches the confirmation email via Resend's HTTP API.
+    const r=await fetch(`${SB_URL}/functions/v1/waitlist-signup`,{
       method:'POST',
       headers:HEADERS,
-      body:JSON.stringify({
-        email,
-        create_user:true,
-        data:{account_type:'business'}
-      })
+      body:JSON.stringify({email,account_type:'business'})
     });
     if(!r.ok){
       const d=await r.json().catch(()=>({}));
-      throw new Error(d.msg||d.error_description||'Something went wrong. Please try again.');
+      throw new Error((d&&d.error&&d.error.message)||'Something went wrong. Please try again.');
     }
     document.getElementById('biz-conf-email').textContent=email;
     btn.disabled=false;btn.textContent=originalLabel;
