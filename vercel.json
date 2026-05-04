@@ -8,6 +8,7 @@
     { "source": "/verify", "destination": "/verify.html" },
     { "source": "/verify/:code", "destination": "/verify.html" },
     { "source": "/confirmed", "destination": "/confirmed.html" },
+    { "source": "/confirmed-business", "destination": "/confirmed-business.html" },
     { "source": "/onboard-artist", "destination": "/onboard-artist.html" },
     { "source": "/onboard-business", "destination": "/onboard-business.html" },
     { "source": "/pricing", "destination": "/pricing.html" },

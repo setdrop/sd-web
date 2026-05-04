@@ -206,8 +206,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="ty-icon r">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
       </div>
-      <h2 class="ty-h r">You're on the list.<br><span class="c">We'll be in touch.</span></h2>
-      <p class="ty-sub r">Thanks for joining. We'll reach out to <strong id="biz-conf-email">your email</strong> when we're ready to onboard your venue.</p>
+      <h2 class="ty-h r">Check your inbox.<br><span class="c">Confirm your spot.</span></h2>
+      <p class="ty-sub r">We sent a confirmation link to <strong id="biz-conf-email">your email</strong>. Click it to lock in your place on the waitlist.</p>
       <div class="ty-what r">
         <div class="ty-what-item">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#00D2FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#00D2FF" stroke-width="1.5"/></svg>
@@ -286,23 +286,32 @@ async function handleBizSignup(){
   err.style.display='none';
   if(!email||!email.includes('@')){err.textContent='Please enter a valid email address.';err.style.display='block';return;}
   const btn=document.getElementById('biz-btn');
-  btn.disabled=true;btn.textContent='Joining…';
+  const originalLabel=btn.textContent;
+  btn.disabled=true;btn.textContent='Sending…';
   try{
-    const r=await fetch(`${SB_URL}/rest/v1/business_waitlist`,{
+    // Send the confirmation email via Supabase Auth -> Resend SMTP. The
+    // BEFORE-INSERT trigger on auth.users routes the new row into
+    // public.business_waitlist when account_type === 'business'.
+    const redirect=encodeURIComponent('https://setdrop.com.au/confirmed-business');
+    const r=await fetch(`${SB_URL}/auth/v1/otp?redirect_to=${redirect}`,{
       method:'POST',
-      headers:{...HEADERS,Prefer:'return=minimal'},
-      body:JSON.stringify({email,created_at:new Date().toISOString()})
+      headers:HEADERS,
+      body:JSON.stringify({
+        email,
+        create_user:true,
+        data:{account_type:'business'}
+      })
     });
-    if(!r.ok&&r.status!==409){
-      // Fallback: try OTP magic link if table doesn't exist
-      const fb=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,options:{email_redirect_to:'https://setdrop.com.au/confirmed'}})});
-      if(!fb.ok)throw new Error('Something went wrong. Please try again.');
+    if(!r.ok){
+      const d=await r.json().catch(()=>({}));
+      throw new Error(d.msg||d.error_description||'Something went wrong. Please try again.');
     }
     document.getElementById('biz-conf-email').textContent=email;
+    btn.disabled=false;btn.textContent=originalLabel;
     goTo(4);
   }catch(e){
     err.textContent=e.message||'Something went wrong. Please try again.';err.style.display='block';
-    btn.disabled=false;btn.textContent='Join Waitlist';
+    btn.disabled=false;btn.textContent=originalLabel;
   }
 }
 

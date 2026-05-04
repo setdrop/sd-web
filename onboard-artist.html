@@ -348,7 +348,8 @@ async function getCount(){
   try{const r=await fetch(`${SB_URL}/rest/v1/rpc/waitlist_count`,{method:'POST',headers:HEADERS,body:'{}'});return r.ok?await r.json():null;}catch{return null;}
 }
 async function sendOTP(email){
-  const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,options:{email_redirect_to:'https://setdrop.com.au/confirmed'}})});
+  const redirect=encodeURIComponent('https://setdrop.com.au/confirmed');
+  const r=await fetch(`${SB_URL}/auth/v1/otp?redirect_to=${redirect}`,{method:'POST',headers:HEADERS,body:JSON.stringify({email,create_user:true,data:{account_type:'artist'}})});
   if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.msg||d.error_description||'Failed to send link');}
 }
 async function handleSignup(){
