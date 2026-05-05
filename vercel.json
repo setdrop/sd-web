@@ -1,6 +1,9 @@
 {
+  "redirects": [
+    { "source": "/dev", "destination": "/operator", "permanent": true }
+  ],
   "rewrites": [
-    { "source": "/dev", "destination": "/dev_console.html" },
+    { "source": "/operator", "destination": "/operator.html" },
     { "source": "/edit", "destination": "/edit.html" },
     { "source": "/customise", "destination": "/customise.html" },
     { "source": "/analytics", "destination": "/analytics.html" },
