@@ -13,6 +13,7 @@
     { "source": "/onboard-business", "destination": "/onboard-business.html" },
     { "source": "/pricing", "destination": "/pricing.html" },
     { "source": "/faq", "destination": "/faq.html" },
-    { "source": "/reset-password", "destination": "/reset-password.html" }
+    { "source": "/reset-password", "destination": "/reset-password.html" },
+    { "source": "/auth-confirmed", "destination": "/auth-confirmed.html" }
   ]
 }

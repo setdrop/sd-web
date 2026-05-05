@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Email confirmed · Setdrop</title>
+<meta name="description" content="Your Setdrop account email is confirmed.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090F;--cyan:#00D2FF;--white:#F0F0FF;--muted:#888AAA;--dim:#3A3A5A;
+  --glass:rgba(255,255,255,0.05);--gb:rgba(255,255,255,0.09);
+}
+html,body{width:100%;min-height:100vh;background:var(--bg);color:var(--white);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(60px + env(safe-area-inset-top) + 28px) 24px calc(env(safe-area-inset-bottom) + 28px);
+  position:relative;overflow-x:hidden
+}
+a{color:inherit;text-decoration:none}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:flex-start;padding:0 40px;padding-top:env(safe-area-inset-top);height:calc(60px + env(safe-area-inset-top));background:rgba(9,9,15,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-brand{font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--white)}
+
+.glow-1{position:absolute;width:700px;height:700px;background:radial-gradient(ellipse,rgba(0,210,255,0.12) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:glow 4s ease-in-out infinite alternate;z-index:0}
+.glow-2{position:absolute;width:420px;height:420px;background:radial-gradient(ellipse,rgba(0,210,255,0.07) 0%,transparent 65%);top:35%;left:35%;transform:translate(-50%,-50%);pointer-events:none;animation:glow 4s ease-in-out infinite alternate-reverse;z-index:0}
+@keyframes glow{from{opacity:0.5;transform:translate(-50%,-50%) scale(1)}to{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+
+.wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:480px;width:100%}
+.r{animation:up 0.55s cubic-bezier(0.16,1,0.3,1) both}
+.r:nth-child(1){animation-delay:0.05s}
+.r:nth-child(2){animation-delay:0.13s}
+.r:nth-child(3){animation-delay:0.21s}
+.r:nth-child(4){animation-delay:0.30s}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.icon{width:64px;height:64px;border-radius:50%;background:rgba(0,210,255,0.1);border:1px solid rgba(0,210,255,0.25);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.h{font-size:clamp(28px,4.5vw,48px);font-weight:700;letter-spacing:-1.5px;line-height:1.08;margin-bottom:10px}
+.h .c{color:var(--cyan)}
+.sub{font-size:15px;color:var(--muted);line-height:1.7;max-width:420px;margin-bottom:28px}
+.sub strong{color:var(--white);font-weight:600}
+
+.foot{font-size:12px;color:var(--dim);margin-top:24px}
+
+@media(max-width:600px){
+  .nav{padding:0 18px;padding-top:env(safe-area-inset-top)}
+  .h{letter-spacing:-1px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="/">Set<span class="d">drop</span></a>
+</nav>
+
+<div class="wrap">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <div class="icon r">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 12l2 2 4-4"/>
+      <circle cx="12" cy="12" r="10"/>
+    </svg>
+  </div>
+
+  <h1 class="h r">Email <span class="c">confirmed</span>.</h1>
+  <p class="sub r">You're all set. Open the Setdrop app and sign in with your password to keep going.</p>
+
+  <p class="foot r">Setdrop · Built for live music</p>
+</div>
+
+<script>
+// Strip the auth fragment from the URL so a refresh or share doesn't reuse
+// the consumed access token.
+if (window.location.hash && window.location.hash.includes('access_token')) {
+  history.replaceState(null, '', location.pathname);
+}
+</script>
+
+</body>
+</html>
